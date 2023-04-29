@@ -16,7 +16,7 @@ CREATE TABLE "employees" (
     "display_name" TEXT NOT NULL,
     "comment" TEXT,
     "contacts" TEXT,
-    "wallet_address" TEXT NOT NULL,
+    "wallet_address" TEXT,
     "company_id" UUID NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
