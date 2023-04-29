@@ -290,56 +290,56 @@ model Payment {
 
 ### Sprint 1
 
-- Create project structure and set up linters
-- Create and test database schema using Prisma
-- Set up GitHub workflow actions for automated testing and deployment
-- Create a Docker container with docker-compose and provide a Makefile
+- [x] Create project structure and set up linters
+- [x] Create and test database schema using Prisma
+- [x] Set up GitHub workflow actions for automated testing and deployment
+- [x] Create a Docker container with docker-compose and provide a Makefile
 
 ### Sprint 2
 
-- Create API endpoint to create a company with display name and validate input
-- Create frontend UI to create a company
-- Write test cases for creating a company and validating input
-- Create API endpoint to list all companies with their display names and status
-- Create frontend UI to display all companies
-- Write test cases for listing all companies
+- [ ] Create API endpoint to create a company with display name and validate input
+- [ ] Create frontend UI to create a company
+- [ ] Write test cases for creating a company and validating input
+- [ ] Create API endpoint to list all companies with their display names and status
+- [ ] Create frontend UI to display all companies
+- [ ] Write test cases for listing all companies
 
 ### Sprint 3
 
-- Create API endpoint to add an employee to a specific company
-- Create frontend UI to add an employee to a specific company
-- Write test cases for adding an employee to a company
-- Create API endpoint to list all employees in a specific company
-- Create frontend UI to display all employees in a specific company
-- Write test cases for listing all employees in a specific company
+- [ ] Create API endpoint to add an employee to a specific company
+- [ ] Create frontend UI to add an employee to a specific company
+- [ ] Write test cases for adding an employee to a company
+- [ ] Create API endpoint to list all employees in a specific company
+- [ ] Create frontend UI to display all employees in a specific company
+- [ ] Write test cases for listing all employees in a specific company
 
 ### Sprint 4
 
-- Create API endpoint to make a payment for an employee
-- Create frontend UI to make a payment for an employee
-- Write test cases for making a payment for an employee
-- Write documentation on how to run the project locally
+- [ ] Create API endpoint to make a payment for an employee
+- [ ] Create frontend UI to make a payment for an employee
+- [ ] Write test cases for making a payment for an employee
+- [ ] Write documentation on how to run the project locally
 
 ### Sprint 5
 
-- Create API endpoint to update company details
-- Create frontend UI to update company details
-- Write test cases for updating company details
-- Create API endpoint to update employee details
-- Create frontend UI to update employee details
-- Write test cases for updating employee details
+- [ ] Create API endpoint to update company details
+- [ ] Create frontend UI to update company details
+- [ ] Write test cases for updating company details
+- [ ] Create API endpoint to update employee details
+- [ ] Create frontend UI to update employee details
+- [ ] Write test cases for updating employee details
 
 ### Sprint 6
 
-- Create API endpoint to archive/unarchive a company
-- Create frontend UI to archive/unarchive a company
-- Write test cases for archiving/unarchiving a company
-- Create API endpoint to archive/unarchive an employee
-- Create frontend UI to archive/unarchive an employee
-- Write test cases for archiving/unarchiving an employee
+- [ ] Create API endpoint to archive/unarchive a company
+- [ ] Create frontend UI to archive/unarchive a company
+- [ ] Write test cases for archiving/unarchiving a company
+- [ ] Create API endpoint to archive/unarchive an employee
+- [ ] Create frontend UI to archive/unarchive an employee
+- [ ] Write test cases for archiving/unarchiving an employee
 
 ### Sprint 7
 
-- Create API endpoint to list all transactions for a specific company
-- Create frontend UI to display all transactions for a specific company
-- Write test cases for listing all transactions for a specific company
+- [ ] Create API endpoint to list all transactions for a specific company
+- [ ] Create frontend UI to display all transactions for a specific company
+- [ ] Write test cases for listing all transactions for a specific company

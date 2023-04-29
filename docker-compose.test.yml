@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+  test_db:
+    image: postgres:12-alpine
+    container_name: web3_employment_test_db
+    environment:
+      POSTGRES_USER: 'app'
+      POSTGRES_DB: 'app_test'
+      POSTGRES_PASSWORD: 'password'
+    ports:
+      - 127.0.0.1:5433:5432

@@ -1,0 +1,43 @@
+version: '3'
+
+services:
+  app:
+    container_name: web3_employment_production_app
+    build:
+      context: .
+      dockerfile: Dockerfile
+      # NOTE: We must expose these args to Dockerfile because they are used in next.config.js
+      args:
+        - TRON_NETWORK=${TRON_NETWORK}
+        - TOKEN_ADDRESS=${TOKEN_ADDRESS}
+        - TOKEN_DECIMALS=${TOKEN_DECIMALS}
+        - TOKEN_SYMBOL=${TOKEN_SYMBOL}
+    env_file: .env
+    depends_on:
+      db:
+        condition: service_healthy
+    stdin_open: true
+    tty: true
+    ports:
+      - 127.0.0.1:3001:3000
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          'curl http://localhost:3000/api/status | grep true > /dev/null',
+        ]
+      interval: 5s
+      timeout: 5s
+
+  db:
+    image: postgres:12-alpine
+    container_name: web3_employment_production_db
+    env_file: .env
+    volumes:
+      - .data:/var/lib/postgresql/data
+    ports:
+      - 127.0.0.1:5432:5432
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U $POSTGRES_USER -d $POSTGRES_DB']
+      interval: 5s
+      timeout: 5s

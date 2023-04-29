@@ -1,0 +1,16 @@
+Dockerfile
+.dockerignore
+node_modules
+npm-debug.log
+README.md
+.next
+.git
+.github
+Makefile
+coverage
+
+# PostgreSQL data
+/.data
+
+/___tests__
+*.env*
