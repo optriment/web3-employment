@@ -34,7 +34,7 @@ db-migrate: # Apply available migrations
 	@${NPM_RUN} db:migrate
 
 db-seed: # Seed database
-	@${NPM_RUN} db:seed
+	@${NPX} prisma db seed
 
 #
 # Test environment
