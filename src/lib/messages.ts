@@ -1,5 +1,5 @@
 export const UNHANDLED_ERROR = {
-  message: 'Unhandled error. Report has been sent to developers.',
+  message: 'Internal Server Error. Report has been sent to developers.',
 }
 
 export const METHOD_NOT_ALLOWED = {
