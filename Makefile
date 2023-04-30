@@ -54,6 +54,9 @@ test-db-stop: # Stop dockerized database only
 # Production environment
 #
 
+# NOTE: If you use the following command in your laptop or PC,
+# make sure you have a valid DATABASE_URL value in your .env file.
+# It should be set to `db` hostname, instead of `127.0.0.1`
 prod-docker-build: # Build Docker image
 	@${DOCKER_COMPOSE} build
 
