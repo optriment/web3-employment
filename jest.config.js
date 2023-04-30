@@ -18,6 +18,7 @@ const customJestConfig = {
   errorOnDeprecated: true,
   clearMocks: true,
   testEnvironment: 'node',
+  setupFilesAfterEnv: ['<rootDir>/__tests__/testSetup.js'],
 }
 
 module.exports = createJestConfig(customJestConfig)

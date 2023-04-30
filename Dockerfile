@@ -31,7 +31,8 @@ ENV TOKEN_DECIMALS=$TOKEN_DECIMALS
 ARG TOKEN_SYMBOL
 ENV TOKEN_SYMBOL=$TOKEN_SYMBOL
 
-RUN npm run build
+RUN npm run prisma:generate_client && \
+    npm run build
 
 FROM node:17.9-alpine AS prod_builder
 WORKDIR /app
@@ -72,8 +73,6 @@ COPY --from=builder --chown=$USER:$USER /app/.next/standalone ./
 COPY --from=builder --chown=$USER:$USER /app/.next/static ./.next/static
 
 USER $USER
-
-RUN npm run prisma:generate_client
 
 EXPOSE 3000
 

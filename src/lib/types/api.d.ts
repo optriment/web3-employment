@@ -1,6 +1,6 @@
 export type ApiResponse<T> = {
   success: boolean
-  status?: string
   message?: string
+  validation_errors?: string[]
   data?: T
 }
