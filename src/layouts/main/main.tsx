@@ -1,5 +1,6 @@
 import React from 'react'
-import { Grid, Segment } from 'semantic-ui-react'
+import { Grid } from 'semantic-ui-react'
+import { Menu } from './components'
 
 type Props = {
   isMobile: boolean
@@ -9,10 +10,10 @@ type Props = {
 const Layout = ({ isMobile, children }: Props) => (
   <Grid container={!isMobile} columns={1}>
     <Grid.Column>
-      <Segment basic size={isMobile ? undefined : 'big'}>
-        {children}
-      </Segment>
+      <Menu />
     </Grid.Column>
+
+    <Grid.Column>{children}</Grid.Column>
   </Grid>
 )
 
