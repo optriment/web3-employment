@@ -50,8 +50,8 @@ Body:
 
 ```json
 {
-  "display_name": "Company Name",
-  "comment": "A few words about this company"
+  "display_name": "Springfield Nuclear Power Plant",
+  "comment": "Sector 7G"
 }
 ```
 
@@ -74,9 +74,9 @@ Body:
 {
   "companies": [
     {
-      "id": "1",
-      "display_name": "Company Name",
-      "comment": "A few words about this company",
+      "id": "a8496aed-8bb4-4be1-988c-ac33a347d950",
+      "display_name": "Springfield Nuclear Power Plant",
+      "comment": "Sector 7G",
       "status": "active"
     }
   ]
@@ -101,17 +101,17 @@ Body:
 ```json
 {
   "company": {
-    "id": 1,
-    "display_name": "Company Name",
-    "comment": "A few words about this company",
+    "id": "a8496aed-8bb4-4be1-988c-ac33a347d950",
+    "display_name": "Springfield Nuclear Power Plant",
+    "comment": "Sector 7G",
     "status": "active"
   },
   "employees": [
     {
-      "id": 1,
-      "display_name": "Employee 1",
-      "contacts": "Telegram, Skype, etc.",
-      "wallet_address": "0xBEE",
+      "id": "54f1c72f-274a-42a5-9fc7-0f80438a32a3",
+      "display_name": "Homer Jay Simpson",
+      "contacts": "Homer_Simpson@AOL.com",
+      "wallet_address": "0xDEADBEEF",
       "status": "active"
     }
   ]
@@ -132,9 +132,10 @@ Body:
 
 ```json
 {
-  "display_name": "Employee 1",
-  "contacts": "Telegram, Skype, etc.",
-  "wallet_address": "0xBEE"
+  "display_name": "Homer Jay Simpson",
+  "contacts": "Homer_Simpson@AOL.com",
+  "wallet_address": "0xDEADBEEF",
+  "contacts": "Homer_Simpson@AOL.com"
 }
 ```
 
@@ -225,66 +226,15 @@ Body:
 ```json
 {
   "transaction_hash": "0x1234",
-  "amount": "123.32",
+  "amount": 123,
   "wallet_address": "0xEEE"
 }
 ```
 
 ## Database
 
-Here is the possible scheme for Prisma:
-
-```text
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-}
-
-generator client {
-  provider = "prisma-client-js"
-}
-
-model Company {
-  id           Int       @id @default(autoincrement())
-  display_name String
-  comment      String?
-  status       String    @default("active")
-  employees    Employee[]
-  created_at   DateTime  @default(now())
-  updated_at   DateTime  @updatedAt
-
-  @@map("companies")
-}
-
-model Employee {
-  id            Int       @id @default(autoincrement())
-  display_name  String
-  contacts      String?
-  wallet_address String
-  status        String    @default("active")
-  company       Company   @relation(fields: [company_id], references: [id])
-  company_id    Int
-  payments      Payment[]
-  created_at    DateTime  @default(now())
-  updated_at    DateTime  @updatedAt
-
-  @@map("employees")
-}
-
-model Payment {
-  id             Int       @id @default(autoincrement())
-  transaction_hash String
-  amount         Float
-  wallet_address String
-  payment_date   DateTime
-  employee       Employee  @relation(fields: [employee_id], references: [id])
-  employee_id    Int
-  created_at     DateTime  @default(now())
-  updated_at     DateTime  @updatedAt
-
-  @@map("payments")
-}
-```
+[Here is the current schema](https://github.com/optriment/web3-employment/blob/main/prisma/schema.prisma)
+for Prisma.
 
 ## Timeline & Sprint Planning
 
@@ -297,9 +247,9 @@ model Payment {
 
 ### Sprint 2
 
-- [ ] Create API endpoint to create a company with display name and validate input
-- [ ] Create frontend UI to create a company
-- [ ] Write test cases for creating a company and validating input
+- [x] Create API endpoint to create a company with display name and validate input
+- [x] Create frontend UI to create a company
+- [x] Write test cases for creating a company and validating input
 - [ ] Create API endpoint to list all companies with their display names and status
 - [ ] Create frontend UI to display all companies
 - [ ] Write test cases for listing all companies
