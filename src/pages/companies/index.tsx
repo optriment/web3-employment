@@ -1,8 +1,8 @@
 import React from 'react'
 import { WalletLoader } from '@/components'
-import { useHasMounted } from '@/hooks/use-has-mounted'
+import { useHasMounted } from '@/hooks'
 import { MainLayout } from '@/layouts'
-import { LandingPage } from '@/screens/landing'
+import { CompaniesScreen } from '@/screens/companies'
 import { getIsSsrMobile } from '@/utils/get-is-ssr-mobile'
 import { useIsMobile } from '@/utils/use-is-mobile'
 import type { GetServerSidePropsContext } from 'next'
@@ -18,8 +18,8 @@ const Page: React.FC = () => {
   return (
     <MainLayout isMobile={isMobile}>
       <WalletLoader
-        onDisconnected={() => <LandingPage />}
-        onConnected={() => <LandingPage />}
+        onDisconnected={() => <CompaniesScreen />}
+        onConnected={() => <CompaniesScreen />}
       />
     </MainLayout>
   )
