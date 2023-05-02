@@ -1,23 +1,69 @@
+import { useRouter } from 'next/router'
 import React, { useState, useEffect } from 'react'
-import { Button, Message, Grid, Header } from 'semantic-ui-react'
+import { Modal, Button, Message, Grid, Header } from 'semantic-ui-react'
 import { ErrorMessage, LoadingMessage } from '@/components'
 import type {
   CompanyWithEmployees,
   CompanyWithEmployeesApiResponse,
 } from '@/pages/api/companies/[id]'
+import type { EmployeeCreateApiResponse } from '@/pages/api/companies/[id]/employees'
 import { useIsMobile } from '@/utils/use-is-mobile'
+import { EmployeeForm } from './components/employee-form'
 import { EmployeesList } from './components/employees-list'
+import type { ValidationSchema } from './components/employee-form'
 
 interface Props {
   companyId: string
 }
 
 const Screen = ({ companyId }: Props) => {
+  const router = useRouter()
   const isMobile = useIsMobile()
 
   const [data, setData] = useState<CompanyWithEmployees | null>(null)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [error, setError] = useState<string>('')
+
+  const [open, setOpen] = useState<boolean>(false)
+  const [createError, setCreateError] = useState<string>('')
+  const [createValidationErrors, setCreateValidationErrors] = useState<
+    string[]
+  >([])
+
+  const onFormSubmitted = async (data: ValidationSchema) => {
+    try {
+      setCreateError('')
+      setCreateValidationErrors([])
+
+      const payload = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      }
+
+      const res = await fetch(`/api/companies/${companyId}/employees`, payload)
+      const response: EmployeeCreateApiResponse = await res.json()
+
+      if (!res.ok) {
+        const { validation_errors, message } = response
+
+        if (message) setCreateError(message)
+        if (validation_errors) setCreateValidationErrors(validation_errors)
+
+        return
+      }
+
+      if (!response.data) {
+        throw new Error('There is no response.data in API response')
+      }
+
+      router.reload()
+    } catch (e) {
+      setCreateError(`${e}`)
+    }
+  }
 
   useEffect(() => {
     if (!companyId) return
@@ -86,6 +132,7 @@ const Screen = ({ companyId }: Props) => {
                   icon="plus"
                   content="Add Employee"
                   primary
+                  onClick={() => setOpen(true)}
                   disabled={!!isCompanyArchived}
                 />
                 <Button size="large" icon="pencil" content="Edit Company" />
@@ -107,6 +154,36 @@ const Screen = ({ companyId }: Props) => {
           </>
         )}
       </Grid>
+
+      {data !== null && (
+        <Modal
+          closeIcon
+          onClose={() => setOpen(false)}
+          onOpen={() => setOpen(true)}
+          open={open}
+        >
+          <Modal.Header>Add New Employee</Modal.Header>
+          <Modal.Content>
+            {createError && (
+              <Message error size="big">
+                <Message.Header content="Unable to create employee" />
+                <p>{createError}</p>
+              </Message>
+            )}
+
+            {createValidationErrors.length > 0 && (
+              <Message
+                error
+                size="big"
+                header="Validation errors"
+                list={createValidationErrors}
+              />
+            )}
+
+            <EmployeeForm onFormSubmitted={onFormSubmitted} />
+          </Modal.Content>
+        </Modal>
+      )}
     </>
   )
 }
