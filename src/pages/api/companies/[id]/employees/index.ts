@@ -6,21 +6,16 @@ import {
   UNHANDLED_ERROR,
 } from '@/lib/messages'
 import type { ApiResponse } from '@/lib/types/api'
-import { getCompanyWithEmployees } from '@/useCases/getCompanyWithEmployees'
-import type { Company, Employee } from '@prisma/client'
+import { createEmployee } from '@/useCases/createEmployee'
+import type { Employee } from '@prisma/client'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
-export interface CompanyWithEmployees {
-  company: Company
-  employees: Employee[]
-}
-
-export type CompanyWithEmployeesApiResponse = ApiResponse<CompanyWithEmployees>
+export type EmployeeCreateApiResponse = ApiResponse<Employee>
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
-    case 'GET':
-      return await handleGET(req, res)
+    case 'POST':
+      return await handlePOST(req, res)
 
     default:
       res.status(405)
@@ -29,12 +24,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 }
 
-const handleGET = async (
+const handlePOST = async (
   req: NextApiRequest,
-  res: NextApiResponse<CompanyWithEmployeesApiResponse>
+  res: NextApiResponse<EmployeeCreateApiResponse>
 ) => {
   try {
-    const useCase = await getCompanyWithEmployees(req.query.id as string)
+    const useCase = await createEmployee(req.query.id as string, req.body)
 
     res.status(useCase.status)
 
@@ -44,6 +39,7 @@ const handleGET = async (
       res.json({
         success: false,
         message: useCase.message,
+        validation_errors: useCase.validationErrors,
       })
     }
 
