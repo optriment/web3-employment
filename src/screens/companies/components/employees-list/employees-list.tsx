@@ -14,6 +14,7 @@ const Component = ({ isCompanyArchived, employees }: Props) => (
         <Table.HeaderCell>Display Name</Table.HeaderCell>
         <Table.HeaderCell>Wallet</Table.HeaderCell>
         <Table.HeaderCell>Comment</Table.HeaderCell>
+        <Table.HeaderCell>Status</Table.HeaderCell>
         <Table.HeaderCell />
       </Table.Row>
     </Table.Header>
@@ -23,6 +24,9 @@ const Component = ({ isCompanyArchived, employees }: Props) => (
           <Table.Cell>{employee.display_name}</Table.Cell>
           <Table.Cell>{employee.wallet_address}</Table.Cell>
           <Table.Cell>{employee.comment}</Table.Cell>
+          <Table.Cell>
+            {employee.archived_at ? 'Archived' : 'Active'}
+          </Table.Cell>
           <Table.Cell textAlign="right">
             <Button
               positive
