@@ -10,7 +10,7 @@ import { getCompanyWithEmployees } from '@/useCases/getCompanyWithEmployees'
 import type { Company, Employee } from '@prisma/client'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
-interface CompanyWithEmployees {
+export interface CompanyWithEmployees {
   company: Company
   employees: Employee[]
 }

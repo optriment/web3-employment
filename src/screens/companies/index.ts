@@ -1,3 +1,4 @@
 import CompaniesScreen from './companies'
+import CompanyWithEmployeesScreen from './company-with-employees'
 
-export { CompaniesScreen }
+export { CompaniesScreen, CompanyWithEmployeesScreen }
