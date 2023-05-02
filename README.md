@@ -260,7 +260,7 @@ for Prisma.
 - [ ] Create frontend UI to add an employee to a specific company
 - [ ] Write test cases for adding an employee to a company
 - [x] Create API endpoint to list all employees in a specific company
-- [ ] Create frontend UI to display all employees in a specific company
+- [x] Create frontend UI to display all employees in a specific company
 - [x] Write test cases for listing all employees in a specific company
 
 ### Sprint 4
