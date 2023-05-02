@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 import { Grid, Message, Modal, Button, Header } from 'semantic-ui-react'
 import type { CompanyCreateApiResponse } from '@/pages/api/companies'
@@ -6,6 +7,7 @@ import { CompanyForm } from './components/company-form'
 import type { ValidationSchema } from './components/company-form'
 
 const Screen: React.FC = () => {
+  const router = useRouter()
   const isMobile = useIsMobile()
 
   const [open, setOpen] = useState<boolean>(false)
@@ -35,12 +37,15 @@ const Screen: React.FC = () => {
 
         if (message) setCreateError(message)
         if (validation_errors) setCreateValidationErrors(validation_errors)
-      } else {
-        // TODO: Redirect to company card
-        console.log({ response })
 
-        setOpen(false)
+        return
       }
+
+      if (!response.data) {
+        throw new Error('There is no response.data in API response')
+      }
+
+      router.push(`/companies/${response.data.id}`)
     } catch (e) {
       setCreateError(`${e}`)
     }
@@ -49,16 +54,20 @@ const Screen: React.FC = () => {
   return (
     <>
       <Grid container={!isMobile} columns={1}>
-        <Grid.Column>
-          <Header as="h1" content="Companies" />
+        <Grid.Row columns={2}>
+          <Grid.Column width={12}>
+            <Header as="h1" content="Companies" />
+          </Grid.Column>
 
-          <Button
-            size="large"
-            content="Add New"
-            primary
-            onClick={() => setOpen(true)}
-          />
-        </Grid.Column>
+          <Grid.Column width={4} textAlign="right">
+            <Button
+              size="large"
+              content="Add New"
+              primary
+              onClick={() => setOpen(true)}
+            />
+          </Grid.Column>
+        </Grid.Row>
       </Grid>
 
       <Modal

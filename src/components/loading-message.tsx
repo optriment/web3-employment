@@ -10,7 +10,7 @@ const Component = ({ content }: Props) => (
     <Icon name="circle notched" loading />
 
     <Message.Content>
-      <Message.Header content="We are awaiting a response from the blockchain" />
+      <Message.Header content="Please wait..." />
       <p>{content}</p>
     </Message.Content>
   </Message>
