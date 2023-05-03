@@ -265,9 +265,9 @@ for Prisma.
 
 ### Sprint 4
 
-- [ ] Create API endpoint to make a payment for an employee
+- [x] Create API endpoint to make a payment for an employee
 - [ ] Create frontend UI to make a payment for an employee
-- [ ] Write test cases for making a payment for an employee
+- [x] Write test cases for making a payment for an employee
 - [ ] Write documentation on how to run the project locally
 
 ### Sprint 5
