@@ -1,7 +1,8 @@
 import { useRouter } from 'next/router'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { Modal, Button, Message, Grid, Header } from 'semantic-ui-react'
 import { ErrorMessage, LoadingMessage } from '@/components'
+import { Web3Context } from '@/context/web3-context'
 import type {
   CompanyWithEmployees,
   CompanyWithEmployeesApiResponse,
@@ -10,7 +11,12 @@ import type { EmployeeCreateApiResponse } from '@/pages/api/companies/[id]/emplo
 import { useIsMobile } from '@/utils/use-is-mobile'
 import { EmployeeForm } from './components/employee-form'
 import { EmployeesList } from './components/employees-list'
+import { PaymentForm } from './components/payment-form'
+import { TransactionDialog } from './components/transaction-dialog'
 import type { ValidationSchema } from './components/employee-form'
+import type { ValidationSchema as PaymentValidationSchema } from './components/payment-form'
+import type { PaymentTransactionData } from './components/transaction-dialog'
+import type { Employee } from '@prisma/client'
 
 interface Props {
   companyId: string
@@ -19,6 +25,7 @@ interface Props {
 const Screen = ({ companyId }: Props) => {
   const router = useRouter()
   const isMobile = useIsMobile()
+  const { connected } = useContext(Web3Context)
 
   const [data, setData] = useState<CompanyWithEmployees | null>(null)
   const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -29,6 +36,13 @@ const Screen = ({ companyId }: Props) => {
   const [createValidationErrors, setCreateValidationErrors] = useState<
     string[]
   >([])
+
+  const [paymentOpen, setPaymentOpen] = useState<boolean>(false)
+  const [employeeToPay, setEmployeeToPay] = useState<Employee | null>(null)
+
+  const [transactionOpen, setTransactionOpen] = useState<boolean>(false)
+  const [paymentTransactionData, setPaymentTransactionData] =
+    useState<PaymentTransactionData | null>(null)
 
   const onFormSubmitted = async (data: ValidationSchema) => {
     try {
@@ -63,6 +77,27 @@ const Screen = ({ companyId }: Props) => {
     } catch (e) {
       setCreateError(`${e}`)
     }
+  }
+
+  const onPaymentClicked = (employee: Employee) => {
+    setEmployeeToPay(employee)
+    setPaymentOpen(true)
+  }
+
+  const onPaymentFormSubmitted = async (data: PaymentValidationSchema) => {
+    if (!employeeToPay?.wallet_address) return
+
+    setPaymentTransactionData({
+      amount: data.amount,
+      recipient: employeeToPay.wallet_address,
+    })
+    setPaymentOpen(false)
+    setTransactionOpen(true)
+  }
+
+  const onTransactionReceived = async (tx: string) => {
+    // TODO: Send data to backend
+    console.log({ tx })
   }
 
   useEffect(() => {
@@ -139,11 +174,24 @@ const Screen = ({ companyId }: Props) => {
               </Grid.Column>
             </Grid.Row>
 
+            {!connected && (
+              <Grid.Column>
+                <Message warning size="large">
+                  <Message.Header>Payments are not available</Message.Header>
+
+                  <p>Please connect wallet to make payments</p>
+                </Message>
+              </Grid.Column>
+            )}
+
             <Grid.Column>
               {data.employees.length > 0 ? (
                 <EmployeesList
                   isCompanyArchived={!!isCompanyArchived}
                   employees={data.employees}
+                  onPaymentClicked={(employee: Employee) =>
+                    onPaymentClicked(employee)
+                  }
                 />
               ) : (
                 <Message warning>
@@ -156,33 +204,77 @@ const Screen = ({ companyId }: Props) => {
       </Grid>
 
       {data !== null && (
-        <Modal
-          closeIcon
-          onClose={() => setOpen(false)}
-          onOpen={() => setOpen(true)}
-          open={open}
-        >
-          <Modal.Header>Add New Employee</Modal.Header>
-          <Modal.Content>
-            {createError && (
-              <Message error size="big">
-                <Message.Header content="Unable to create employee" />
-                <p>{createError}</p>
-              </Message>
-            )}
+        <>
+          <Modal
+            closeIcon
+            onClose={() => setOpen(false)}
+            onOpen={() => setOpen(true)}
+            open={open}
+          >
+            <Modal.Header>Add New Employee</Modal.Header>
+            <Modal.Content>
+              {createError && (
+                <Message error size="big">
+                  <Message.Header content="Unable to create employee" />
+                  <p>{createError}</p>
+                </Message>
+              )}
 
-            {createValidationErrors.length > 0 && (
-              <Message
-                error
-                size="big"
-                header="Validation errors"
-                list={createValidationErrors}
-              />
-            )}
+              {createValidationErrors.length > 0 && (
+                <Message
+                  error
+                  size="big"
+                  header="Validation errors"
+                  list={createValidationErrors}
+                />
+              )}
 
-            <EmployeeForm onFormSubmitted={onFormSubmitted} />
-          </Modal.Content>
-        </Modal>
+              <EmployeeForm onFormSubmitted={onFormSubmitted} />
+            </Modal.Content>
+          </Modal>
+
+          {employeeToPay !== null && (
+            <>
+              <Modal
+                closeIcon
+                onClose={() => setPaymentOpen(false)}
+                onOpen={() => setPaymentOpen(true)}
+                open={paymentOpen}
+                size="tiny"
+              >
+                <Modal.Header>
+                  Payment for {employeeToPay.display_name}
+                </Modal.Header>
+                <Modal.Content>
+                  <PaymentForm onFormSubmitted={onPaymentFormSubmitted} />
+                </Modal.Content>
+              </Modal>
+
+              {paymentTransactionData !== null && (
+                <Modal
+                  closeIcon
+                  onClose={() => setTransactionOpen(false)}
+                  onOpen={() => setTransactionOpen(true)}
+                  open={transactionOpen}
+                  size="small"
+                >
+                  <Modal.Header>
+                    Click button to send money to
+                    {' ' + employeeToPay.display_name}
+                  </Modal.Header>
+                  <Modal.Content>
+                    <TransactionDialog
+                      payment={paymentTransactionData}
+                      onTransactionReceived={(tx: string) =>
+                        onTransactionReceived(tx)
+                      }
+                    />
+                  </Modal.Content>
+                </Modal>
+              )}
+            </>
+          )}
+        </>
       )}
     </>
   )

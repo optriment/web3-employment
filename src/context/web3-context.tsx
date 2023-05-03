@@ -76,9 +76,9 @@ const Web3Provider = ({ children }: Props) => {
   const buildTronScanTransactionURL = useCallback((tx: string) => {
     let url
     if (tronNetwork === 'mainnet') {
-      url = 'https://tronscan.io/#/transaction/'
+      url = 'https://tronscan.io/#/transaction'
     } else {
-      url = 'https://shasta.tronscan.io/#/transaction/'
+      url = 'https://shasta.tronscan.io/#/transaction'
     }
 
     return `${url}/${tx}`
@@ -154,7 +154,6 @@ const Web3Provider = ({ children }: Props) => {
 
         setNetwork(n)
       } catch (e) {
-        console.error({ e })
         setError(`Network ${tronNetwork} is not supported`)
       }
     }
