@@ -268,7 +268,7 @@ for Prisma.
 - [x] Create API endpoint to make a payment for an employee
 - [x] Create frontend UI to make a payment for an employee
 - [x] Write test cases for making a payment for an employee
-- [ ] Write documentation on how to run the project locally
+- [x] Write documentation on how to run the project locally
 
 ### Sprint 5
 
