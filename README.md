@@ -250,9 +250,9 @@ for Prisma.
 - [x] Create API endpoint to create a company with display name and validate input
 - [x] Create frontend UI to create a company
 - [x] Write test cases for creating a company and validating input
-- [ ] Create API endpoint to list all companies with their display names and status
+- [x] Create API endpoint to list all companies with their display names and status
 - [ ] Create frontend UI to display all companies
-- [ ] Write test cases for listing all companies
+- [x] Write test cases for listing all companies
 
 ### Sprint 3
 
