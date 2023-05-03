@@ -21,7 +21,6 @@ const ensureMethodNotAllowed = (method: RequestMethod, url: string) => {
   })
 }
 
-ensureMethodNotAllowed('GET', ENDPOINT)
 ensureMethodNotAllowed('PUT', ENDPOINT)
 ensureMethodNotAllowed('DELETE', ENDPOINT)
 

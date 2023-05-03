@@ -2,9 +2,11 @@ import { createMocks } from 'node-mocks-http'
 import type { PrismaClient } from '@prisma/client'
 import type { RequestOptions, MockResponse } from 'node-mocks-http'
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const cleanDatabase = async (_prisma: PrismaClient) => {
-  // NOTE: Put here your cleanup instructions
+export const cleanDatabase = async (prisma: PrismaClient) => {
+  const deleteEmployees = prisma.employee.deleteMany()
+  const deleteCompanies = prisma.company.deleteMany()
+
+  await prisma.$transaction([deleteEmployees, deleteCompanies])
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
