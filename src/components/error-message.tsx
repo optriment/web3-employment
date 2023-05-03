@@ -7,7 +7,7 @@ interface Props {
 }
 
 const Component = ({ header, content }: Props) => (
-  <Message icon error>
+  <Message icon error size="large">
     <Icon name="ban" />
 
     <Message.Content>

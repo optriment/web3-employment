@@ -11,3 +11,7 @@ export const CreateEmployeeSchema = z.object({
   wallet_address: z.string().trim().optional(),
   contacts: z.string().trim().optional(),
 })
+
+export const PaymentSchema = z.object({
+  amount: z.coerce.number().int().positive(),
+})
