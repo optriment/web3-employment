@@ -3,10 +3,11 @@ import type { PrismaClient } from '@prisma/client'
 import type { RequestOptions, MockResponse } from 'node-mocks-http'
 
 export const cleanDatabase = async (prisma: PrismaClient) => {
+  const deletePayments = prisma.payment.deleteMany()
   const deleteEmployees = prisma.employee.deleteMany()
   const deleteCompanies = prisma.company.deleteMany()
 
-  await prisma.$transaction([deleteEmployees, deleteCompanies])
+  await prisma.$transaction([deletePayments, deleteEmployees, deleteCompanies])
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

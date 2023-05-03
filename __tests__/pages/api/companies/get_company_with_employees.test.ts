@@ -1,10 +1,18 @@
 import { v4 as uuidv4 } from 'uuid'
 import { prisma } from '@/lib/prisma'
 import handler from '@/pages/api/companies/[id]'
-import { mockGETRequestWithQuery, parseJSON } from '../../../helpers'
+import {
+  cleanDatabase,
+  mockGETRequestWithQuery,
+  parseJSON,
+} from '../../../helpers'
 import type { Company, Employee } from '@prisma/client'
 
 const ENDPOINT = '/api/companies/[id]'
+
+beforeEach(async () => {
+  await cleanDatabase(prisma)
+})
 
 describe(`GET ${ENDPOINT}`, () => {
   describe('when company id is not a valid UUID', () => {

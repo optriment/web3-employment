@@ -1,10 +1,15 @@
 import { createMocks } from 'node-mocks-http'
 import { METHOD_NOT_ALLOWED } from '@/lib/messages'
+import { prisma } from '@/lib/prisma'
 import handler from '@/pages/api/companies'
-import { mockPOSTRequest, parseJSON } from '../../../helpers'
+import { cleanDatabase, mockPOSTRequest, parseJSON } from '../../../helpers'
 import type { RequestMethod } from 'node-mocks-http'
 
 const ENDPOINT = '/api/companies'
+
+beforeEach(async () => {
+  await cleanDatabase(prisma)
+})
 
 const ensureMethodNotAllowed = (method: RequestMethod, url: string) => {
   describe(`${method} ${url}`, () => {
