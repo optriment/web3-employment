@@ -34,7 +34,7 @@ const Component = ({ isCompanyArchived, employees }: Props) => (
               content="Pay"
               disabled={!!isCompanyArchived || !employee.wallet_address}
             />
-            <Button icon="pencil" />
+            <Button icon="pencil" disabled={!!isCompanyArchived} />
           </Table.Cell>
         </Table.Row>
       ))}

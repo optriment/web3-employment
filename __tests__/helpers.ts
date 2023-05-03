@@ -17,6 +17,16 @@ export const mockPOSTRequest = (body: RequestOptions['body'] = {}) =>
     body: body,
   })
 
+export const mockPOSTRequestWithQuery = (
+  query: RequestOptions['query'],
+  body: RequestOptions['body'] = {}
+) =>
+  createMocks({
+    method: 'POST',
+    query: query,
+    body: body,
+  })
+
 export const mockGETRequest = () => createMocks({ method: 'GET' })
 
 export const mockGETRequestWithQuery = (query: RequestOptions['query']) =>
