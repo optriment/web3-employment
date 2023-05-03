@@ -2,7 +2,7 @@ import React from 'react'
 import { Icon, Message } from 'semantic-ui-react'
 
 const Component = () => (
-  <Message icon warning>
+  <Message icon warning size="large">
     <Icon name="circle notched" loading />
 
     <Message.Content>
