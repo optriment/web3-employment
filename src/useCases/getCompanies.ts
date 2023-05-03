@@ -9,28 +9,11 @@ interface GetCompaniesResult {
 }
 
 export const getCompanies = async (): Promise<GetCompaniesResult> => {
-  try {
-    const companies = await prisma.company.findMany({
-      select: {
-        id: true,
-        display_name: true,
-        comment: true,
-        created_at: true,
-        updated_at: true,
-        archived_at: true,
-      },
-    })
-    return {
-      status: 200,
-      success: true,
-      data: companies,
-    }
-  } catch (error) {
-    return {
-      status: 500,
-      success: false,
-      data: undefined,
-      message: 'Unhandled error',
-    }
+  const companies = await prisma.company.findMany()
+
+  return {
+    status: 200,
+    success: true,
+    data: companies,
   }
 }

@@ -11,12 +11,8 @@ import { getCompanies } from '@/useCases/getCompanies'
 import type { Company } from '@prisma/client'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
-export type CompanyResponse = {
-  companies?: Company[]
-}
-
 export type CompanyCreateApiResponse = ApiResponse<Company>
-export type CompanyGetApiResponse = ApiResponse<CompanyResponse>
+export type CompanyGetApiResponse = ApiResponse<Company[]>
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
@@ -74,12 +70,7 @@ const handleGET = async (
 
     res.status(useCase.status)
     if (useCase.success) {
-      res.json({
-        success: true,
-        data: {
-          companies: useCase.data || [],
-        },
-      })
+      res.json({ success: true, data: useCase.data })
     } else {
       res.json({ success: false, message: useCase.message })
     }
