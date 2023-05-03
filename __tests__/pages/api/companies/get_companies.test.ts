@@ -5,14 +5,16 @@ import type { Company } from '@prisma/client'
 
 const ENDPOINT = '/api/companies'
 
-describe(`GET ${ENDPOINT}`, () => {
-  beforeEach(async () => {
-    await cleanDatabase(prisma)
-  })
+beforeEach(async () => {
+  await cleanDatabase(prisma)
+})
 
+describe(`GET ${ENDPOINT}`, () => {
   it('returns an empty array when there are no companies in the database', async () => {
     const { req, res } = mockGETRequest()
+
     await handler(req, res)
+
     expect(res.statusCode).toBe(200)
     expect(parseJSON(res)).toEqual({ success: true, data: [] })
   })
@@ -24,6 +26,7 @@ describe(`GET ${ENDPOINT}`, () => {
         comment: 'Comment 1',
       },
     })
+
     const company2: Company = await prisma.company.create({
       data: {
         display_name: 'Company 2',
@@ -32,7 +35,9 @@ describe(`GET ${ENDPOINT}`, () => {
     })
 
     const { req, res } = mockGETRequest()
+
     await handler(req, res)
+
     expect(res.statusCode).toBe(200)
     expect(parseJSON(res)).toEqual({
       success: true,

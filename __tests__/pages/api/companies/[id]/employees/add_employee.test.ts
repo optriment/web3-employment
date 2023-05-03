@@ -1,10 +1,18 @@
 import { v4 as uuidv4 } from 'uuid'
 import { prisma } from '@/lib/prisma'
 import handler from '@/pages/api/companies/[id]/employees'
-import { mockPOSTRequestWithQuery, parseJSON } from '../../../../../helpers'
+import {
+  cleanDatabase,
+  mockPOSTRequestWithQuery,
+  parseJSON,
+} from '../../../../../helpers'
 import type { Company } from '@prisma/client'
 
 const ENDPOINT = '/api/companies/[id]/employees'
+
+beforeEach(async () => {
+  await cleanDatabase(prisma)
+})
 
 describe(`POST ${ENDPOINT}`, () => {
   describe('general errors', () => {
