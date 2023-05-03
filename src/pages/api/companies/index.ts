@@ -7,16 +7,23 @@ import {
 } from '@/lib/messages'
 import type { ApiResponse } from '@/lib/types/api'
 import { createCompany } from '@/useCases/createCompany'
+import { getCompanies } from '@/useCases/getCompanies'
 import type { Company } from '@prisma/client'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
+export type CompanyResponse = {
+  companies?: Company[]
+}
+
 export type CompanyCreateApiResponse = ApiResponse<Company>
+export type CompanyGetApiResponse = ApiResponse<CompanyResponse>
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
     case 'POST':
       return await handlePOST(req, res)
-
+    case 'GET':
+      return await handleGET(req, res)
     default:
       res.status(405)
       res.json({ success: false, ...METHOD_NOT_ALLOWED })
@@ -30,7 +37,6 @@ const handlePOST = async (
 ) => {
   try {
     const useCase = await createCompany(req.body)
-
     res.status(useCase.status)
 
     if (useCase.success) {
@@ -59,4 +65,36 @@ const handlePOST = async (
   }
 }
 
+const handleGET = async (
+  req: NextApiRequest,
+  res: NextApiResponse<CompanyGetApiResponse>
+) => {
+  try {
+    const useCase = await getCompanies()
+
+    res.status(useCase.status)
+    if (useCase.success) {
+      res.json({
+        success: true,
+        data: {
+          companies: useCase.data || [],
+        },
+      })
+    } else {
+      res.json({ success: false, message: useCase.message })
+    }
+  } catch (e) {
+    Sentry.captureException(e)
+
+    res.status(500)
+
+    if (e instanceof Prisma.PrismaClientKnownRequestError) {
+      res.json({ success: false, ...DATABASE_ERROR })
+    } else {
+      res.json({ success: false, ...UNHANDLED_ERROR })
+    }
+
+    return res.end()
+  }
+}
 export default handler
