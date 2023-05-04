@@ -216,7 +216,6 @@ const Screen = ({ companyId }: Props) => {
                   onClick={() => setOpen(true)}
                   disabled={!!isCompanyArchived}
                 />
-                <Button size="large" icon="pencil" content="Edit Company" />
               </Grid.Column>
             </Grid.Row>
 

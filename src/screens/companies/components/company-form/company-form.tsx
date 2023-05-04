@@ -4,6 +4,7 @@ import { Controller, useForm } from 'react-hook-form'
 import { Header, Grid, Button, Form } from 'semantic-ui-react'
 import { useIsMobile } from '@/utils/use-is-mobile'
 import { CreateCompanySchema } from '@/validations'
+import type { Company } from '@prisma/client'
 import type { SubmitHandler } from 'react-hook-form'
 import type { z } from 'zod'
 
@@ -11,9 +12,10 @@ export type ValidationSchema = z.infer<typeof CreateCompanySchema>
 
 type Props = {
   onFormSubmitted: (_: ValidationSchema) => void
+  company?: Company
 }
 
-const Component = ({ onFormSubmitted }: Props) => {
+const Component = ({ onFormSubmitted, company }: Props) => {
   const isMobile = useIsMobile()
 
   const {
@@ -24,8 +26,8 @@ const Component = ({ onFormSubmitted }: Props) => {
     mode: 'onChange',
     resolver: zodResolver(CreateCompanySchema),
     defaultValues: {
-      display_name: '',
-      comment: '',
+      display_name: company?.display_name || '',
+      comment: company?.comment || '',
     },
   })
 

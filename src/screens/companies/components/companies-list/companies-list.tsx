@@ -4,9 +4,10 @@ import type { Company } from '@prisma/client'
 
 interface Props {
   companies: Company[]
+  onEditClicked: (_company: Company) => void
 }
 
-const Component = ({ companies }: Props) => (
+const Component = ({ companies, onEditClicked }: Props) => (
   <Table size="large">
     <Table.Header>
       <Table.Row>
@@ -31,7 +32,7 @@ const Component = ({ companies }: Props) => (
               icon="users"
               title="Employees"
             />
-            <Button icon="pencil" />
+            <Button icon="pencil" onClick={() => onEditClicked(company)} />
           </Table.Cell>
         </Table.Row>
       ))}
