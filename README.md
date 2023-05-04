@@ -272,9 +272,9 @@ for Prisma.
 
 ### Sprint 5
 
-- [ ] Create API endpoint to update company details
+- [x] Create API endpoint to update company details
 - [ ] Create frontend UI to update company details
-- [ ] Write test cases for updating company details
+- [x] Write test cases for updating company details
 - [ ] Create API endpoint to update employee details
 - [ ] Create frontend UI to update employee details
 - [ ] Write test cases for updating employee details

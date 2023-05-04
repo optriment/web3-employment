@@ -62,7 +62,7 @@ const handlePOST = async (
 }
 
 const handleGET = async (
-  req: NextApiRequest,
+  _req: NextApiRequest,
   res: NextApiResponse<CompanyGetApiResponse>
 ) => {
   try {

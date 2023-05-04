@@ -1,9 +1,12 @@
 import { z } from 'zod'
 
-export const CreateCompanySchema = z.object({
+const CompanySchema = z.object({
   display_name: z.string().trim().min(2),
   comment: z.string().trim().optional(),
 })
+
+export const CreateCompanySchema = CompanySchema
+export const UpdateCompanySchema = CompanySchema
 
 export const CreateEmployeeSchema = z.object({
   display_name: z.string().trim().min(2),
