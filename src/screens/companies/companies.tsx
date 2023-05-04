@@ -1,10 +1,17 @@
 import { useRouter } from 'next/router'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Grid, Message, Modal, Button, Header } from 'semantic-ui-react'
-import type { CompanyCreateApiResponse } from '@/pages/api/companies'
+import { ErrorMessage, LoadingMessage } from '@/components'
+import type {
+  CompanyCreateApiResponse,
+  CompanyGetApiResponse,
+} from '@/pages/api/companies'
 import { useIsMobile } from '@/utils/use-is-mobile'
+import { CompaniesList } from './components/companies-list'
 import { CompanyForm } from './components/company-form'
+
 import type { ValidationSchema } from './components/company-form'
+import type { Company } from '@prisma/client'
 
 const Screen: React.FC = () => {
   const router = useRouter()
@@ -15,7 +22,9 @@ const Screen: React.FC = () => {
   const [createValidationErrors, setCreateValidationErrors] = useState<
     string[]
   >([])
-
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [data, setData] = useState<Company[] | null>(null)
+  const [error, setError] = useState<string>('')
   const onFormSubmitted = async (data: ValidationSchema) => {
     try {
       setCreateError('')
@@ -51,9 +60,44 @@ const Screen: React.FC = () => {
     }
   }
 
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true)
+
+      try {
+        const res = await fetch('/api/companies/')
+        const d: CompanyGetApiResponse = await res.json()
+
+        if (d.success) {
+          setData(d.data as Company[])
+          setIsLoading(false)
+          return
+        }
+
+        setError(d.message || 'Unknown response from API')
+      } catch (e) {
+        setError(`${e}`)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchData()
+  }, [])
+
   return (
     <>
       <Grid container={!isMobile} columns={1}>
+        {isLoading && (
+          <Grid.Column>
+            <LoadingMessage content="Loading companies" />
+          </Grid.Column>
+        )}
+        {error && (
+          <Grid.Column>
+            <ErrorMessage header="Unable to load companies" content={error} />
+          </Grid.Column>
+        )}
         <Grid.Row columns={2}>
           <Grid.Column width={12}>
             <Header as="h1" content="Companies" />
@@ -66,6 +110,17 @@ const Screen: React.FC = () => {
               primary
               onClick={() => setOpen(true)}
             />
+          </Grid.Column>
+        </Grid.Row>
+        <Grid.Row>
+          <Grid.Column>
+            {data !== null && data.length > 0 ? (
+              <CompaniesList companies={data} />
+            ) : (
+              <Message warning>
+                <p>No companies present yet.</p>
+              </Message>
+            )}
           </Grid.Column>
         </Grid.Row>
       </Grid>
