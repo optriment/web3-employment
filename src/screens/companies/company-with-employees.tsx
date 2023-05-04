@@ -8,6 +8,7 @@ import type {
   CompanyWithEmployeesApiResponse,
 } from '@/pages/api/companies/[id]'
 import type { EmployeeCreateApiResponse } from '@/pages/api/companies/[id]/employees'
+import type { PaymentCreateApiResponse } from '@/pages/api/companies/[id]/employees/[employee_id]/payment'
 import { useIsMobile } from '@/utils/use-is-mobile'
 import { EmployeeForm } from './components/employee-form'
 import { EmployeesList } from './components/employees-list'
@@ -43,6 +44,11 @@ const Screen = ({ companyId }: Props) => {
   const [transactionOpen, setTransactionOpen] = useState<boolean>(false)
   const [paymentTransactionData, setPaymentTransactionData] =
     useState<PaymentTransactionData | null>(null)
+
+  const [paymentError, setPaymentError] = useState<string>('')
+  const [paymentValidationErrors, setPaymentValidationErrors] = useState<
+    string[]
+  >([])
 
   const onFormSubmitted = async (data: ValidationSchema) => {
     try {
@@ -96,8 +102,48 @@ const Screen = ({ companyId }: Props) => {
   }
 
   const onTransactionReceived = async (tx: string) => {
-    // TODO: Send data to backend
-    console.log({ tx })
+    if (!employeeToPay) return
+    if (!paymentTransactionData) return
+
+    try {
+      setPaymentError('')
+      setPaymentValidationErrors([])
+
+      const payload = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          transaction_hash: tx,
+          amount: paymentTransactionData.amount,
+        }),
+      }
+
+      const res = await fetch(
+        `/api/companies/${companyId}/employees/${employeeToPay.id}/payment`,
+        payload
+      )
+      const response: PaymentCreateApiResponse = await res.json()
+
+      if (!res.ok) {
+        const { validation_errors, message } = response
+
+        if (message) setPaymentError(message)
+        if (validation_errors) setPaymentValidationErrors(validation_errors)
+
+        return
+      }
+
+      if (!response.data) {
+        throw new Error('There is no response.data in API response')
+      }
+
+      setEmployeeToPay(null)
+      setPaymentTransactionData(null)
+    } catch (e) {
+      setPaymentError(`${e}`)
+    }
   }
 
   useEffect(() => {
@@ -259,10 +305,25 @@ const Screen = ({ companyId }: Props) => {
                   size="small"
                 >
                   <Modal.Header>
-                    Click button to send money to
-                    {' ' + employeeToPay.display_name}
+                    Send money to {' ' + employeeToPay.display_name}
                   </Modal.Header>
                   <Modal.Content>
+                    {paymentError && (
+                      <Message error size="big">
+                        <Message.Header content="Unable to create payment" />
+                        <p>{paymentError}</p>
+                      </Message>
+                    )}
+
+                    {paymentValidationErrors.length > 0 && (
+                      <Message
+                        error
+                        size="big"
+                        header="Validation errors"
+                        list={paymentValidationErrors}
+                      />
+                    )}
+
                     <TransactionDialog
                       payment={paymentTransactionData}
                       onTransactionReceived={(tx: string) =>
