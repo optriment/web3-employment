@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import { Table, Button } from 'semantic-ui-react'
+import { Header, Table, Button } from 'semantic-ui-react'
 import { Web3Context } from '@/context/web3-context'
 import type { Employee } from '@prisma/client'
 
@@ -22,7 +22,6 @@ const Component = ({
         <Table.Row>
           <Table.HeaderCell>Display Name</Table.HeaderCell>
           <Table.HeaderCell>Wallet</Table.HeaderCell>
-          <Table.HeaderCell>Comment</Table.HeaderCell>
           <Table.HeaderCell>Status</Table.HeaderCell>
           <Table.HeaderCell />
         </Table.Row>
@@ -30,13 +29,19 @@ const Component = ({
       <Table.Body>
         {employees.map((employee) => (
           <Table.Row key={employee.id}>
-            <Table.Cell>{employee.display_name}</Table.Cell>
-            <Table.Cell>{employee.wallet_address}</Table.Cell>
-            <Table.Cell>{employee.comment}</Table.Cell>
             <Table.Cell>
+              <Header as="h3">
+                <Header.Content>
+                  {employee.display_name}
+                  <Header.Subheader>{employee.comment}</Header.Subheader>
+                </Header.Content>
+              </Header>
+            </Table.Cell>
+            <Table.Cell collapsing>{employee.wallet_address}</Table.Cell>
+            <Table.Cell collapsing>
               {employee.archived_at ? 'Archived' : 'Active'}
             </Table.Cell>
-            <Table.Cell textAlign="right">
+            <Table.Cell collapsing textAlign="right">
               <Button
                 positive
                 icon="dollar"

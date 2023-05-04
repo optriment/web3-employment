@@ -107,7 +107,8 @@ const Screen: React.FC = () => {
           <Grid.Column width={4} textAlign="right">
             <Button
               size="large"
-              content="Add New"
+              icon="plus"
+              content="Add Company"
               primary
               onClick={() => setOpen(true)}
             />

@@ -21,8 +21,16 @@ const Component = ({ companies }: Props) => (
         <Table.Row key={company.id}>
           <Table.Cell>{company.display_name}</Table.Cell>
           <Table.Cell>{company.comment}</Table.Cell>
-          <Table.Cell>{company.archived_at ? 'Archived' : 'Active'}</Table.Cell>
-          <Table.Cell textAlign="right">
+          <Table.Cell collapsing>
+            {company.archived_at ? 'Archived' : 'Active'}
+          </Table.Cell>
+          <Table.Cell collapsing textAlign="right">
+            <Button
+              as="a"
+              href={`/companies/${company.id}`}
+              icon="users"
+              title="Employees"
+            />
             <Button icon="pencil" />
           </Table.Cell>
         </Table.Row>
