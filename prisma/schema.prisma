@@ -25,6 +25,7 @@ model Employee {
   comment        String?
   contacts       String?
   wallet_address String?
+  salary         Int?      @default(0)
   company        Company   @relation(fields: [company_id], references: [id], onDelete: Restrict)
   company_id     String    @db.Uuid
   payments       Payment[]

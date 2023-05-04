@@ -292,7 +292,10 @@ const Screen = ({ companyId }: Props) => {
                   Payment for {employeeToPay.display_name}
                 </Modal.Header>
                 <Modal.Content>
-                  <PaymentForm onFormSubmitted={onPaymentFormSubmitted} />
+                  <PaymentForm
+                    onFormSubmitted={onPaymentFormSubmitted}
+                    salary={employeeToPay.salary || 0}
+                  />
                 </Modal.Content>
               </Modal>
 

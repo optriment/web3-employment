@@ -10,6 +10,7 @@ export const CreateEmployeeSchema = z.object({
   comment: z.string().trim().optional(),
   wallet_address: z.string().trim().optional(),
   contacts: z.string().trim().optional(),
+  salary: z.coerce.number().nonnegative().int().optional(),
 })
 
 export const PaymentSchema = z.object({
