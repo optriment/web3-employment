@@ -93,6 +93,7 @@ const Screen: React.FC = () => {
             <LoadingMessage content="Loading companies" />
           </Grid.Column>
         )}
+
         {error && (
           <Grid.Column>
             <ErrorMessage header="Unable to load companies" content={error} />
