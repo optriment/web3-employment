@@ -28,6 +28,7 @@ const Component = ({ onFormSubmitted }: Props) => {
       comment: '',
       wallet_address: '',
       contacts: '',
+      salary: 0,
     },
   })
 
@@ -63,7 +64,6 @@ const Component = ({ onFormSubmitted }: Props) => {
           <Controller
             name="wallet_address"
             control={control}
-            rules={{ required: true }}
             render={({ field }) => (
               <Form.Input
                 {...field}
@@ -77,12 +77,29 @@ const Component = ({ onFormSubmitted }: Props) => {
         </Grid.Column>
 
         <Grid.Column>
+          <Header as="h3">Salary:</Header>
+
+          <Controller
+            name="salary"
+            control={control}
+            render={({ field }) => (
+              <Form.Input
+                {...field}
+                error={errors.salary && errors.salary?.message}
+                placeholder=""
+                autoComplete="off"
+                maxLength={6}
+              />
+            )}
+          />
+        </Grid.Column>
+
+        <Grid.Column>
           <Header as="h3">Contacts:</Header>
 
           <Controller
             name="contacts"
             control={control}
-            rules={{ required: true }}
             render={({ field }) => (
               <Form.Input
                 {...field}

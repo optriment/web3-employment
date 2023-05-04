@@ -18,6 +18,7 @@ const fieldNames: { [key: string]: string } = {
   comment: 'Comment',
   wallet_address: 'Wallet address',
   contacts: 'Contacts',
+  salary: 'Salary',
 }
 
 export const createEmployee = async (

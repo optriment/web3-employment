@@ -97,6 +97,8 @@ describe(`GET ${ENDPOINT}`, () => {
           data: {
             company_id: company.id,
             display_name: 'Second Employee',
+            salary: 42,
+            archived_at: new Date(),
           },
         })
 
@@ -124,8 +126,18 @@ describe(`GET ${ENDPOINT}`, () => {
         expect(result.data.company.comment).toEqual('Comment')
 
         expect(result.data.employees).toHaveLength(2)
+
         expect(result.data.employees[0].id).toEqual(firstEmployee.id)
+        expect(result.data.employees[0].display_name).toEqual('First Employee')
+        expect(result.data.employees[0].comment).toEqual('Note')
+        expect(result.data.employees[0].salary).toEqual(0)
+        expect(result.data.employees[0].archived_at).toBeNull()
+
         expect(result.data.employees[1].id).toEqual(secondEmployee.id)
+        expect(result.data.employees[1].display_name).toEqual('Second Employee')
+        expect(result.data.employees[1].comment).toBeNull()
+        expect(result.data.employees[1].salary).toEqual(42)
+        expect(result.data.employees[1].archived_at).not.toBeNull()
       })
     })
   })

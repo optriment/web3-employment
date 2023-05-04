@@ -12,9 +12,10 @@ export type ValidationSchema = z.infer<typeof PaymentSchema>
 
 type Props = {
   onFormSubmitted: (_: ValidationSchema) => void
+  salary: number
 }
 
-const Component = ({ onFormSubmitted }: Props) => {
+const Component = ({ onFormSubmitted, salary }: Props) => {
   const { tokenSymbol } = useContext(Web3Context)
   const isMobile = useIsMobile()
 
@@ -26,7 +27,7 @@ const Component = ({ onFormSubmitted }: Props) => {
     mode: 'onChange',
     resolver: zodResolver(PaymentSchema),
     defaultValues: {
-      amount: 0,
+      amount: salary,
     },
   })
 

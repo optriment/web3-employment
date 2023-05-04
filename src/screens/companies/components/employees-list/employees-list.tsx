@@ -22,6 +22,7 @@ const Component = ({
         <Table.Row>
           <Table.HeaderCell>Display Name</Table.HeaderCell>
           <Table.HeaderCell>Wallet</Table.HeaderCell>
+          <Table.HeaderCell>Salary</Table.HeaderCell>
           <Table.HeaderCell>Status</Table.HeaderCell>
           <Table.HeaderCell />
         </Table.Row>
@@ -38,6 +39,7 @@ const Component = ({
               </Header>
             </Table.Cell>
             <Table.Cell collapsing>{employee.wallet_address}</Table.Cell>
+            <Table.Cell collapsing>{employee.salary}</Table.Cell>
             <Table.Cell collapsing>
               {employee.archived_at ? 'Archived' : 'Active'}
             </Table.Cell>

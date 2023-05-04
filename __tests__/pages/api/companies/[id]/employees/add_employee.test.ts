@@ -138,6 +138,52 @@ describe(`POST ${ENDPOINT}`, () => {
         })
       })
     })
+
+    describe('when salary is a negative number', () => {
+      it('returns error', async () => {
+        const { req, res } = mockPOSTRequestWithQuery(
+          {
+            id: company.id,
+          },
+          {
+            display_name: 'Homer Jay Simpson',
+            salary: -1,
+          }
+        )
+
+        await handler(req, res)
+
+        expect(res._getStatusCode()).toBe(422)
+        expect(parseJSON(res)).toEqual({
+          success: false,
+          validation_errors: [
+            'Salary: Number must be greater than or equal to 0',
+          ],
+        })
+      })
+    })
+
+    describe.only('when salary is a float number', () => {
+      it('returns error', async () => {
+        const { req, res } = mockPOSTRequestWithQuery(
+          {
+            id: company.id,
+          },
+          {
+            display_name: 'Homer Jay Simpson',
+            salary: 0.1,
+          }
+        )
+
+        await handler(req, res)
+
+        expect(res._getStatusCode()).toBe(422)
+        expect(parseJSON(res)).toEqual({
+          success: false,
+          validation_errors: ['Salary: Expected integer, received float'],
+        })
+      })
+    })
   })
 
   describe('when everything is good', () => {
@@ -175,6 +221,7 @@ describe(`POST ${ENDPOINT}`, () => {
         expect(response.data.comment).toBeNull()
         expect(response.data.wallet_address).toBeNull()
         expect(response.data.contacts).toBeNull()
+        expect(response.data.salary).toEqual(0)
         expect(response.data.created_at).not.toBeEmpty()
         expect(response.data.updated_at).not.toBeEmpty()
         expect(response.data.archived_at).toBeNull()
@@ -192,6 +239,7 @@ describe(`POST ${ENDPOINT}`, () => {
             comment: ' Technical supervisor ',
             wallet_address: ' 0xDEADBEEF ',
             contacts: ' Homer_Simpson@AOL.com ',
+            salary: 42,
           }
         )
 
@@ -208,6 +256,7 @@ describe(`POST ${ENDPOINT}`, () => {
         expect(response.data.comment).toEqual('Technical supervisor')
         expect(response.data.wallet_address).toEqual('0xDEADBEEF')
         expect(response.data.contacts).toEqual('Homer_Simpson@AOL.com')
+        expect(response.data.salary).toEqual(42)
         expect(response.data.created_at).not.toBeEmpty()
         expect(response.data.updated_at).not.toBeEmpty()
         expect(response.data.archived_at).toBeNull()
