@@ -6,6 +6,7 @@ import type {
   CompanyCreateApiResponse,
   CompanyGetApiResponse,
 } from '@/pages/api/companies'
+import type { CompanyUpdateApiResponse } from '@/pages/api/companies/[id]'
 import { useIsMobile } from '@/utils/use-is-mobile'
 import { CompaniesList } from './components/companies-list'
 import { CompanyForm } from './components/company-form'
@@ -17,15 +18,25 @@ const Screen: React.FC = () => {
   const router = useRouter()
   const isMobile = useIsMobile()
 
-  const [open, setOpen] = useState<boolean>(false)
+  const [newOpen, setNewOpen] = useState<boolean>(false)
   const [createError, setCreateError] = useState<string>('')
   const [createValidationErrors, setCreateValidationErrors] = useState<
     string[]
   >([])
+
+  const [editOpen, setEditOpen] = useState<boolean>(false)
+  const [updateError, setUpdateError] = useState<string>('')
+  const [updateValidationErrors, setUpdateValidationErrors] = useState<
+    string[]
+  >([])
+
+  const [companyToEdit, setCompanyToEdit] = useState<Company | null>(null)
+
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [data, setData] = useState<Company[] | null>(null)
   const [error, setError] = useState<string>('')
-  const onFormSubmitted = async (data: ValidationSchema) => {
+
+  const handleCreateCompany = async (data: ValidationSchema) => {
     try {
       setCreateError('')
       setCreateValidationErrors([])
@@ -58,6 +69,51 @@ const Screen: React.FC = () => {
     } catch (e) {
       setCreateError(`${e}`)
     }
+  }
+
+  const handleUpdateCompany = async (data: ValidationSchema) => {
+    if (!companyToEdit) return
+
+    try {
+      setUpdateError('')
+      setUpdateValidationErrors([])
+
+      const payload = {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      }
+
+      const res = await fetch(`/api/companies/${companyToEdit.id}`, payload)
+      const response: CompanyUpdateApiResponse = await res.json()
+
+      if (!res.ok) {
+        const { validation_errors, message } = response
+
+        if (message) setUpdateError(message)
+        if (validation_errors) setUpdateValidationErrors(validation_errors)
+
+        return
+      }
+
+      if (!response.data) {
+        throw new Error('There is no response.data in API response')
+      }
+
+      setCompanyToEdit(null)
+      setEditOpen(false)
+
+      router.reload()
+    } catch (e) {
+      setUpdateError(`${e}`)
+    }
+  }
+
+  const onEditClicked = (company: Company) => {
+    setCompanyToEdit(company)
+    setEditOpen(true)
   }
 
   useEffect(() => {
@@ -110,14 +166,17 @@ const Screen: React.FC = () => {
               icon="plus"
               content="Add Company"
               primary
-              onClick={() => setOpen(true)}
+              onClick={() => setNewOpen(true)}
             />
           </Grid.Column>
         </Grid.Row>
         <Grid.Row>
           <Grid.Column>
             {data !== null && data.length > 0 ? (
-              <CompaniesList companies={data} />
+              <CompaniesList
+                companies={data}
+                onEditClicked={(company: Company) => onEditClicked(company)}
+              />
             ) : (
               <Message warning>
                 <p>No companies present yet.</p>
@@ -129,9 +188,9 @@ const Screen: React.FC = () => {
 
       <Modal
         closeIcon
-        onClose={() => setOpen(false)}
-        onOpen={() => setOpen(true)}
-        open={open}
+        onClose={() => setNewOpen(false)}
+        onOpen={() => setNewOpen(true)}
+        open={newOpen}
       >
         <Modal.Header>Add New Company</Modal.Header>
         <Modal.Content>
@@ -151,9 +210,42 @@ const Screen: React.FC = () => {
             />
           )}
 
-          <CompanyForm onFormSubmitted={onFormSubmitted} />
+          <CompanyForm onFormSubmitted={handleCreateCompany} />
         </Modal.Content>
       </Modal>
+
+      {companyToEdit && (
+        <Modal
+          closeIcon
+          onClose={() => setEditOpen(false)}
+          onOpen={() => setEditOpen(true)}
+          open={editOpen}
+        >
+          <Modal.Header>Edit Company {companyToEdit.display_name}</Modal.Header>
+          <Modal.Content>
+            {updateError && (
+              <Message error size="big">
+                <Message.Header content="Unable to update company" />
+                <p>{updateError}</p>
+              </Message>
+            )}
+
+            {updateValidationErrors.length > 0 && (
+              <Message
+                error
+                size="big"
+                header="Validation errors"
+                list={updateValidationErrors}
+              />
+            )}
+
+            <CompanyForm
+              onFormSubmitted={handleUpdateCompany}
+              company={companyToEdit}
+            />
+          </Modal.Content>
+        </Modal>
+      )}
     </>
   )
 }
