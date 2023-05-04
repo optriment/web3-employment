@@ -1,24 +1,24 @@
 import { v4 as uuidv4 } from 'uuid'
 import { prisma } from '@/lib/prisma'
-import handler from '@/pages/api/companies/[id]/employees'
+import handler from '@/pages/api/companies/[id]'
 import {
   cleanDatabase,
-  mockPOSTRequestWithQuery,
+  mockPUTRequestWithQuery,
   parseJSON,
-} from '../../../../../helpers'
+} from '../../../../helpers'
 import type { Company } from '@prisma/client'
 
-const ENDPOINT = '/api/companies/[id]/employees'
+const ENDPOINT = '/api/companies/[id]'
 
 beforeEach(async () => {
   await cleanDatabase(prisma)
 })
 
-describe(`POST ${ENDPOINT}`, () => {
+describe(`PUT ${ENDPOINT}`, () => {
   describe('general errors', () => {
     describe('when company id is not a valid UUID', () => {
       it('returns error', async () => {
-        const { req, res } = mockPOSTRequestWithQuery({ id: 'qwe' }, {})
+        const { req, res } = mockPUTRequestWithQuery({ id: 'qwe' }, {})
 
         await handler(req, res)
 
@@ -34,7 +34,7 @@ describe(`POST ${ENDPOINT}`, () => {
       it('returns error', async () => {
         const companyId = uuidv4()
 
-        const { req, res } = mockPOSTRequestWithQuery({ id: companyId }, {})
+        const { req, res } = mockPUTRequestWithQuery({ id: companyId }, {})
 
         await handler(req, res)
 
@@ -60,7 +60,7 @@ describe(`POST ${ENDPOINT}`, () => {
 
     describe('when display_name is missing', () => {
       it('returns error', async () => {
-        const { req, res } = mockPOSTRequestWithQuery({ id: company.id }, {})
+        const { req, res } = mockPUTRequestWithQuery({ id: company.id })
 
         await handler(req, res)
 
@@ -74,13 +74,9 @@ describe(`POST ${ENDPOINT}`, () => {
 
     describe('when display_name is not a string', () => {
       it('returns error', async () => {
-        const { req, res } = mockPOSTRequestWithQuery(
-          {
-            id: company.id,
-          },
-          {
-            display_name: 1,
-          }
+        const { req, res } = mockPUTRequestWithQuery(
+          { id: company.id },
+          { display_name: 1 }
         )
 
         await handler(req, res)
@@ -95,13 +91,9 @@ describe(`POST ${ENDPOINT}`, () => {
 
     describe('when display_name is an empty string', () => {
       it('returns error', async () => {
-        const { req, res } = mockPOSTRequestWithQuery(
-          {
-            id: company.id,
-          },
-          {
-            display_name: ' ',
-          }
+        const { req, res } = mockPUTRequestWithQuery(
+          { id: company.id },
+          { display_name: ' ' }
         )
 
         await handler(req, res)
@@ -118,13 +110,9 @@ describe(`POST ${ENDPOINT}`, () => {
 
     describe('when display_name is too short', () => {
       it('returns error', async () => {
-        const { req, res } = mockPOSTRequestWithQuery(
-          {
-            id: company.id,
-          },
-          {
-            display_name: ' 1 ',
-          }
+        const { req, res } = mockPUTRequestWithQuery(
+          { id: company.id },
+          { display_name: ' 1 ' }
         )
 
         await handler(req, res)
@@ -135,52 +123,6 @@ describe(`POST ${ENDPOINT}`, () => {
           validation_errors: [
             'Display name: String must contain at least 2 character(s)',
           ],
-        })
-      })
-    })
-
-    describe('when salary is a negative number', () => {
-      it('returns error', async () => {
-        const { req, res } = mockPOSTRequestWithQuery(
-          {
-            id: company.id,
-          },
-          {
-            display_name: 'Homer Jay Simpson',
-            salary: -1,
-          }
-        )
-
-        await handler(req, res)
-
-        expect(res._getStatusCode()).toBe(422)
-        expect(parseJSON(res)).toEqual({
-          success: false,
-          validation_errors: [
-            'Salary: Number must be greater than or equal to 0',
-          ],
-        })
-      })
-    })
-
-    describe('when salary is a float number', () => {
-      it('returns error', async () => {
-        const { req, res } = mockPOSTRequestWithQuery(
-          {
-            id: company.id,
-          },
-          {
-            display_name: 'Homer Jay Simpson',
-            salary: 0.1,
-          }
-        )
-
-        await handler(req, res)
-
-        expect(res._getStatusCode()).toBe(422)
-        expect(parseJSON(res)).toEqual({
-          success: false,
-          validation_errors: ['Salary: Expected integer, received float'],
         })
       })
     })
@@ -199,66 +141,57 @@ describe(`POST ${ENDPOINT}`, () => {
 
     describe('with only required fields', () => {
       it('returns valid response', async () => {
-        const { req, res } = mockPOSTRequestWithQuery(
-          {
-            id: company.id,
-          },
-          {
-            display_name: ' Homer Jay Simpson ',
-          }
+        const { req, res } = mockPUTRequestWithQuery(
+          { id: company.id },
+          { display_name: ' The Simpsons ' }
         )
 
         await handler(req, res)
 
-        expect(res._getStatusCode()).toBe(201)
+        expect(res._getStatusCode()).toBe(200)
 
         const response = parseJSON(res)
         expect(response.success).toBeTruthy()
         expect(response.data).not.toBeEmptyObject()
         expect(response.data.id).not.toBeEmpty()
-        expect(response.data.company_id).toEqual(company.id)
-        expect(response.data.display_name).toEqual('Homer Jay Simpson')
+        expect(response.data.display_name).toEqual('The Simpsons')
         expect(response.data.comment).toBeNull()
-        expect(response.data.wallet_address).toBeNull()
-        expect(response.data.contacts).toBeNull()
-        expect(response.data.salary).toEqual(0)
-        expect(response.data.created_at).not.toBeEmpty()
-        expect(response.data.updated_at).not.toBeEmpty()
+        expect(response.data.created_at).toEqual(
+          company.created_at.toISOString()
+        )
+        expect(+Date.parse(response.data.updated_at)).toBeGreaterThan(
+          +company.updated_at
+        )
         expect(response.data.archived_at).toBeNull()
       })
     })
 
     describe('with all fields', () => {
       it('returns valid response', async () => {
-        const { req, res } = mockPOSTRequestWithQuery(
+        const { req, res } = mockPUTRequestWithQuery(
+          { id: company.id },
           {
-            id: company.id,
-          },
-          {
-            display_name: ' Homer Jay Simpson ',
-            comment: ' Technical supervisor ',
-            wallet_address: ' 0xDEADBEEF ',
-            contacts: ' Homer_Simpson@AOL.com ',
-            salary: 42,
+            display_name: ' The Simpsons ',
+            comment: ' Family ',
           }
         )
 
         await handler(req, res)
 
-        expect(res._getStatusCode()).toBe(201)
+        expect(res._getStatusCode()).toBe(200)
 
         const response = parseJSON(res)
         expect(response.success).toBeTruthy()
         expect(response.data).not.toBeEmptyObject()
         expect(response.data.id).not.toBeEmpty()
-        expect(response.data.company_id).toEqual(company.id)
-        expect(response.data.display_name).toEqual('Homer Jay Simpson')
-        expect(response.data.comment).toEqual('Technical supervisor')
-        expect(response.data.wallet_address).toEqual('0xDEADBEEF')
-        expect(response.data.contacts).toEqual('Homer_Simpson@AOL.com')
-        expect(response.data.salary).toEqual(42)
-        expect(response.data.created_at).not.toBeEmpty()
-        expect(response.data.updated_at).not.toBeEmpty()
+        expect(response.data.display_name).toEqual('The Simpsons')
+        expect(response.data.comment).toEqual('Family')
+        expect(response.data.created_at).toEqual(
+          company.created_at.toISOString()
+        )
+        expect(+Date.parse(response.data.updated_at)).toBeGreaterThan(
+          +company.updated_at
+        )
         expect(response.data.archived_at).toBeNull()
       })
     })

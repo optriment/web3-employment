@@ -33,3 +33,13 @@ export const mockGETRequest = () => createMocks({ method: 'GET' })
 
 export const mockGETRequestWithQuery = (query: RequestOptions['query']) =>
   createMocks({ method: 'GET', query: query })
+
+export const mockPUTRequestWithQuery = (
+  query: RequestOptions['query'],
+  body: RequestOptions['body'] = {}
+) =>
+  createMocks({
+    method: 'PUT',
+    query: query,
+    body: body,
+  })
