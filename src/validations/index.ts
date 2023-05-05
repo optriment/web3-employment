@@ -8,13 +8,16 @@ const CompanySchema = z.object({
 export const CreateCompanySchema = CompanySchema
 export const UpdateCompanySchema = CompanySchema
 
-export const CreateEmployeeSchema = z.object({
+const EmployeeSchema = z.object({
   display_name: z.string().trim().min(2),
   comment: z.string().trim().optional(),
   wallet_address: z.string().trim().optional(),
   contacts: z.string().trim().optional(),
   salary: z.coerce.number().nonnegative().int().optional(),
 })
+
+export const CreateEmployeeSchema = EmployeeSchema
+export const UpdateEmployeeSchema = EmployeeSchema
 
 export const PaymentSchema = z.object({
   amount: z.coerce.number().int().positive(),
