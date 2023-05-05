@@ -290,6 +290,6 @@ for Prisma.
 
 ### Sprint 7
 
-- [ ] Create API endpoint to list all transactions for a specific company
-- [ ] Create frontend UI to display all transactions for a specific company
-- [ ] Write test cases for listing all transactions for a specific company
+- [x] Create API endpoint to list all transactions for a specific company
+- [x] Create frontend UI to display all transactions for a specific company
+- [x] Write test cases for listing all transactions for a specific company
