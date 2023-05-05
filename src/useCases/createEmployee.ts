@@ -25,21 +25,21 @@ export const createEmployee = async (
   companyId: string,
   body: unknown
 ): Promise<CreateEmployeeResult> => {
-  const company = await prisma.company.findFirst({
-    where: {
-      id: companyId,
-    },
-  })
-
-  if (!company) {
-    return {
-      status: 404,
-      success: false,
-      message: `Company ${companyId} does not exist`,
-    }
-  }
-
   try {
+    const company = await prisma.company.findFirst({
+      where: {
+        id: companyId,
+      },
+    })
+
+    if (!company) {
+      return {
+        status: 404,
+        success: false,
+        message: `Company ${companyId} does not exist`,
+      }
+    }
+
     const employee = await prisma.employee.create({
       data: {
         company_id: companyId,
