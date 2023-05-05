@@ -273,6 +273,13 @@ const Screen = ({ companyId }: Props) => {
                   onClick={() => setNewOpen(true)}
                   disabled={!!isCompanyArchived}
                 />
+                <Button
+                  size="large"
+                  icon="money"
+                  content="Payments"
+                  as="a"
+                  href={`/companies/${data.company.id}/payments`}
+                />
               </Grid.Column>
             </Grid.Row>
 

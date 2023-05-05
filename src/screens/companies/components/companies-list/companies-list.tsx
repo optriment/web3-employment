@@ -32,6 +32,12 @@ const Component = ({ companies, onEditClicked }: Props) => (
               icon="users"
               title="Employees"
             />
+            <Button
+              as="a"
+              href={`/companies/${company.id}/payments`}
+              icon="dollar"
+              title="Payments"
+            />
             <Button icon="pencil" onClick={() => onEditClicked(company)} />
           </Table.Cell>
         </Table.Row>
