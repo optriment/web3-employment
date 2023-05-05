@@ -7,12 +7,14 @@ interface Props {
   isCompanyArchived: boolean
   employees: Employee[]
   onPaymentClicked: (_employee: Employee) => void
+  onEditClicked: (_employee: Employee) => void
 }
 
 const Component = ({
   isCompanyArchived,
   employees,
   onPaymentClicked,
+  onEditClicked,
 }: Props) => {
   const { connected } = useContext(Web3Context)
 
@@ -53,7 +55,11 @@ const Component = ({
                 }
                 onClick={() => onPaymentClicked(employee)}
               />
-              <Button icon="pencil" disabled={!!isCompanyArchived} />
+              <Button
+                icon="pencil"
+                disabled={!!isCompanyArchived}
+                onClick={() => onEditClicked(employee)}
+              />
             </Table.Cell>
           </Table.Row>
         ))}
