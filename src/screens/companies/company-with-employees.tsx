@@ -8,13 +8,14 @@ import type {
   CompanyWithEmployeesApiResponse,
 } from '@/pages/api/companies/[id]'
 import type { EmployeeCreateApiResponse } from '@/pages/api/companies/[id]/employees'
+import type { EmployeeUpdateApiResponse } from '@/pages/api/companies/[id]/employees/[employee_id]'
 import type { PaymentCreateApiResponse } from '@/pages/api/companies/[id]/employees/[employee_id]/payment'
 import { useIsMobile } from '@/utils/use-is-mobile'
 import { EmployeeForm } from './components/employee-form'
 import { EmployeesList } from './components/employees-list'
 import { PaymentForm } from './components/payment-form'
 import { TransactionDialog } from './components/transaction-dialog'
-import type { ValidationSchema } from './components/employee-form'
+import type { ValidationSchema as EmployeeValidationSchema } from './components/employee-form'
 import type { ValidationSchema as PaymentValidationSchema } from './components/payment-form'
 import type { PaymentTransactionData } from './components/transaction-dialog'
 import type { Employee } from '@prisma/client'
@@ -32,9 +33,17 @@ const Screen = ({ companyId }: Props) => {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [error, setError] = useState<string>('')
 
-  const [open, setOpen] = useState<boolean>(false)
+  const [newOpen, setNewOpen] = useState<boolean>(false)
   const [createError, setCreateError] = useState<string>('')
   const [createValidationErrors, setCreateValidationErrors] = useState<
+    string[]
+  >([])
+
+  const [employeeToEdit, setEmployeeToEdit] = useState<Employee | null>(null)
+
+  const [editOpen, setEditOpen] = useState<boolean>(false)
+  const [updateError, setUpdateError] = useState<string>('')
+  const [updateValidationErrors, setUpdateValidationErrors] = useState<
     string[]
   >([])
 
@@ -50,7 +59,7 @@ const Screen = ({ companyId }: Props) => {
     string[]
   >([])
 
-  const onFormSubmitted = async (data: ValidationSchema) => {
+  const handleCreateEmployee = async (data: EmployeeValidationSchema) => {
     try {
       setCreateError('')
       setCreateValidationErrors([])
@@ -146,6 +155,54 @@ const Screen = ({ companyId }: Props) => {
     }
   }
 
+  const onEditClicked = (employee: Employee) => {
+    setEmployeeToEdit(employee)
+    setEditOpen(true)
+  }
+
+  const handleUpdateEmployee = async (data: EmployeeValidationSchema) => {
+    if (!employeeToEdit) return
+
+    try {
+      setUpdateError('')
+      setUpdateValidationErrors([])
+
+      const payload = {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      }
+
+      const res = await fetch(
+        `/api/companies/${companyId}/employees/${employeeToEdit.id}`,
+        payload
+      )
+      const response: EmployeeUpdateApiResponse = await res.json()
+
+      if (!res.ok) {
+        const { validation_errors, message } = response
+
+        if (message) setUpdateError(message)
+        if (validation_errors) setUpdateValidationErrors(validation_errors)
+
+        return
+      }
+
+      if (!response.data) {
+        throw new Error('There is no response.data in API response')
+      }
+
+      setEmployeeToEdit(null)
+      setEditOpen(false)
+
+      router.reload()
+    } catch (e) {
+      setUpdateError(`${e}`)
+    }
+  }
+
   useEffect(() => {
     if (!companyId) return
 
@@ -213,7 +270,7 @@ const Screen = ({ companyId }: Props) => {
                   icon="plus"
                   content="Add Employee"
                   primary
-                  onClick={() => setOpen(true)}
+                  onClick={() => setNewOpen(true)}
                   disabled={!!isCompanyArchived}
                 />
               </Grid.Column>
@@ -237,6 +294,9 @@ const Screen = ({ companyId }: Props) => {
                   onPaymentClicked={(employee: Employee) =>
                     onPaymentClicked(employee)
                   }
+                  onEditClicked={(employee: Employee) =>
+                    onEditClicked(employee)
+                  }
                 />
               ) : (
                 <Message warning>
@@ -252,9 +312,9 @@ const Screen = ({ companyId }: Props) => {
         <>
           <Modal
             closeIcon
-            onClose={() => setOpen(false)}
-            onOpen={() => setOpen(true)}
-            open={open}
+            onClose={() => setNewOpen(false)}
+            onOpen={() => setNewOpen(true)}
+            open={newOpen}
           >
             <Modal.Header>Add New Employee</Modal.Header>
             <Modal.Content>
@@ -274,9 +334,44 @@ const Screen = ({ companyId }: Props) => {
                 />
               )}
 
-              <EmployeeForm onFormSubmitted={onFormSubmitted} />
+              <EmployeeForm onFormSubmitted={handleCreateEmployee} />
             </Modal.Content>
           </Modal>
+
+          {employeeToEdit && (
+            <Modal
+              closeIcon
+              onClose={() => setEditOpen(false)}
+              onOpen={() => setEditOpen(true)}
+              open={editOpen}
+            >
+              <Modal.Header>
+                Edit Employee {employeeToEdit.display_name}
+              </Modal.Header>
+              <Modal.Content>
+                {updateError && (
+                  <Message error size="big">
+                    <Message.Header content="Unable to update employee" />
+                    <p>{updateError}</p>
+                  </Message>
+                )}
+
+                {updateValidationErrors.length > 0 && (
+                  <Message
+                    error
+                    size="big"
+                    header="Validation errors"
+                    list={updateValidationErrors}
+                  />
+                )}
+
+                <EmployeeForm
+                  onFormSubmitted={handleUpdateEmployee}
+                  employee={employeeToEdit}
+                />
+              </Modal.Content>
+            </Modal>
+          )}
 
           {employeeToPay !== null && (
             <>

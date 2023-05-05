@@ -276,7 +276,7 @@ for Prisma.
 - [x] Create frontend UI to update company details
 - [x] Write test cases for updating company details
 - [x] Create API endpoint to update employee details
-- [ ] Create frontend UI to update employee details
+- [x] Create frontend UI to update employee details
 - [x] Write test cases for updating employee details
 
 ### Sprint 6
