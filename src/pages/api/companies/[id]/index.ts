@@ -129,16 +129,18 @@ const handleDELETE = async (
   res: NextApiResponse<CompanyArchiveApiResponse>
 ) => {
   try {
-    const archivedCompany = await archiveCompany(req.query.id as string)
-    if (!archivedCompany.success) {
-      res.status(400)
-      return res.json({
+    const useCase = await archiveCompany(req.query.id as string)
+
+    res.status(useCase.status)
+
+    if (useCase.success) {
+      res.json({ success: true, data: useCase.data })
+    } else {
+      res.json({
         success: false,
-        message: archivedCompany.message,
+        message: useCase.message,
       })
     }
-    res.status(200)
-    res.json({ success: true, message: archivedCompany.message })
 
     return res.end()
   } catch (e) {

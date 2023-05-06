@@ -1,36 +1,41 @@
 import { prisma } from '@/lib/prisma'
+import type { Company } from '@prisma/client'
 
 interface ArchiveCompanyResponse {
+  status: number
   success: boolean
   message?: string
+  data?: Company
 }
 
 export const archiveCompany = async (
-  companyId: string
+  id: string
 ): Promise<ArchiveCompanyResponse> => {
-  const existingCompany = await prisma.company.findUnique({
+  const company = await prisma.company.findUnique({
     where: {
-      id: companyId,
+      id: id,
     },
   })
-  if (!existingCompany) {
+
+  if (!company) {
     return {
+      status: 404,
       success: false,
-      message: 'Company not found',
+      message: `Company ${id} does not exist`,
     }
   }
 
-  if (existingCompany.archived_at !== null) {
+  if (company.archived_at !== null) {
     return {
+      status: 200,
       success: true,
-      message: 'Company already archived',
+      data: company,
     }
   }
 
-  // Archive the company
-  await prisma.company.update({
+  const archivedCompany = await prisma.company.update({
     where: {
-      id: companyId,
+      id: id,
     },
     data: {
       archived_at: new Date(),
@@ -38,7 +43,8 @@ export const archiveCompany = async (
   })
 
   return {
+    status: 200,
     success: true,
-    message: 'Company archived successfully',
+    data: archivedCompany,
   }
 }
