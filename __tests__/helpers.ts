@@ -43,3 +43,9 @@ export const mockPUTRequestWithQuery = (
     query: query,
     body: body,
   })
+
+export const mockDELETERequest = (query: RequestOptions['query']) =>
+  createMocks({
+    method: 'DELETE',
+    query: query,
+  })
