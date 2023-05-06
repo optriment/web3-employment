@@ -33,7 +33,7 @@ const Screen: React.FC = () => {
   const [companyToEdit, setCompanyToEdit] = useState<Company | null>(null)
 
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const [data, setData] = useState<Company[] | null>(null)
+  const [data, setData] = useState<Company[]>([])
   const [error, setError] = useState<string>('')
 
   const handleCreateCompany = async (data: ValidationSchema) => {
@@ -155,6 +155,7 @@ const Screen: React.FC = () => {
             <ErrorMessage header="Unable to load companies" content={error} />
           </Grid.Column>
         )}
+
         <Grid.Row columns={2}>
           <Grid.Column width={12}>
             <Header as="h1" content="Companies" />
@@ -170,9 +171,10 @@ const Screen: React.FC = () => {
             />
           </Grid.Column>
         </Grid.Row>
+
         <Grid.Row>
           <Grid.Column>
-            {data !== null && data.length > 0 ? (
+            {data.length > 0 ? (
               <CompaniesList
                 companies={data}
                 onEditClicked={(company: Company) => onEditClicked(company)}

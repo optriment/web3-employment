@@ -33,6 +33,24 @@ will allow you to create companies and add employees to them. Additionally, the
 system will support making payments to employees using cryptocurrencies and
 archiving/unarchiving companies and employees.
 
+## Screenshots
+
+### Companies List
+
+![Companies List](./screenshots/companies-list.png)
+
+### Employees List
+
+![Employees List](./screenshots/employees-list.png)
+
+### Add New Employee
+
+![Add New Employee](./screenshots/add-new-employee.png)
+
+### Pay Salary
+
+![Pay Salary](./screenshots/pay-salary.png)
+
 ## Features
 
 ### Create Company
@@ -290,6 +308,6 @@ for Prisma.
 
 ### Sprint 7
 
-- [ ] Create API endpoint to list all transactions for a specific company
-- [ ] Create frontend UI to display all transactions for a specific company
-- [ ] Write test cases for listing all transactions for a specific company
+- [x] Create API endpoint to list all transactions for a specific company
+- [x] Create frontend UI to display all transactions for a specific company
+- [x] Write test cases for listing all transactions for a specific company
