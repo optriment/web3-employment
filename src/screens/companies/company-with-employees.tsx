@@ -339,6 +339,7 @@ const Screen = ({ companyId }: Props) => {
 
               <Grid.Column width={8} textAlign="right">
                 <Button
+                  size="large"
                   color={isCompanyArchived ? 'green' : 'red'}
                   content={isCompanyArchived ? 'Unarchive' : 'Archive'}
                   icon={isCompanyArchived ? 'unlock' : 'lock'}
