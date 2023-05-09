@@ -4,12 +4,14 @@ import { Modal, Button, Message, Grid, Header } from 'semantic-ui-react'
 import { ErrorMessage, LoadingMessage } from '@/components'
 import { Web3Context } from '@/context/web3-context'
 import type {
+  CompanyArchiveApiResponse,
   CompanyWithEmployees,
   CompanyWithEmployeesApiResponse,
 } from '@/pages/api/companies/[id]'
 import type { EmployeeCreateApiResponse } from '@/pages/api/companies/[id]/employees'
 import type { EmployeeUpdateApiResponse } from '@/pages/api/companies/[id]/employees/[employee_id]'
 import type { PaymentCreateApiResponse } from '@/pages/api/companies/[id]/employees/[employee_id]/payment'
+import type { CompanyUnarchiveApiResponse } from '@/pages/api/companies/[id]/unarchive'
 import { useIsMobile } from '@/utils/use-is-mobile'
 import { EmployeeForm } from './components/employee-form'
 import { EmployeesList } from './components/employees-list'
@@ -58,6 +60,10 @@ const Screen = ({ companyId }: Props) => {
   const [paymentValidationErrors, setPaymentValidationErrors] = useState<
     string[]
   >([])
+
+  const [isCompanyArchived, setIsCompanyArchived] = useState<boolean>(false)
+  const [archiveError, setArchiveError] = useState<string>('')
+  const [unarchiveError, setUnarchiveError] = useState<string>('')
 
   const handleCreateEmployee = async (data: EmployeeValidationSchema) => {
     try {
@@ -203,6 +209,52 @@ const Screen = ({ companyId }: Props) => {
     }
   }
 
+  const handleArchive = async () => {
+    try {
+      setArchiveError('')
+
+      const res = await fetch(`/api/companies/${companyId}`, {
+        method: 'DELETE',
+      })
+      const response: CompanyArchiveApiResponse = await res.json()
+
+      if (!res.ok) {
+        const { message } = response
+
+        if (message) setArchiveError(message)
+
+        return
+      }
+
+      setIsCompanyArchived(true)
+    } catch (e) {
+      setArchiveError(`${e}`)
+    }
+  }
+
+  const handleUnarchive = async () => {
+    try {
+      setUnarchiveError('')
+
+      const res = await fetch(`/api/companies/${companyId}/unarchive`, {
+        method: 'POST',
+      })
+      const response: CompanyUnarchiveApiResponse = await res.json()
+
+      if (!res.ok) {
+        const { message } = response
+
+        if (message) setUnarchiveError(message)
+
+        return
+      }
+
+      setIsCompanyArchived(false)
+    } catch (error) {
+      setUnarchiveError(`${error}`)
+    }
+  }
+
   useEffect(() => {
     if (!companyId) return
 
@@ -215,6 +267,11 @@ const Screen = ({ companyId }: Props) => {
 
         if (d.success) {
           setData(d.data as CompanyWithEmployees)
+          if (d.data?.company?.archived_at) {
+            setIsCompanyArchived(true)
+          } else {
+            setIsCompanyArchived(false)
+          }
           setIsLoading(false)
           return
         }
@@ -229,8 +286,6 @@ const Screen = ({ companyId }: Props) => {
 
     fetchData()
   }, [companyId])
-
-  const isCompanyArchived = data && data.company.archived_at
 
   return (
     <>
@@ -247,10 +302,28 @@ const Screen = ({ companyId }: Props) => {
           </Grid.Column>
         )}
 
+        {archiveError && (
+          <Grid.Column>
+            <ErrorMessage
+              header="Unable to archive company"
+              content={archiveError}
+            />
+          </Grid.Column>
+        )}
+
+        {unarchiveError && (
+          <Grid.Column>
+            <ErrorMessage
+              header="Unable to unarchive company"
+              content={unarchiveError}
+            />
+          </Grid.Column>
+        )}
+
         {data !== null && (
           <>
             <Grid.Row columns={isMobile ? 1 : 2}>
-              <Grid.Column width={10}>
+              <Grid.Column width={8}>
                 <Header as="h1">{data.company.display_name}</Header>
 
                 {data.company.comment && (
@@ -264,7 +337,14 @@ const Screen = ({ companyId }: Props) => {
                 )}
               </Grid.Column>
 
-              <Grid.Column width={6} textAlign="right">
+              <Grid.Column width={8} textAlign="right">
+                <Button
+                  color={isCompanyArchived ? 'green' : 'red'}
+                  content={isCompanyArchived ? 'Unarchive' : 'Archive'}
+                  icon={isCompanyArchived ? 'unlock' : 'lock'}
+                  labelPosition="left"
+                  onClick={isCompanyArchived ? handleUnarchive : handleArchive}
+                />
                 <Button
                   size="large"
                   icon="plus"
