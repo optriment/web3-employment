@@ -8,7 +8,7 @@ import {
 } from '../../../../../../helpers'
 import type { Employee } from '@prisma/client'
 
-const ENDPOINT = '/api/employees/[id]'
+const ENDPOINT = '/api/companies/[id]/employees/[employee_id]'
 
 describe(`DELETE ${ENDPOINT}`, () => {
   beforeEach(async () => {
