@@ -340,14 +340,6 @@ const Screen = ({ companyId }: Props) => {
               <Grid.Column width={8} textAlign="right">
                 <Button
                   size="large"
-                  color={isCompanyArchived ? 'green' : 'red'}
-                  content={isCompanyArchived ? 'Unarchive' : 'Archive'}
-                  icon={isCompanyArchived ? 'unlock' : 'lock'}
-                  labelPosition="left"
-                  onClick={isCompanyArchived ? handleUnarchive : handleArchive}
-                />
-                <Button
-                  size="large"
                   icon="plus"
                   content="Add Employee"
                   primary
@@ -360,6 +352,11 @@ const Screen = ({ companyId }: Props) => {
                   content="Payments"
                   as="a"
                   href={`/companies/${data.company.id}/payments`}
+                />
+                <Button
+                  size="large"
+                  icon={isCompanyArchived ? 'undo' : 'archive'}
+                  onClick={isCompanyArchived ? handleUnarchive : handleArchive}
                 />
               </Grid.Column>
             </Grid.Row>
