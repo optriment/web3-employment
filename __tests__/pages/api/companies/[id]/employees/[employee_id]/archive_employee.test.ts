@@ -6,7 +6,7 @@ import {
   mockDELETERequest,
   parseJSON,
 } from '../../../../../../helpers'
-import type { Employee } from '@prisma/client'
+import type { Company, Employee } from '@prisma/client'
 
 const ENDPOINT = '/api/companies/[id]/employees/[employee_id]'
 
@@ -44,16 +44,20 @@ describe(`DELETE ${ENDPOINT}`, () => {
       })
     })
   })
+
   describe('when company exists', () => {
+    let company: Company
+
+    beforeEach(async () => {
+      company = await prisma.company.create({
+        data: {
+          display_name: 'Springfield Nuclear Power Plant',
+        },
+      })
+    })
+
     describe('when the employee id is not a valid UUID', () => {
       it('returns error', async () => {
-        const company = await prisma.company.create({
-          data: {
-            display_name: 'Test Company',
-            comment: 'This is a test company',
-          },
-        })
-
         const { req, res } = mockDELETERequest({
           id: company.id,
           employee_id: 'invalid-employee-id',
@@ -71,13 +75,6 @@ describe(`DELETE ${ENDPOINT}`, () => {
 
     describe('when the employee does not exist', () => {
       it('returns error', async () => {
-        const company = await prisma.company.create({
-          data: {
-            display_name: 'Test Company',
-            comment: 'This is a test company',
-          },
-        })
-
         const employee_id = uuidv4()
 
         const { req, res } = mockDELETERequest({
@@ -94,89 +91,75 @@ describe(`DELETE ${ENDPOINT}`, () => {
         })
       })
     })
-  })
 
-  describe('when a valid employee is already archived', () => {
-    it('returns HTTP 200 and the archived employee data', async () => {
-      const company = await prisma.company.create({
-        data: {
-          display_name: 'Test Company',
-          comment: 'This is a test company',
-        },
-      })
+    describe('when a valid employee is already archived', () => {
+      it('returns HTTP 200 and the archived employee data', async () => {
+        const employee: Employee = await prisma.employee.create({
+          data: {
+            company_id: company.id,
+            display_name: 'Test Employee',
+            archived_at: new Date(),
+          },
+        })
 
-      const employee: Employee = await prisma.employee.create({
-        data: {
-          company_id: company.id,
-          display_name: 'Test Employee',
-          archived_at: new Date(),
-        },
-      })
+        const { req, res } = mockDELETERequest({
+          id: company.id,
+          employee_id: employee.id,
+        })
 
-      const { req, res } = mockDELETERequest({
-        id: company.id,
-        employee_id: employee.id,
-      })
+        await handler(req, res)
 
-      await handler(req, res)
-
-      expect(res._getStatusCode()).toBe(200)
-      expect(parseJSON(res)).toEqual({
-        success: true,
-        data: {
-          id: employee.id,
-          display_name: 'Test Employee',
-          comment: null,
-          contacts: null,
-          wallet_address: null,
-          salary: 0,
-          company_id: company.id,
-          created_at: employee.created_at.toISOString(),
-          updated_at: employee.updated_at.toISOString(),
-          archived_at: employee.archived_at?.toISOString(),
-        },
+        expect(res._getStatusCode()).toBe(200)
+        expect(parseJSON(res)).toEqual({
+          success: true,
+          data: {
+            id: employee.id,
+            display_name: 'Test Employee',
+            comment: null,
+            contacts: null,
+            wallet_address: null,
+            salary: 0,
+            company_id: company.id,
+            created_at: employee.created_at.toISOString(),
+            updated_at: employee.updated_at.toISOString(),
+            archived_at: employee.archived_at?.toISOString(),
+          },
+        })
       })
     })
-  })
 
-  describe('when a valid employee is successfully archived', () => {
-    it('returns HTTP 200 and the archived employee data', async () => {
-      const company = await prisma.company.create({
-        data: {
-          display_name: 'Test Company',
-          comment: 'This is a test company',
-        },
-      })
+    describe('when a valid employee is successfully archived', () => {
+      it('returns HTTP 200 and the archived employee data', async () => {
+        const employee: Employee = await prisma.employee.create({
+          data: {
+            company_id: company.id,
+            display_name: 'Test Employee',
+          },
+        })
 
-      const employee: Employee = await prisma.employee.create({
-        data: {
-          company_id: company.id,
-          display_name: 'Test Employee',
-        },
-      })
+        const { req, res } = mockDELETERequest({
+          id: company.id,
+          employee_id: employee.id,
+        })
 
-      const { req, res } = mockDELETERequest({
-        id: company.id,
-        employee_id: employee.id,
-      })
+        await handler(req, res)
 
-      await handler(req, res)
-
-      expect(res._getStatusCode()).toBe(200)
-      expect(parseJSON(res)).toEqual({
-        success: true,
-        data: {
-          id: employee.id,
-          display_name: 'Test Employee',
-          comment: null,
-          contacts: null,
-          wallet_address: null,
-          salary: 0,
-          company_id: company.id,
-          created_at: employee.created_at.toISOString(),
-          updated_at: expect.any(String),
-          archived_at: expect.any(String),
-        },
+        expect(res._getStatusCode()).toBe(200)
+        expect(parseJSON(res)).toEqual({
+          success: true,
+          data: {
+            id: employee.id,
+            display_name: 'Test Employee',
+            comment: null,
+            contacts: null,
+            wallet_address: null,
+            salary: 0,
+            company_id: company.id,
+            created_at: employee.created_at.toISOString(),
+            updated_at: expect.any(String),
+            archived_at: expect.any(String),
+          },
+        })
       })
     })
   })
