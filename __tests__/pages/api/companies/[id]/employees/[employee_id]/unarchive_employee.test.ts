@@ -5,7 +5,7 @@ import {
   cleanDatabase,
   mockPOSTRequestWithQuery,
   parseJSON,
-} from '../../../../../../../helpers'
+} from '../../../../../../helpers'
 import type { Company, Employee } from '@prisma/client'
 
 const ENDPOINT = '/api/companies/[id]/employees/[employee_id]/unarchive'
