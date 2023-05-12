@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint --no-cache && npx eslint . --ext .ts,.tsx.js,.jsx && npx prettier --check .",
+    "lint": "next lint --no-cache && npx eslint . --ext .ts,.tsx,.js,.jsx && npx prettier --check .",
     "lint:prisma": "npx prisma validate",
     "lint-fix": "next lint --fix",
     "analyze": "cross-env ANALYZE=true npm run-script build",
