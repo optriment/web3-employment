@@ -1,6 +1,7 @@
-import React, { useContext } from 'react'
-import { Header, Table, Button } from 'semantic-ui-react'
-import { Web3Context } from '@/context/web3-context'
+import React, { useState } from 'react'
+import { Grid, Table } from 'semantic-ui-react'
+import { ErrorMessage } from '@/components'
+import EmployeeInfo from './employee-info'
 import type { Employee } from '@prisma/client'
 
 interface Props {
@@ -16,56 +17,54 @@ const Component = ({
   onPaymentClicked,
   onEditClicked,
 }: Props) => {
-  const { connected } = useContext(Web3Context)
+  const [archiveError, setArchiveError] = useState<string>('')
+  const [unarchiveError, setUnarchiveError] = useState<string>('')
 
   return (
-    <Table size="large">
-      <Table.Header>
-        <Table.Row>
-          <Table.HeaderCell>Display Name</Table.HeaderCell>
-          <Table.HeaderCell>Wallet</Table.HeaderCell>
-          <Table.HeaderCell>Salary</Table.HeaderCell>
-          <Table.HeaderCell>Status</Table.HeaderCell>
-          <Table.HeaderCell />
-        </Table.Row>
-      </Table.Header>
-      <Table.Body>
-        {employees.map((employee) => (
-          <Table.Row key={employee.id}>
-            <Table.Cell>
-              <Header as="h3">
-                <Header.Content>
-                  {employee.display_name}
-                  <Header.Subheader>{employee.comment}</Header.Subheader>
-                </Header.Content>
-              </Header>
-            </Table.Cell>
-            <Table.Cell collapsing>{employee.wallet_address}</Table.Cell>
-            <Table.Cell collapsing>{employee.salary}</Table.Cell>
-            <Table.Cell collapsing>
-              {employee.archived_at ? 'Archived' : 'Active'}
-            </Table.Cell>
-            <Table.Cell collapsing textAlign="right">
-              <Button
-                positive
-                icon="dollar"
-                content="Pay"
-                disabled={
-                  !connected || !!isCompanyArchived || !employee.wallet_address
-                }
-                onClick={() => onPaymentClicked(employee)}
-              />
-              <Button
-                icon="pencil"
-                disabled={!!isCompanyArchived}
-                onClick={() => onEditClicked(employee)}
-              />
-            </Table.Cell>
+    <>
+      {archiveError && (
+        <Grid.Column>
+          <ErrorMessage
+            header="Unable to archive employee"
+            content={archiveError}
+          />
+        </Grid.Column>
+      )}
+
+      {unarchiveError && (
+        <Grid.Column>
+          <ErrorMessage
+            header="Unable to unarchive employee"
+            content={unarchiveError}
+          />
+        </Grid.Column>
+      )}
+
+      <Table size="large">
+        <Table.Header>
+          <Table.Row>
+            <Table.HeaderCell>Display Name</Table.HeaderCell>
+            <Table.HeaderCell>Wallet</Table.HeaderCell>
+            <Table.HeaderCell>Salary</Table.HeaderCell>
+            <Table.HeaderCell>Status</Table.HeaderCell>
+            <Table.HeaderCell />
           </Table.Row>
-        ))}
-      </Table.Body>
-    </Table>
+        </Table.Header>
+        <Table.Body>
+          {employees.map((employee) => (
+            <EmployeeInfo
+              key={employee.id}
+              employee={employee}
+              isCompanyArchived={isCompanyArchived}
+              onPaymentClicked={onPaymentClicked}
+              onEditClicked={onEditClicked}
+              setArchiveError={setArchiveError}
+              setUnarchiveError={setUnarchiveError}
+            />
+          ))}
+        </Table.Body>
+      </Table>
+    </>
   )
 }
-
 export default Component
