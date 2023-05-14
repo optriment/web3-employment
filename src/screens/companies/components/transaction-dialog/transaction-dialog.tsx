@@ -1,9 +1,10 @@
 import React, { useContext, useState } from 'react'
-import { Message, Grid, Button } from 'semantic-ui-react'
+import { Modal, Message, Button } from 'semantic-ui-react'
 import { ErrorMessage, TransactionLoadingMessage } from '@/components'
 import { Web3Context } from '@/context/web3-context'
+import api, { APIError } from '@/lib/api'
 import { useTokenTransfer } from '@/utils/tokens'
-import { useIsMobile } from '@/utils/use-is-mobile'
+import type { Employee } from '@prisma/client'
 
 export interface PaymentTransactionData {
   recipient: string
@@ -11,12 +12,26 @@ export interface PaymentTransactionData {
 }
 
 type Props = {
-  onTransactionReceived: (_tx: string) => void
+  open: boolean
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>
+  companyId: string
+  employee: Employee
   payment: PaymentTransactionData
+  onTransactionSaved: (_tx: string) => void
 }
 
-const Component = ({ payment, onTransactionReceived }: Props) => {
-  const isMobile = useIsMobile()
+const Component = ({
+  open,
+  setOpen,
+  companyId,
+  employee,
+  payment,
+  onTransactionSaved,
+}: Props) => {
+  const [paymentError, setPaymentError] = useState<string>('')
+  const [paymentValidationErrors, setPaymentValidationErrors] = useState<
+    string[]
+  >([])
 
   const { tokenSymbol, toTokens, buildTronScanTransactionURL } =
     useContext(Web3Context)
@@ -40,9 +55,58 @@ const Component = ({ payment, onTransactionReceived }: Props) => {
     },
   })
 
+  const onTransactionReceived = async (tx: string) => {
+    if (!employee) return
+    if (!payment) return
+
+    try {
+      setPaymentError('')
+      setPaymentValidationErrors([])
+
+      const data = JSON.stringify({
+        transaction_hash: tx,
+        amount: payment.amount,
+      })
+
+      await api.addPaymentToEmployee(companyId, employee.id, data)
+
+      onTransactionSaved(tx)
+    } catch (e) {
+      if (e instanceof APIError) {
+        setPaymentError(e.message)
+        setPaymentValidationErrors(e.validationErrors)
+      } else {
+        setPaymentError(`${e}`)
+      }
+    }
+  }
+
   return (
-    <Grid container={!isMobile} columns={1}>
-      <Grid.Column>
+    <Modal
+      closeIcon
+      onClose={() => setOpen(false)}
+      onOpen={() => setOpen(true)}
+      open={open}
+      size="tiny"
+    >
+      <Modal.Header>Send money to {' ' + employee.display_name}</Modal.Header>
+      <Modal.Content>
+        {paymentError && (
+          <Message error size="big">
+            <Message.Header content="Unable to create payment" />
+            <p>{paymentError}</p>
+          </Message>
+        )}
+
+        {paymentValidationErrors.length > 0 && (
+          <Message
+            error
+            size="big"
+            header="Validation errors"
+            list={paymentValidationErrors}
+          />
+        )}
+
         {isLoading && <TransactionLoadingMessage />}
 
         {error && (
@@ -72,8 +136,8 @@ const Component = ({ payment, onTransactionReceived }: Props) => {
             disabled={isLoading}
           />
         )}
-      </Grid.Column>
-    </Grid>
+      </Modal.Content>
+    </Modal>
   )
 }
 
