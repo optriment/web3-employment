@@ -88,7 +88,6 @@ export default async function handler(
       return res.end()
     }
 
-    console.log({ transaction })
     const contractAddress =
       transaction.raw_data.contract[0].parameter.value.contract_address
 

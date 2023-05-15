@@ -1,10 +1,5 @@
-import { Prisma } from '@prisma/client'
-import * as Sentry from '@sentry/nextjs'
-import {
-  DATABASE_ERROR,
-  METHOD_NOT_ALLOWED,
-  UNHANDLED_ERROR,
-} from '@/lib/messages'
+import { captureAPIError } from '@/lib/api'
+import { METHOD_NOT_ALLOWED } from '@/lib/messages'
 import type { ApiResponse } from '@/lib/types/api'
 import { createCompany } from '@/useCases/createCompany'
 import { getCompanies } from '@/useCases/getCompanies'
@@ -18,8 +13,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
     case 'POST':
       return await handlePOST(req, res)
+
     case 'GET':
       return await handleGET(req, res)
+
     default:
       res.status(405)
       res.json({ success: false, ...METHOD_NOT_ALLOWED })
@@ -47,17 +44,7 @@ const handlePOST = async (
 
     return res.end()
   } catch (e) {
-    Sentry.captureException(e)
-
-    res.status(500)
-
-    if (e instanceof Prisma.PrismaClientKnownRequestError) {
-      res.json({ success: false, ...DATABASE_ERROR })
-    } else {
-      res.json({ success: false, ...UNHANDLED_ERROR })
-    }
-
-    return res.end()
+    return captureAPIError(e, res)
   }
 }
 
@@ -75,17 +62,7 @@ const handleGET = async (
       res.json({ success: false, message: useCase.message })
     }
   } catch (e) {
-    Sentry.captureException(e)
-
-    res.status(500)
-
-    if (e instanceof Prisma.PrismaClientKnownRequestError) {
-      res.json({ success: false, ...DATABASE_ERROR })
-    } else {
-      res.json({ success: false, ...UNHANDLED_ERROR })
-    }
-
-    return res.end()
+    return captureAPIError(e, res)
   }
 }
 export default handler

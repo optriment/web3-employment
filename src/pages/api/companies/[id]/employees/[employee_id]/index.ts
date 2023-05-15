@@ -1,10 +1,5 @@
-import { Prisma } from '@prisma/client'
-import * as Sentry from '@sentry/nextjs'
-import {
-  DATABASE_ERROR,
-  METHOD_NOT_ALLOWED,
-  UNHANDLED_ERROR,
-} from '@/lib/messages'
+import { captureAPIError } from '@/lib/api'
+import { METHOD_NOT_ALLOWED } from '@/lib/messages'
 import type { ApiResponse } from '@/lib/types/api'
 import { archiveEmployee } from '@/useCases/archiveEmployee'
 import { updateEmployee } from '@/useCases/updateEmployee'
@@ -55,24 +50,7 @@ const handlePUT = async (
 
     return res.end()
   } catch (e) {
-    Sentry.captureException(e)
-
-    res.status(500)
-
-    if (e instanceof Prisma.PrismaClientKnownRequestError) {
-      switch (e.code) {
-        case 'P2023': {
-          res.json({ success: false, message: 'Invalid UUID' })
-          break
-        }
-        default:
-          res.json({ success: false, ...DATABASE_ERROR })
-      }
-    } else {
-      res.json({ success: false, ...UNHANDLED_ERROR })
-    }
-
-    return res.end()
+    return captureAPIError(e, res)
   }
 }
 
@@ -99,24 +77,7 @@ const handleDELETE = async (
 
     return res.end()
   } catch (e) {
-    Sentry.captureException(e)
-
-    res.status(500)
-
-    if (e instanceof Prisma.PrismaClientKnownRequestError) {
-      switch (e.code) {
-        case 'P2023': {
-          res.json({ success: false, message: 'Invalid UUID' })
-          break
-        }
-        default:
-          res.json({ success: false, ...DATABASE_ERROR })
-      }
-    } else {
-      res.json({ success: false, ...UNHANDLED_ERROR })
-    }
-
-    return res.end()
+    return captureAPIError(e, res)
   }
 }
 
