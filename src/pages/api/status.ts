@@ -1,5 +1,5 @@
-import * as Sentry from '@sentry/nextjs'
-import { METHOD_NOT_ALLOWED, UNHANDLED_ERROR } from '@/lib/messages'
+import { captureAPIError } from '@/lib/api'
+import { METHOD_NOT_ALLOWED } from '@/lib/messages'
 import { prisma } from '@/lib/prisma'
 import type { ApiResponse } from '@/lib/types/api'
 import type { NextApiRequest, NextApiResponse } from 'next'
@@ -34,16 +34,9 @@ const handler = async (
 
     res.status(200)
     res.json({ success: result[0].success })
-  } catch (err) {
-    Sentry.captureException(err)
-
-    res.status(500)
-    res.json({
-      success: false,
-      ...UNHANDLED_ERROR,
-    })
-  } finally {
-    res.end()
+    return res.end()
+  } catch (e) {
+    return captureAPIError(e, res)
   }
 }
 
