@@ -7,7 +7,12 @@ import {
 } from '@/lib/messages'
 import type { ApiResponse } from '@/lib/types/api'
 import type {
+  CompanyCreateApiResponse,
+  CompanyGetApiResponse,
+} from '@/pages/api/companies'
+import type {
   CompanyArchiveApiResponse,
+  CompanyUpdateApiResponse,
   CompanyWithEmployeesApiResponse,
 } from '@/pages/api/companies/[id]'
 import type { EmployeeCreateApiResponse } from '@/pages/api/companies/[id]/employees'
@@ -52,6 +57,50 @@ const handleResponse = async <T>(response: Response): Promise<T> => {
 
 // NOTE: Used on frontend side only
 const api = {
+  addCompany: async (body: string): Promise<CompanyCreateApiResponse> => {
+    const payload = {
+      method: 'POST',
+      headers: {
+        ...defaultHeaders,
+      },
+      body,
+    }
+
+    const response = await fetch(`${BASE_URL}/companies`, payload)
+
+    return handleResponse<CompanyCreateApiResponse>(response)
+  },
+
+  updateCompany: async (
+    companyId: string,
+    body: string
+  ): Promise<CompanyUpdateApiResponse> => {
+    const payload = {
+      method: 'PUT',
+      headers: {
+        ...defaultHeaders,
+      },
+      body,
+    }
+
+    const response = await fetch(`${BASE_URL}/companies/${companyId}`, payload)
+
+    return handleResponse<CompanyUpdateApiResponse>(response)
+  },
+
+  getCompanies: async (): Promise<CompanyGetApiResponse> => {
+    const payload = {
+      method: 'GET',
+      headers: {
+        ...defaultHeaders,
+      },
+    }
+
+    const response = await fetch(`${BASE_URL}/companies`, payload)
+
+    return handleResponse<CompanyGetApiResponse>(response)
+  },
+
   getCompanyById: async (
     companyId: string
   ): Promise<CompanyWithEmployeesApiResponse> => {
