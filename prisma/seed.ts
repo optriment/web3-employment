@@ -1,27 +1,27 @@
 import { prisma } from '../src/lib/prisma'
 
 async function main() {
-  console.log('Seeding companies...')
+  console.log('Seeding groups...')
 
-  const company1 = await prisma.company.create({
+  const group1 = await prisma.company.create({
     data: {
       display_name: 'Springfield Nuclear Power Plant (Staff)',
       comment: 'Staff',
     },
   })
 
-  const company2 = await prisma.company.create({
+  const group2 = await prisma.company.create({
     data: {
       display_name: 'Springfield Nuclear Power Plant (Workers)',
       comment: 'Sector 7G',
     },
   })
 
-  console.log('Seeding employees...')
+  console.log('Seeding recipients...')
 
   await prisma.employee.create({
     data: {
-      company_id: company1.id,
+      company_id: group1.id,
       display_name: 'Montgomery Burns',
       comment: 'Owner and CEO of the power plant',
     },
@@ -29,7 +29,7 @@ async function main() {
 
   await prisma.employee.create({
     data: {
-      company_id: company1.id,
+      company_id: group1.id,
       display_name: 'Waylon Smithers',
       comment: "Burns' loyal assistant",
     },
@@ -37,7 +37,7 @@ async function main() {
 
   await prisma.employee.create({
     data: {
-      company_id: company2.id,
+      company_id: group2.id,
       display_name: 'Homer Jay Simpson',
       wallet_address: '0xBEER',
       contacts: 'Homer_Simpson@AOL.com',
@@ -47,7 +47,7 @@ async function main() {
 
   await prisma.employee.create({
     data: {
-      company_id: company2.id,
+      company_id: group2.id,
       display_name: 'Lenny Leonard',
       comment: 'Worker in Sector 7G',
     },
@@ -55,7 +55,7 @@ async function main() {
 
   await prisma.employee.create({
     data: {
-      company_id: company2.id,
+      company_id: group2.id,
       display_name: 'Carl Carlson',
       comment: 'Worker in Sector 7G',
     },

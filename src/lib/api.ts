@@ -7,18 +7,25 @@ import {
 } from '@/lib/messages'
 import type { ApiResponse } from '@/lib/types/api'
 import type {
-  CompanyCreateApiResponse,
-  CompanyGetApiResponse,
-} from '@/pages/api/companies'
+  GroupCreateApiResponse,
+  GroupGetApiResponse,
+} from '@/pages/api/groups'
 import type {
-  CompanyArchiveApiResponse,
-  CompanyUpdateApiResponse,
-  CompanyWithEmployeesApiResponse,
-} from '@/pages/api/companies/[id]'
-import type { EmployeeCreateApiResponse } from '@/pages/api/companies/[id]/employees'
-import type { EmployeeUpdateApiResponse } from '@/pages/api/companies/[id]/employees/[employee_id]'
-import type { PaymentCreateApiResponse } from '@/pages/api/companies/[id]/employees/[employee_id]/payment'
-import type { CompanyUnarchiveApiResponse } from '@/pages/api/companies/[id]/unarchive'
+  GroupArchiveApiResponse,
+  GroupUpdateApiResponse,
+  GroupWithRecipientsApiResponse,
+} from '@/pages/api/groups/[id]'
+import type { GroupPaymentsApiResponse } from '@/pages/api/groups/[id]/payments'
+import type { RecipientCreateApiResponse } from '@/pages/api/groups/[id]/recipients'
+import type {
+  RecipientArchiveApiResponse,
+  RecipientUpdateApiResponse,
+} from '@/pages/api/groups/[id]/recipients/[recipient_id]'
+import type { PaymentCreateApiResponse } from '@/pages/api/groups/[id]/recipients/[recipient_id]/payment'
+import type { RecipientUnarchiveApiResponse } from '@/pages/api/groups/[id]/recipients/[recipient_id]/unarchive'
+import type { GroupUnarchiveApiResponse } from '@/pages/api/groups/[id]/unarchive'
+import { ClientError } from './clientError'
+import { ValidationError } from './validationError'
 import type { NextApiResponse } from 'next'
 import type { ZodError } from 'zod'
 
@@ -57,7 +64,7 @@ const handleResponse = async <T>(response: Response): Promise<T> => {
 
 // NOTE: Used on frontend side only
 const api = {
-  addCompany: async (body: string): Promise<CompanyCreateApiResponse> => {
+  addGroup: async (body: string): Promise<GroupCreateApiResponse> => {
     const payload = {
       method: 'POST',
       headers: {
@@ -66,15 +73,15 @@ const api = {
       body,
     }
 
-    const response = await fetch(`${BASE_URL}/companies`, payload)
+    const response = await fetch(`${BASE_URL}/groups`, payload)
 
-    return handleResponse<CompanyCreateApiResponse>(response)
+    return handleResponse<GroupCreateApiResponse>(response)
   },
 
-  updateCompany: async (
-    companyId: string,
+  updateGroup: async (
+    groupId: string,
     body: string
-  ): Promise<CompanyUpdateApiResponse> => {
+  ): Promise<GroupUpdateApiResponse> => {
     const payload = {
       method: 'PUT',
       headers: {
@@ -83,12 +90,12 @@ const api = {
       body,
     }
 
-    const response = await fetch(`${BASE_URL}/companies/${companyId}`, payload)
+    const response = await fetch(`${BASE_URL}/groups/${groupId}`, payload)
 
-    return handleResponse<CompanyUpdateApiResponse>(response)
+    return handleResponse<GroupUpdateApiResponse>(response)
   },
 
-  getCompanies: async (): Promise<CompanyGetApiResponse> => {
+  getGroups: async (): Promise<GroupGetApiResponse> => {
     const payload = {
       method: 'GET',
       headers: {
@@ -96,14 +103,14 @@ const api = {
       },
     }
 
-    const response = await fetch(`${BASE_URL}/companies`, payload)
+    const response = await fetch(`${BASE_URL}/groups`, payload)
 
-    return handleResponse<CompanyGetApiResponse>(response)
+    return handleResponse<GroupGetApiResponse>(response)
   },
 
-  getCompanyById: async (
-    companyId: string
-  ): Promise<CompanyWithEmployeesApiResponse> => {
+  getGroupById: async (
+    groupId: string
+  ): Promise<GroupWithRecipientsApiResponse> => {
     const payload = {
       method: 'GET',
       headers: {
@@ -111,14 +118,12 @@ const api = {
       },
     }
 
-    const response = await fetch(`${BASE_URL}/companies/${companyId}`, payload)
+    const response = await fetch(`${BASE_URL}/groups/${groupId}`, payload)
 
-    return handleResponse<CompanyWithEmployeesApiResponse>(response)
+    return handleResponse<GroupWithRecipientsApiResponse>(response)
   },
 
-  archiveCompany: async (
-    companyId: string
-  ): Promise<CompanyArchiveApiResponse> => {
+  archiveGroup: async (groupId: string): Promise<GroupArchiveApiResponse> => {
     const payload = {
       method: 'DELETE',
       headers: {
@@ -126,14 +131,14 @@ const api = {
       },
     }
 
-    const response = await fetch(`${BASE_URL}/companies/${companyId}`, payload)
+    const response = await fetch(`${BASE_URL}/groups/${groupId}`, payload)
 
-    return handleResponse<CompanyArchiveApiResponse>(response)
+    return handleResponse<GroupArchiveApiResponse>(response)
   },
 
-  unarchiveCompany: async (
-    companyId: string
-  ): Promise<CompanyUnarchiveApiResponse> => {
+  unarchiveGroup: async (
+    groupId: string
+  ): Promise<GroupUnarchiveApiResponse> => {
     const payload = {
       method: 'POST',
       headers: {
@@ -142,17 +147,17 @@ const api = {
     }
 
     const response = await fetch(
-      `${BASE_URL}/companies/${companyId}/unarchive`,
+      `${BASE_URL}/groups/${groupId}/unarchive`,
       payload
     )
 
-    return handleResponse<CompanyUnarchiveApiResponse>(response)
+    return handleResponse<GroupUnarchiveApiResponse>(response)
   },
 
-  addEmployeeToCompany: async (
-    companyId: string,
+  addRecipientToGroup: async (
+    groupId: string,
     body: string
-  ): Promise<EmployeeCreateApiResponse> => {
+  ): Promise<RecipientCreateApiResponse> => {
     const payload = {
       method: 'POST',
       headers: {
@@ -162,18 +167,18 @@ const api = {
     }
 
     const response = await fetch(
-      `${BASE_URL}/companies/${companyId}/employees`,
+      `${BASE_URL}/groups/${groupId}/recipients`,
       payload
     )
 
-    return handleResponse<EmployeeCreateApiResponse>(response)
+    return handleResponse<RecipientCreateApiResponse>(response)
   },
 
-  updateEmployee: async (
-    companyId: string,
-    employeeId: string,
+  updateRecipient: async (
+    groupId: string,
+    recipientId: string,
     body: string
-  ): Promise<EmployeeUpdateApiResponse> => {
+  ): Promise<RecipientUpdateApiResponse> => {
     const payload = {
       method: 'PUT',
       headers: {
@@ -183,16 +188,16 @@ const api = {
     }
 
     const response = await fetch(
-      `${BASE_URL}/companies/${companyId}/employees/${employeeId}`,
+      `${BASE_URL}/groups/${groupId}/recipients/${recipientId}`,
       payload
     )
 
-    return handleResponse<EmployeeUpdateApiResponse>(response)
+    return handleResponse<RecipientUpdateApiResponse>(response)
   },
 
-  addPaymentToEmployee: async (
-    companyId: string,
-    employeeId: string,
+  addPaymentToRecipient: async (
+    groupId: string,
+    recipientId: string,
     body: string
   ): Promise<PaymentCreateApiResponse> => {
     const payload = {
@@ -204,11 +209,67 @@ const api = {
     }
 
     const response = await fetch(
-      `${BASE_URL}/companies/${companyId}/employees/${employeeId}/payment`,
+      `${BASE_URL}/groups/${groupId}/recipients/${recipientId}/payment`,
       payload
     )
 
     return handleResponse<PaymentCreateApiResponse>(response)
+  },
+
+  archiveRecipient: async (
+    groupId: string,
+    recipientId: string
+  ): Promise<RecipientArchiveApiResponse> => {
+    const payload = {
+      method: 'DELETE',
+      headers: {
+        ...defaultHeaders,
+      },
+    }
+
+    const response = await fetch(
+      `${BASE_URL}/groups/${groupId}/recipients/${recipientId}`,
+      payload
+    )
+
+    return handleResponse<RecipientArchiveApiResponse>(response)
+  },
+
+  unarchiveRecipient: async (
+    groupId: string,
+    recipientId: string
+  ): Promise<RecipientUnarchiveApiResponse> => {
+    const payload = {
+      method: 'POST',
+      headers: {
+        ...defaultHeaders,
+      },
+    }
+
+    const response = await fetch(
+      `${BASE_URL}/groups/${groupId}/recipients/${recipientId}/unarchive`,
+      payload
+    )
+
+    return handleResponse<RecipientUnarchiveApiResponse>(response)
+  },
+
+  getGroupPayments: async (
+    groupId: string
+  ): Promise<GroupPaymentsApiResponse> => {
+    const payload = {
+      method: 'GET',
+      headers: {
+        ...defaultHeaders,
+      },
+    }
+
+    const response = await fetch(
+      `${BASE_URL}/groups/${groupId}/payments`,
+      payload
+    )
+
+    return handleResponse<GroupPaymentsApiResponse>(response)
   },
 }
 
@@ -247,6 +308,24 @@ export const buildValidationErrors = (
 // NOTE: Used on backend side only
 export const captureAPIError = async (e: unknown, res: NextApiResponse) => {
   Sentry.captureException(e)
+
+  if (e instanceof ValidationError) {
+    res.status(422)
+    res.json({
+      success: false,
+      validation_errors: e.validationErrors,
+    })
+    return res.end()
+  }
+
+  if (e instanceof ClientError) {
+    res.status(e.status)
+    res.json({
+      success: false,
+      message: e.message,
+    })
+    return res.end()
+  }
 
   res.status(500)
 
