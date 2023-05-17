@@ -18,7 +18,7 @@ export const updateGroup = async (
   body: unknown
 ): Promise<GroupDTO> => {
   try {
-    const group = await prisma.company.findFirst({
+    const group = await prisma.group.findFirst({
       where: {
         id: id,
       },
@@ -28,7 +28,7 @@ export const updateGroup = async (
       throw new ClientError(GROUP_DOES_NOT_EXIST.message, 404)
     }
 
-    const updatedGroup = await prisma.company.update({
+    const updatedGroup = await prisma.group.update({
       where: { id: group.id },
       data: {
         updated_at: new Date(),

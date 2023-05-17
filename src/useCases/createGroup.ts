@@ -13,7 +13,7 @@ const fieldNames: { [key: string]: string } = {
 
 export const createGroup = async (body: unknown): Promise<GroupDTO> => {
   try {
-    const createdGroup = await prisma.company.create({
+    const createdGroup = await prisma.group.create({
       data: CreateGroupSchema.parse(body),
     })
 

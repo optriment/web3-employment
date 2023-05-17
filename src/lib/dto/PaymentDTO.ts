@@ -30,7 +30,7 @@ export class PaymentDTO {
       model.transaction_hash,
       model.amount,
       model.wallet_address,
-      model.employee_id,
+      model.recipient_id,
       model.created_at
     )
   }

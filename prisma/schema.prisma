@@ -7,43 +7,43 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Company {
-  id           String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+model Group {
+  id           String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   display_name String
   comment      String?
-  employees    Employee[]
-  created_at   DateTime   @default(now())
-  updated_at   DateTime   @updatedAt
+  recipients   Recipient[]
+  created_at   DateTime    @default(now())
+  updated_at   DateTime    @updatedAt
   archived_at  DateTime?
 
-  @@map("companies")
+  @@map("groups")
 }
 
-model Employee {
+model Recipient {
   id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   display_name   String
   comment        String?
   contacts       String?
   wallet_address String?
   salary         Int?      @default(0)
-  company        Company   @relation(fields: [company_id], references: [id], onDelete: Restrict)
-  company_id     String    @db.Uuid
+  group          Group     @relation(fields: [group_id], references: [id], onDelete: Restrict)
+  group_id       String    @db.Uuid
   payments       Payment[]
   created_at     DateTime  @default(now())
   updated_at     DateTime  @updatedAt
   archived_at    DateTime?
 
-  @@map("employees")
+  @@map("recipients")
 }
 
 model Payment {
-  id               String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  transaction_hash String   @unique
+  id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  transaction_hash String    @unique
   amount           Int
   wallet_address   String
-  employee         Employee @relation(fields: [employee_id], references: [id], onDelete: Restrict)
-  employee_id      String   @db.Uuid
-  created_at       DateTime @default(now())
+  recipient        Recipient @relation(fields: [recipient_id], references: [id], onDelete: Restrict)
+  recipient_id     String    @db.Uuid
+  created_at       DateTime  @default(now())
 
   @@map("payments")
 }

@@ -4,7 +4,7 @@ import { GROUP_DOES_NOT_EXIST } from '@/lib/messages'
 import { prisma } from '@/lib/prisma'
 
 export const archiveGroup = async (id: string): Promise<GroupDTO> => {
-  const group = await prisma.company.findUnique({
+  const group = await prisma.group.findUnique({
     where: {
       id: id,
     },
@@ -18,7 +18,7 @@ export const archiveGroup = async (id: string): Promise<GroupDTO> => {
     return GroupDTO.fromModel(group)
   }
 
-  const archivedGroup = await prisma.company.update({
+  const archivedGroup = await prisma.group.update({
     where: {
       id: id,
     },

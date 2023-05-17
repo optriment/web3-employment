@@ -1,4 +1,4 @@
-import type { Employee } from '@prisma/client'
+import type { Recipient } from '@prisma/client'
 
 export class RecipientDTO {
   id: string
@@ -33,7 +33,7 @@ export class RecipientDTO {
     this.archived_at = archivedAt ? archivedAt.toISOString() : null
   }
 
-  static fromModel(model: Employee): RecipientDTO {
+  static fromModel(model: Recipient): RecipientDTO {
     return new RecipientDTO(
       model.id,
       model.display_name,

@@ -6,7 +6,7 @@ import {
   mockPUTRequestWithQuery,
   parseJSON,
 } from '../../../../helpers'
-import type { Company } from '@prisma/client'
+import type { Group } from '@prisma/client'
 
 const ENDPOINT = '/api/groups/[id]'
 
@@ -48,10 +48,10 @@ describe(`PUT ${ENDPOINT}`, () => {
   })
 
   describe('validation errors', () => {
-    let group: Company
+    let group: Group
 
     beforeEach(async () => {
-      group = await prisma.company.create({
+      group = await prisma.group.create({
         data: {
           display_name: 'Springfield Nuclear Power Plant',
         },
@@ -129,10 +129,10 @@ describe(`PUT ${ENDPOINT}`, () => {
   })
 
   describe('when everything is good', () => {
-    let group: Company
+    let group: Group
 
     beforeEach(async () => {
-      group = await prisma.company.create({
+      group = await prisma.group.create({
         data: {
           display_name: 'Springfield Nuclear Power Plant (Workers)',
         },

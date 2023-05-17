@@ -1,4 +1,4 @@
-import type { Company } from '@prisma/client'
+import type { Group } from '@prisma/client'
 
 export class GroupDTO {
   id: string
@@ -24,7 +24,7 @@ export class GroupDTO {
     this.archived_at = archivedAt ? archivedAt.toISOString() : null
   }
 
-  static fromModel(model: Company): GroupDTO {
+  static fromModel(model: Group): GroupDTO {
     return new GroupDTO(
       model.id,
       model.display_name,

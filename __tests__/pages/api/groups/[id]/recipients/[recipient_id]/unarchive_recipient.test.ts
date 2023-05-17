@@ -6,7 +6,7 @@ import {
   mockPOSTRequestWithQuery,
   parseJSON,
 } from '../../../../../../helpers'
-import type { Company, Employee } from '@prisma/client'
+import type { Group } from '@prisma/client'
 
 const ENDPOINT = '/api/groups/[id]/recipients/[recipient_id]/unarchive'
 
@@ -46,10 +46,10 @@ describe(`POST ${ENDPOINT}`, () => {
   })
 
   describe('when group exists', () => {
-    let group: Company
+    let group: Group
 
     beforeEach(async () => {
-      group = await prisma.company.create({
+      group = await prisma.group.create({
         data: {
           display_name: 'Springfield Nuclear Power Plant',
         },
@@ -60,7 +60,7 @@ describe(`POST ${ENDPOINT}`, () => {
       it('returns error', async () => {
         const { req, res } = mockPOSTRequestWithQuery({
           id: group.id,
-          recipient_id: 'invalid-employee-id',
+          recipient_id: 'invalid-id',
         })
 
         await handler(req, res)
@@ -94,9 +94,9 @@ describe(`POST ${ENDPOINT}`, () => {
 
     describe('when a valid recipient is not archived', () => {
       it('returns HTTP 200 and the recipient data', async () => {
-        const recipient: Employee = await prisma.employee.create({
+        const recipient = await prisma.recipient.create({
           data: {
-            company_id: group.id,
+            group_id: group.id,
             display_name: 'Homer Jay Simpson',
           },
         })
@@ -128,9 +128,9 @@ describe(`POST ${ENDPOINT}`, () => {
 
     describe('when a valid recipient is archived', () => {
       it('returns HTTP 200 and the recipient data', async () => {
-        const recipient: Employee = await prisma.employee.create({
+        const recipient = await prisma.recipient.create({
           data: {
-            company_id: group.id,
+            group_id: group.id,
             display_name: 'Homer Jay Simpson',
             archived_at: new Date(),
           },

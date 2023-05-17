@@ -12,7 +12,7 @@ interface GroupWithRecipients {
 export const getGroupWithRecipients = async (
   id: string
 ): Promise<GroupWithRecipients> => {
-  const group = await prisma.company.findFirst({
+  const group = await prisma.group.findFirst({
     where: {
       id: id,
     },
@@ -22,9 +22,9 @@ export const getGroupWithRecipients = async (
     throw new ClientError(GROUP_DOES_NOT_EXIST.message, 404)
   }
 
-  const recipients = await prisma.employee.findMany({
+  const recipients = await prisma.recipient.findMany({
     where: {
-      company_id: id,
+      group_id: id,
     },
   })
 

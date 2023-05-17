@@ -25,7 +25,7 @@ export const createPayment = async (
   body: unknown
 ): Promise<PaymentDTO> => {
   try {
-    const group = await prisma.company.findFirst({
+    const group = await prisma.group.findFirst({
       where: {
         id: groupId,
       },
@@ -39,9 +39,9 @@ export const createPayment = async (
       throw new ClientError(GROUP_IS_ARCHIVED.message, 400)
     }
 
-    const recipient = await prisma.employee.findFirst({
+    const recipient = await prisma.recipient.findFirst({
       where: {
-        company_id: groupId,
+        group_id: groupId,
         id: recipientId,
       },
     })
@@ -64,7 +64,7 @@ export const createPayment = async (
 
     const payment = await prisma.payment.create({
       data: {
-        employee_id: recipientId,
+        recipient_id: recipientId,
         wallet_address: recipient.wallet_address,
         ...paymentSchema,
       },

@@ -6,7 +6,7 @@ import {
   mockGETRequestWithQuery,
   parseJSON,
 } from '../../../helpers'
-import type { Company, Employee } from '@prisma/client'
+import type { Group, Recipient } from '@prisma/client'
 
 const ENDPOINT = '/api/groups/[id]'
 
@@ -46,17 +46,17 @@ describe(`GET ${ENDPOINT}`, () => {
   })
 
   describe('when group exists', () => {
-    let group: Company, anotherGroup: Company
+    let group: Group, anotherGroup: Group
 
     beforeEach(async () => {
-      group = await prisma.company.create({
+      group = await prisma.group.create({
         data: {
           display_name: 'Springfield Nuclear Power Plant (Workers)',
           comment: 'Workers',
         },
       })
 
-      anotherGroup = await prisma.company.create({
+      anotherGroup = await prisma.group.create({
         data: {
           display_name: 'Springfield Nuclear Power Plant (Staff)',
         },
@@ -84,29 +84,29 @@ describe(`GET ${ENDPOINT}`, () => {
     })
 
     describe('when there are recipients', () => {
-      let firstRecipient: Employee, secondRecipient: Employee
+      let firstRecipient: Recipient, secondRecipient: Recipient
 
       beforeEach(async () => {
-        firstRecipient = await prisma.employee.create({
+        firstRecipient = await prisma.recipient.create({
           data: {
-            company_id: group.id,
+            group_id: group.id,
             display_name: 'Homer Jay Simpson',
             comment: 'Technical supervisor',
           },
         })
 
-        secondRecipient = await prisma.employee.create({
+        secondRecipient = await prisma.recipient.create({
           data: {
-            company_id: group.id,
+            group_id: group.id,
             display_name: 'Lenny Leonard',
             salary: 42,
             archived_at: new Date(),
           },
         })
 
-        await prisma.employee.create({
+        await prisma.recipient.create({
           data: {
-            company_id: anotherGroup.id,
+            group_id: anotherGroup.id,
             display_name: 'Montgomery Burns',
           },
         })

@@ -6,7 +6,6 @@ import {
   mockDELETERequest,
   parseJSON,
 } from '../../../../helpers'
-import type { Company } from '@prisma/client'
 
 const ENDPOINT = '/api/groups/[id]'
 
@@ -45,9 +44,9 @@ describe(`DELETE ${ENDPOINT}`, () => {
     })
   })
 
-  describe('when a valid company is already archived', () => {
+  describe('when a valid group is already archived', () => {
     it('returns HTTP 200 and the group data', async () => {
-      const group: Company = await prisma.company.create({
+      const group = await prisma.group.create({
         data: {
           display_name: 'Springfield Nuclear Power Plant',
           comment: 'Workers',
@@ -78,7 +77,7 @@ describe(`DELETE ${ENDPOINT}`, () => {
 
   describe('when a valid group is not archived', () => {
     it('returns HTTP 200 and the group data', async () => {
-      const group: Company = await prisma.company.create({
+      const group = await prisma.group.create({
         data: {
           display_name: 'Springfield Nuclear Power Plant',
           comment: 'Workers',
