@@ -12,7 +12,7 @@ interface GroupPayments {
 }
 
 export const getGroupPayments = async (id: string): Promise<GroupPayments> => {
-  const group = await prisma.company.findFirst({
+  const group = await prisma.group.findFirst({
     where: {
       id: id,
     },
@@ -22,15 +22,15 @@ export const getGroupPayments = async (id: string): Promise<GroupPayments> => {
     throw new ClientError(GROUP_DOES_NOT_EXIST.message, 404)
   }
 
-  const recipients = await prisma.employee.findMany({
+  const recipients = await prisma.recipient.findMany({
     where: {
-      company_id: id,
+      group_id: id,
     },
   })
 
   const payments = await prisma.payment.findMany({
     where: {
-      employee_id: {
+      recipient_id: {
         in: recipients.map((recipient) => recipient.id),
       },
     },

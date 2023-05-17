@@ -6,7 +6,7 @@ import {
   mockPOSTRequestWithQuery,
   parseJSON,
 } from '../../../../../../helpers'
-import type { Company, Employee } from '@prisma/client'
+import type { Group, Recipient } from '@prisma/client'
 
 const ENDPOINT = '/api/groups/[id]/recipients/[recipient_id]/payment'
 
@@ -49,7 +49,7 @@ describe(`POST ${ENDPOINT}`, () => {
     describe('when group exists', () => {
       describe('when group is archived', () => {
         it('returns error', async () => {
-          const group = await prisma.company.create({
+          const group = await prisma.group.create({
             data: {
               display_name: 'Springfield Nuclear Power Plant',
               archived_at: new Date(),
@@ -72,10 +72,10 @@ describe(`POST ${ENDPOINT}`, () => {
       })
 
       describe('when group is active', () => {
-        let group: Company
+        let group: Group
 
         beforeEach(async () => {
-          group = await prisma.company.create({
+          group = await prisma.group.create({
             data: {
               display_name: 'Springfield Nuclear Power Plant',
             },
@@ -120,9 +120,9 @@ describe(`POST ${ENDPOINT}`, () => {
 
         describe('when recipient does not have wallet', () => {
           it('returns error', async () => {
-            const recipient = await prisma.employee.create({
+            const recipient = await prisma.recipient.create({
               data: {
-                company_id: group.id,
+                group_id: group.id,
                 display_name: 'Homer Jay Simpson',
               },
             })
@@ -144,9 +144,9 @@ describe(`POST ${ENDPOINT}`, () => {
 
         describe('when recipient is archived', () => {
           it('returns error', async () => {
-            const recipient = await prisma.employee.create({
+            const recipient = await prisma.recipient.create({
               data: {
-                company_id: group.id,
+                group_id: group.id,
                 display_name: 'Homer Jay Simpson',
                 wallet_address: '0xDEADBEEF',
                 archived_at: new Date(),
@@ -172,18 +172,18 @@ describe(`POST ${ENDPOINT}`, () => {
   })
 
   describe('validation errors', () => {
-    let group: Company, recipient: Employee
+    let group: Group, recipient: Recipient
 
     beforeEach(async () => {
-      group = await prisma.company.create({
+      group = await prisma.group.create({
         data: {
           display_name: 'Springfield Nuclear Power Plant',
         },
       })
 
-      recipient = await prisma.employee.create({
+      recipient = await prisma.recipient.create({
         data: {
-          company_id: group.id,
+          group_id: group.id,
           display_name: 'Homer Jay Simpson',
           wallet_address: '0xDEADBEEF',
         },
@@ -338,18 +338,18 @@ describe(`POST ${ENDPOINT}`, () => {
   })
 
   describe('when everything is good', () => {
-    let group: Company, recipient: Employee
+    let group: Group, recipient: Recipient
 
     beforeEach(async () => {
-      group = await prisma.company.create({
+      group = await prisma.group.create({
         data: {
           display_name: 'Springfield Nuclear Power Plant',
         },
       })
 
-      recipient = await prisma.employee.create({
+      recipient = await prisma.recipient.create({
         data: {
-          company_id: group.id,
+          group_id: group.id,
           display_name: 'Homer Jay Simpson',
           wallet_address: '0xDEADBEEF',
         },

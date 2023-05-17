@@ -6,7 +6,7 @@ import {
   mockGETRequestWithQuery,
   parseJSON,
 } from '../../../../helpers'
-import type { Company, Employee, Payment } from '@prisma/client'
+import type { Group, Recipient, Payment } from '@prisma/client'
 
 const ENDPOINT = '/api/groups/[id]/payments'
 
@@ -46,17 +46,17 @@ describe(`GET ${ENDPOINT}`, () => {
   })
 
   describe('when group exists', () => {
-    let group: Company, anotherGroup: Company
+    let group: Group, anotherGroup: Group
 
     beforeEach(async () => {
-      group = await prisma.company.create({
+      group = await prisma.group.create({
         data: {
           display_name: 'Springfield Nuclear Power Plant (Workers)',
           comment: 'Workers',
         },
       })
 
-      anotherGroup = await prisma.company.create({
+      anotherGroup = await prisma.group.create({
         data: {
           display_name: 'Springfield Nuclear Power Plant (Staff)',
         },
@@ -87,23 +87,23 @@ describe(`GET ${ENDPOINT}`, () => {
     })
 
     describe('when there are recipients', () => {
-      let firstRecipient: Employee,
-        secondRecipient: Employee,
-        anotherRecipient: Employee
+      let firstRecipient: Recipient,
+        secondRecipient: Recipient,
+        anotherRecipient: Recipient
 
       beforeEach(async () => {
-        firstRecipient = await prisma.employee.create({
+        firstRecipient = await prisma.recipient.create({
           data: {
-            company_id: group.id,
+            group_id: group.id,
             display_name: 'Homer Jay Simpson',
             comment: 'Technical supervisor',
             wallet_address: '0xDEADBEEF',
           },
         })
 
-        secondRecipient = await prisma.employee.create({
+        secondRecipient = await prisma.recipient.create({
           data: {
-            company_id: group.id,
+            group_id: group.id,
             display_name: 'Lenny Leonard',
             wallet_address: '0xBEE',
             salary: 42,
@@ -111,9 +111,9 @@ describe(`GET ${ENDPOINT}`, () => {
           },
         })
 
-        anotherRecipient = await prisma.employee.create({
+        anotherRecipient = await prisma.recipient.create({
           data: {
-            company_id: anotherGroup.id,
+            group_id: anotherGroup.id,
             display_name: 'Montgomery Burns',
             wallet_address: '0xBEER',
           },
@@ -168,7 +168,7 @@ describe(`GET ${ENDPOINT}`, () => {
         beforeEach(async () => {
           firstRecipientPayment1 = await prisma.payment.create({
             data: {
-              employee_id: firstRecipient.id,
+              recipient_id: firstRecipient.id,
               transaction_hash: '0xHASH1',
               wallet_address: '0xDEADBEEF',
               amount: 35,
@@ -177,7 +177,7 @@ describe(`GET ${ENDPOINT}`, () => {
 
           secondRecipientPayment = await prisma.payment.create({
             data: {
-              employee_id: secondRecipient.id,
+              recipient_id: secondRecipient.id,
               transaction_hash: '0xHASH2',
               wallet_address: '0xBEE',
               amount: 42,
@@ -186,7 +186,7 @@ describe(`GET ${ENDPOINT}`, () => {
 
           firstRecipientPayment2 = await prisma.payment.create({
             data: {
-              employee_id: firstRecipient.id,
+              recipient_id: firstRecipient.id,
               transaction_hash: '0xHASH3',
               wallet_address: '0xDEADBEEF',
               amount: 1,
@@ -195,7 +195,7 @@ describe(`GET ${ENDPOINT}`, () => {
 
           await prisma.payment.create({
             data: {
-              employee_id: anotherRecipient.id,
+              recipient_id: anotherRecipient.id,
               transaction_hash: '0xHASH4',
               wallet_address: '0xBEER',
               amount: 99,

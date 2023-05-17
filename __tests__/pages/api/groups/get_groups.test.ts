@@ -1,7 +1,6 @@
 import { prisma } from '@/lib/prisma'
 import handler from '@/pages/api/groups'
 import { mockGETRequest, parseJSON, cleanDatabase } from '../../../helpers'
-import type { Company } from '@prisma/client'
 
 const ENDPOINT = '/api/groups'
 
@@ -20,14 +19,14 @@ describe(`GET ${ENDPOINT}`, () => {
   })
 
   it('returns an array of groups with all attributes when there are groups in the database', async () => {
-    const group1: Company = await prisma.company.create({
+    const group1 = await prisma.group.create({
       data: {
         display_name: 'Springfield Nuclear Power Plant (Workers)',
         comment: 'Workers',
       },
     })
 
-    const group2: Company = await prisma.company.create({
+    const group2 = await prisma.group.create({
       data: {
         display_name: 'Springfield Nuclear Power Plant (Staff)',
         comment: 'Staff',

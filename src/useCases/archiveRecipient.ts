@@ -7,7 +7,7 @@ export const archiveRecipient = async (
   groupId: string,
   recipientId: string
 ): Promise<RecipientDTO> => {
-  const group = await prisma.company.findFirst({
+  const group = await prisma.group.findFirst({
     where: {
       id: groupId,
     },
@@ -17,9 +17,9 @@ export const archiveRecipient = async (
     throw new ClientError(GROUP_DOES_NOT_EXIST.message, 404)
   }
 
-  const recipient = await prisma.employee.findFirst({
+  const recipient = await prisma.recipient.findFirst({
     where: {
-      company_id: groupId,
+      group_id: groupId,
       id: recipientId,
     },
   })
@@ -32,7 +32,7 @@ export const archiveRecipient = async (
     return RecipientDTO.fromModel(recipient)
   }
 
-  const archivedRecipient = await prisma.employee.update({
+  const archivedRecipient = await prisma.recipient.update({
     where: {
       id: recipientId,
     },

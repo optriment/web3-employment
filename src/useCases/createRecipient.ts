@@ -21,7 +21,7 @@ export const createRecipient = async (
   body: unknown
 ): Promise<RecipientDTO> => {
   try {
-    const group = await prisma.company.findFirst({
+    const group = await prisma.group.findFirst({
       where: {
         id: groupId,
       },
@@ -31,9 +31,9 @@ export const createRecipient = async (
       throw new ClientError(GROUP_DOES_NOT_EXIST.message, 404)
     }
 
-    const recipient = await prisma.employee.create({
+    const recipient = await prisma.recipient.create({
       data: {
-        company_id: groupId,
+        group_id: groupId,
         ...CreateRecipientSchema.parse(body),
       },
     })

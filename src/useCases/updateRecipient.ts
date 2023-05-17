@@ -22,7 +22,7 @@ export const updateRecipient = async (
   body: unknown
 ): Promise<RecipientDTO> => {
   try {
-    const group = await prisma.company.findFirst({
+    const group = await prisma.group.findFirst({
       where: {
         id: groupId,
       },
@@ -32,9 +32,9 @@ export const updateRecipient = async (
       throw new ClientError(GROUP_DOES_NOT_EXIST.message, 404)
     }
 
-    const recipient = await prisma.employee.findFirst({
+    const recipient = await prisma.recipient.findFirst({
       where: {
-        company_id: groupId,
+        group_id: groupId,
         id: recipientId,
       },
     })
@@ -43,7 +43,7 @@ export const updateRecipient = async (
       throw new ClientError(RECIPIENT_DOES_NOT_EXIST.message, 404)
     }
 
-    const updatedRecipient = await prisma.employee.update({
+    const updatedRecipient = await prisma.recipient.update({
       where: { id: recipient.id },
       data: {
         updated_at: new Date(),
