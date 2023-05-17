@@ -1,16 +1,17 @@
 import * as z from 'zod'
 import { buildValidationErrors } from '@/lib/api'
+import { ClientError } from '@/lib/clientError'
+import { PaymentDTO } from '@/lib/dto/PaymentDTO'
+import {
+  GROUP_DOES_NOT_EXIST,
+  GROUP_IS_ARCHIVED,
+  RECIPIENT_DOES_NOT_EXIST,
+  RECIPIENT_DOES_NOT_HAVE_WALLET,
+  RECIPIENT_IS_ARCHIVED,
+} from '@/lib/messages'
 import { prisma } from '@/lib/prisma'
+import { ValidationError } from '@/lib/validationError'
 import { CreatePaymentSchema } from '@/validations'
-import type { Payment } from '@prisma/client'
-
-interface CreatePaymentResult {
-  status: number
-  success: boolean
-  data?: Payment
-  validationErrors?: string[]
-  message?: string
-}
 
 // Define a dictionary object that maps field names to their corresponding human-readable names
 const fieldNames: { [key: string]: string } = {
@@ -19,62 +20,42 @@ const fieldNames: { [key: string]: string } = {
 }
 
 export const createPayment = async (
-  companyId: string,
-  employeeId: string,
+  groupId: string,
+  recipientId: string,
   body: unknown
-): Promise<CreatePaymentResult> => {
+): Promise<PaymentDTO> => {
   try {
-    const company = await prisma.company.findFirst({
+    const group = await prisma.company.findFirst({
       where: {
-        id: companyId,
+        id: groupId,
       },
     })
 
-    if (!company) {
-      return {
-        status: 404,
-        success: false,
-        message: `Company ${companyId} does not exist`,
-      }
+    if (!group) {
+      throw new ClientError(GROUP_DOES_NOT_EXIST.message, 404)
     }
 
-    if (company.archived_at) {
-      return {
-        status: 400,
-        success: false,
-        message: `Company ${companyId} is archived`,
-      }
+    if (group.archived_at) {
+      throw new ClientError(GROUP_IS_ARCHIVED.message, 400)
     }
 
-    const employee = await prisma.employee.findFirst({
+    const recipient = await prisma.employee.findFirst({
       where: {
-        company_id: companyId,
-        id: employeeId,
+        company_id: groupId,
+        id: recipientId,
       },
     })
 
-    if (!employee) {
-      return {
-        status: 404,
-        success: false,
-        message: `Employee ${employeeId} does not exist`,
-      }
+    if (!recipient) {
+      throw new ClientError(RECIPIENT_DOES_NOT_EXIST.message, 404)
     }
 
-    if (!employee.wallet_address || employee.wallet_address.trim() === '') {
-      return {
-        status: 400,
-        success: false,
-        message: `Employee ${employeeId} doesn't have wallet`,
-      }
+    if (!recipient.wallet_address || recipient.wallet_address.trim() === '') {
+      throw new ClientError(RECIPIENT_DOES_NOT_HAVE_WALLET.message, 400)
     }
 
-    if (employee.archived_at) {
-      return {
-        status: 400,
-        success: false,
-        message: `Employee ${employeeId} is archived`,
-      }
+    if (recipient.archived_at) {
+      throw new ClientError(RECIPIENT_IS_ARCHIVED.message, 400)
     }
 
     const paymentSchema = CreatePaymentSchema.parse(body)
@@ -83,24 +64,16 @@ export const createPayment = async (
 
     const payment = await prisma.payment.create({
       data: {
-        employee_id: employeeId,
-        wallet_address: employee.wallet_address,
+        employee_id: recipientId,
+        wallet_address: recipient.wallet_address,
         ...paymentSchema,
       },
     })
 
-    return {
-      status: 201,
-      success: true,
-      data: payment,
-    }
+    return PaymentDTO.fromModel(payment)
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return {
-        status: 422,
-        success: false,
-        validationErrors: buildValidationErrors(error, fieldNames),
-      }
+      throw new ValidationError(buildValidationErrors(error, fieldNames))
     }
 
     throw error

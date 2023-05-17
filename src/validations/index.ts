@@ -1,14 +1,14 @@
 import { z } from 'zod'
 
-const CompanySchema = z.object({
+const GroupSchema = z.object({
   display_name: z.string().trim().min(2),
   comment: z.string().trim().optional(),
 })
 
-export const CreateCompanySchema = CompanySchema
-export const UpdateCompanySchema = CompanySchema
+export const CreateGroupSchema = GroupSchema
+export const UpdateGroupSchema = GroupSchema
 
-const EmployeeSchema = z.object({
+const RecipientSchema = z.object({
   display_name: z.string().trim().min(2),
   comment: z.string().trim().optional(),
   wallet_address: z.string().trim().optional(),
@@ -16,8 +16,8 @@ const EmployeeSchema = z.object({
   salary: z.coerce.number().nonnegative().int().optional(),
 })
 
-export const CreateEmployeeSchema = EmployeeSchema
-export const UpdateEmployeeSchema = EmployeeSchema
+export const CreateRecipientSchema = RecipientSchema
+export const UpdateRecipientSchema = RecipientSchema
 
 export const PaymentSchema = z.object({
   amount: z.coerce.number().int().positive(),

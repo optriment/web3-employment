@@ -5,7 +5,7 @@ import { Menu } from 'semantic-ui-react'
 const Component = () => (
   <Menu stackable size="huge">
     <Menu.Item as="a" href="/" content="Dashboard" />
-    <Menu.Item as="a" href="/companies" content="Companies" />
+    <Menu.Item as="a" href="/groups" content="Groups" />
 
     <Menu.Menu position="right">
       <Menu.Item>
