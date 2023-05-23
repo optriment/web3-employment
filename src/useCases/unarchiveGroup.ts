@@ -3,10 +3,14 @@ import { GroupDTO } from '@/lib/dto/GroupDTO'
 import { GROUP_DOES_NOT_EXIST } from '@/lib/messages'
 import { prisma } from '@/lib/prisma'
 
-export const unarchiveGroup = async (id: string): Promise<GroupDTO> => {
-  const group = await prisma.group.findUnique({
+export const unarchiveGroup = async (
+  userId: string,
+  groupId: string
+): Promise<GroupDTO> => {
+  const group = await prisma.group.findFirst({
     where: {
-      id: id,
+      userId: userId,
+      id: groupId,
     },
   })
 
@@ -20,7 +24,7 @@ export const unarchiveGroup = async (id: string): Promise<GroupDTO> => {
 
   const unarchivedGroup = await prisma.group.update({
     where: {
-      id: id,
+      id: groupId,
     },
     data: {
       archived_at: null,

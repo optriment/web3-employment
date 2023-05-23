@@ -17,6 +17,7 @@ const fieldNames: { [key: string]: string } = {
 }
 
 export const updateRecipient = async (
+  userId: string,
   groupId: string,
   recipientId: string,
   body: unknown
@@ -24,6 +25,7 @@ export const updateRecipient = async (
   try {
     const group = await prisma.group.findFirst({
       where: {
+        userId: userId,
         id: groupId,
       },
     })

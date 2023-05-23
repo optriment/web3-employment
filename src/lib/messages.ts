@@ -14,6 +14,10 @@ export const DATABASE_IS_NOT_READY = {
   message: 'Database is not ready. Report has been sent to developers',
 }
 
+export const UNAUTHORIZED = {
+  message: 'Authorization required',
+}
+
 export const GROUP_DOES_NOT_EXIST = {
   message: 'Group does not exist',
 }

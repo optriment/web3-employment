@@ -1,3 +1,2 @@
-import { MainLayout } from './main'
-
-export { MainLayout }
+export { LandingLayout } from './landing'
+export { UserLayout } from './user'

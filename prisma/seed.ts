@@ -1,10 +1,25 @@
+import { PrismaAdapter } from '@next-auth/prisma-adapter'
+
 import { prisma } from '../src/lib/prisma'
 
+const adapter = PrismaAdapter(prisma)
+
 async function main() {
+  console.log('Seeding users...')
+
+  const timestamp = +new Date()
+
+  const user = await adapter.createUser({
+    name: `User ${timestamp}`,
+    email: `me.${timestamp}@domain.tld`,
+    emailVerified: new Date(),
+  })
+
   console.log('Seeding groups...')
 
   const group1 = await prisma.group.create({
     data: {
+      userId: user.id,
       display_name: 'Springfield Nuclear Power Plant (Staff)',
       comment: 'Staff',
     },
@@ -12,6 +27,7 @@ async function main() {
 
   const group2 = await prisma.group.create({
     data: {
+      userId: user.id,
       display_name: 'Springfield Nuclear Power Plant (Workers)',
       comment: 'Sector 7G',
     },

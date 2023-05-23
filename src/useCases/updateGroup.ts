@@ -14,13 +14,15 @@ const fieldNames: { [key: string]: string } = {
 }
 
 export const updateGroup = async (
-  id: string,
+  userId: string,
+  groupId: string,
   body: unknown
 ): Promise<GroupDTO> => {
   try {
     const group = await prisma.group.findFirst({
       where: {
-        id: id,
+        userId: userId,
+        id: groupId,
       },
     })
 

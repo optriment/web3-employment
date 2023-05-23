@@ -5,6 +5,7 @@ import {
   cleanDatabase,
   mockDELETERequest,
   parseJSON,
+  createUserWithSession,
 } from '../../../../../../helpers'
 import type { Group } from '@prisma/client'
 
@@ -15,148 +16,209 @@ describe(`DELETE ${ENDPOINT}`, () => {
     await cleanDatabase(prisma)
   })
 
-  describe('when group_id is not a valid UUID', () => {
-    it('returns error', async () => {
-      const { req, res } = mockDELETERequest({ id: 'qwe' })
+  describe('authorization errors', () => {
+    describe('when session is not provided', () => {
+      it('returns error', async () => {
+        const groupId = uuidv4()
 
-      await handler(req, res)
+        const { req, res } = mockDELETERequest({ id: groupId })
 
-      expect(res._getStatusCode()).toBe(500)
-      expect(parseJSON(res)).toEqual({
-        success: false,
-        message: `Invalid UUID`,
+        await handler(req, res)
+
+        expect(res._getStatusCode()).toBe(401)
+
+        const response = parseJSON(res)
+        expect(response.success).toBeFalse()
+        expect(response.message).toEqual('Authorization required')
+      })
+    })
+
+    describe('when invalid session provided', () => {
+      it('returns error', async () => {
+        const sessionToken = uuidv4()
+
+        const groupId = uuidv4()
+
+        const { req, res } = mockDELETERequest({ id: groupId }, sessionToken)
+
+        await handler(req, res)
+
+        expect(res._getStatusCode()).toBe(401)
+
+        const response = parseJSON(res)
+        expect(response.success).toBeFalse()
+        expect(response.message).toEqual('Authorization required')
       })
     })
   })
 
-  describe('when group does not exist', () => {
-    it('returns error', async () => {
-      const groupId = uuidv4()
-
-      const { req, res } = mockDELETERequest({ id: groupId })
-
-      await handler(req, res)
-
-      expect(res._getStatusCode()).toBe(404)
-      expect(parseJSON(res)).toEqual({
-        success: false,
-        message: `Group does not exist`,
-      })
-    })
-  })
-
-  describe('when group exists', () => {
-    let group: Group
+  describe('when authorized', () => {
+    let userId: string, sessionToken: string
 
     beforeEach(async () => {
-      group = await prisma.group.create({
-        data: {
-          display_name: 'Springfield Nuclear Power Plant',
-        },
-      })
+      const { userId: _userId, sessionToken: _sessionToken } =
+        await createUserWithSession()
+
+      userId = _userId
+      sessionToken = _sessionToken
     })
 
-    describe('when recipient_id is not a valid UUID', () => {
+    describe('when group_id is not a valid UUID', () => {
       it('returns error', async () => {
-        const { req, res } = mockDELETERequest({
-          id: group.id,
-          recipient_id: 'invalid-id',
-        })
+        const { req, res } = mockDELETERequest({ id: 'qwe' }, sessionToken)
 
         await handler(req, res)
 
         expect(res._getStatusCode()).toBe(500)
         expect(parseJSON(res)).toEqual({
           success: false,
-          message: 'Invalid UUID',
+          message: `Invalid UUID`,
         })
       })
     })
 
-    describe('when recipient does not exist', () => {
+    describe('when group does not exist', () => {
       it('returns error', async () => {
-        const recipientId = uuidv4()
+        const groupId = uuidv4()
 
-        const { req, res } = mockDELETERequest({
-          id: group.id,
-          recipient_id: recipientId,
-        })
+        const { req, res } = mockDELETERequest({ id: groupId }, sessionToken)
 
         await handler(req, res)
 
         expect(res._getStatusCode()).toBe(404)
         expect(parseJSON(res)).toEqual({
           success: false,
-          message: `Recipient does not exist`,
+          message: `Group does not exist`,
         })
       })
     })
 
-    describe('when a valid recipient is already archived', () => {
-      it('returns HTTP 200 and the archived recipient data', async () => {
-        const recipient = await prisma.recipient.create({
+    describe('when group exists', () => {
+      let group: Group
+
+      beforeEach(async () => {
+        group = await prisma.group.create({
           data: {
-            group_id: group.id,
-            display_name: 'Homer Jay Simpson',
-            archived_at: new Date(),
-          },
-        })
-
-        const { req, res } = mockDELETERequest({
-          id: group.id,
-          recipient_id: recipient.id,
-        })
-
-        await handler(req, res)
-
-        expect(res._getStatusCode()).toBe(200)
-        expect(parseJSON(res)).toEqual({
-          success: true,
-          data: {
-            id: recipient.id,
-            display_name: 'Homer Jay Simpson',
-            comment: null,
-            contacts: null,
-            wallet_address: null,
-            salary: 0,
-            created_at: recipient.created_at.toISOString(),
-            updated_at: recipient.updated_at.toISOString(),
-            archived_at: recipient.archived_at?.toISOString(),
+            userId: userId,
+            display_name: 'Springfield Nuclear Power Plant',
           },
         })
       })
-    })
 
-    describe('when a valid recipient is not archived', () => {
-      it('returns HTTP 200 and the archived recipient data', async () => {
-        const recipient = await prisma.recipient.create({
-          data: {
-            group_id: group.id,
-            display_name: 'Homer Jay Simpson',
-          },
+      describe('when recipient_id is not a valid UUID', () => {
+        it('returns error', async () => {
+          const { req, res } = mockDELETERequest(
+            {
+              id: group.id,
+              recipient_id: 'invalid-id',
+            },
+            sessionToken
+          )
+
+          await handler(req, res)
+
+          expect(res._getStatusCode()).toBe(500)
+          expect(parseJSON(res)).toEqual({
+            success: false,
+            message: 'Invalid UUID',
+          })
         })
+      })
 
-        const { req, res } = mockDELETERequest({
-          id: group.id,
-          recipient_id: recipient.id,
+      describe('when recipient does not exist', () => {
+        it('returns error', async () => {
+          const recipientId = uuidv4()
+
+          const { req, res } = mockDELETERequest(
+            {
+              id: group.id,
+              recipient_id: recipientId,
+            },
+            sessionToken
+          )
+
+          await handler(req, res)
+
+          expect(res._getStatusCode()).toBe(404)
+          expect(parseJSON(res)).toEqual({
+            success: false,
+            message: `Recipient does not exist`,
+          })
         })
+      })
 
-        await handler(req, res)
+      describe('when a valid recipient is already archived', () => {
+        it('returns HTTP 200 and the archived recipient data', async () => {
+          const recipient = await prisma.recipient.create({
+            data: {
+              group_id: group.id,
+              display_name: 'Homer Jay Simpson',
+              archived_at: new Date(),
+            },
+          })
 
-        expect(res._getStatusCode()).toBe(200)
-        expect(parseJSON(res)).toEqual({
-          success: true,
-          data: {
-            id: recipient.id,
-            display_name: 'Homer Jay Simpson',
-            comment: null,
-            contacts: null,
-            wallet_address: null,
-            salary: 0,
-            created_at: recipient.created_at.toISOString(),
-            updated_at: expect.any(String),
-            archived_at: expect.any(String),
-          },
+          const { req, res } = mockDELETERequest(
+            {
+              id: group.id,
+              recipient_id: recipient.id,
+            },
+            sessionToken
+          )
+
+          await handler(req, res)
+
+          expect(res._getStatusCode()).toBe(200)
+          expect(parseJSON(res)).toEqual({
+            success: true,
+            data: {
+              id: recipient.id,
+              display_name: 'Homer Jay Simpson',
+              comment: null,
+              contacts: null,
+              wallet_address: null,
+              salary: 0,
+              created_at: recipient.created_at.toISOString(),
+              updated_at: recipient.updated_at.toISOString(),
+              archived_at: recipient.archived_at?.toISOString(),
+            },
+          })
+        })
+      })
+
+      describe('when a valid recipient is not archived', () => {
+        it('returns HTTP 200 and the archived recipient data', async () => {
+          const recipient = await prisma.recipient.create({
+            data: {
+              group_id: group.id,
+              display_name: 'Homer Jay Simpson',
+            },
+          })
+
+          const { req, res } = mockDELETERequest(
+            {
+              id: group.id,
+              recipient_id: recipient.id,
+            },
+            sessionToken
+          )
+
+          await handler(req, res)
+
+          expect(res._getStatusCode()).toBe(200)
+          expect(parseJSON(res)).toEqual({
+            success: true,
+            data: {
+              id: recipient.id,
+              display_name: 'Homer Jay Simpson',
+              comment: null,
+              contacts: null,
+              wallet_address: null,
+              salary: 0,
+              created_at: recipient.created_at.toISOString(),
+              updated_at: expect.any(String),
+              archived_at: expect.any(String),
+            },
+          })
         })
       })
     })

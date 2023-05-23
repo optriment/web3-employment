@@ -11,10 +11,14 @@ interface GroupPayments {
   recipients: RecipientDTO[]
 }
 
-export const getGroupPayments = async (id: string): Promise<GroupPayments> => {
+export const getGroupPayments = async (
+  userId: string,
+  groupId: string
+): Promise<GroupPayments> => {
   const group = await prisma.group.findFirst({
     where: {
-      id: id,
+      userId: userId,
+      id: groupId,
     },
   })
 
@@ -24,7 +28,7 @@ export const getGroupPayments = async (id: string): Promise<GroupPayments> => {
 
   const recipients = await prisma.recipient.findMany({
     where: {
-      group_id: id,
+      group_id: groupId,
     },
   })
 

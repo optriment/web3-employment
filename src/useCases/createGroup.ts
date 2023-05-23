@@ -11,10 +11,16 @@ const fieldNames: { [key: string]: string } = {
   comment: 'Comment',
 }
 
-export const createGroup = async (body: unknown): Promise<GroupDTO> => {
+export const createGroup = async (
+  userId: string,
+  body: unknown
+): Promise<GroupDTO> => {
   try {
     const createdGroup = await prisma.group.create({
-      data: CreateGroupSchema.parse(body),
+      data: {
+        userId: userId,
+        ...CreateGroupSchema.parse(body),
+      },
     })
 
     return GroupDTO.fromModel(createdGroup)
