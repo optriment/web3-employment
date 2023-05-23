@@ -10,11 +10,13 @@ interface GroupWithRecipients {
 }
 
 export const getGroupWithRecipients = async (
-  id: string
+  userId: string,
+  groupId: string
 ): Promise<GroupWithRecipients> => {
   const group = await prisma.group.findFirst({
     where: {
-      id: id,
+      userId: userId,
+      id: groupId,
     },
   })
 
@@ -24,7 +26,7 @@ export const getGroupWithRecipients = async (
 
   const recipients = await prisma.recipient.findMany({
     where: {
-      group_id: id,
+      group_id: groupId,
     },
   })
 

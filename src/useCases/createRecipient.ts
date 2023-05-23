@@ -17,12 +17,14 @@ const fieldNames: { [key: string]: string } = {
 }
 
 export const createRecipient = async (
+  userId: string,
   groupId: string,
   body: unknown
 ): Promise<RecipientDTO> => {
   try {
     const group = await prisma.group.findFirst({
       where: {
+        userId: userId,
         id: groupId,
       },
     })

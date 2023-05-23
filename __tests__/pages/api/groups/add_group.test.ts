@@ -1,39 +1,64 @@
-import { createMocks } from 'node-mocks-http'
-import { METHOD_NOT_ALLOWED } from '@/lib/messages'
+import { v4 as uuidv4 } from 'uuid'
 import { prisma } from '@/lib/prisma'
 import handler from '@/pages/api/groups'
-import { cleanDatabase, mockPOSTRequest, parseJSON } from '../../../helpers'
-import type { RequestMethod } from 'node-mocks-http'
+import {
+  cleanDatabase,
+  mockPOSTRequest,
+  parseJSON,
+  createUserWithSession,
+} from '../../../helpers'
 
 const ENDPOINT = '/api/groups'
 
-beforeEach(async () => {
-  await cleanDatabase(prisma)
-})
+describe(`POST ${ENDPOINT}`, () => {
+  beforeEach(async () => {
+    await cleanDatabase(prisma)
+  })
 
-const ensureMethodNotAllowed = (method: RequestMethod, url: string) => {
-  describe(`${method} ${url}`, () => {
-    it('returns error', async () => {
-      const { req, res } = createMocks({
-        method: method,
+  describe('authorization errors', () => {
+    describe('when session is not provided', () => {
+      it('returns error', async () => {
+        const { req, res } = mockPOSTRequest()
+
+        await handler(req, res)
+
+        expect(res._getStatusCode()).toBe(401)
+
+        const response = parseJSON(res)
+        expect(response.success).toBeFalse()
+        expect(response.message).toEqual('Authorization required')
       })
+    })
 
-      await handler(req, res)
+    describe('when invalid session provided', () => {
+      it('returns error', async () => {
+        const sessionToken = uuidv4()
 
-      expect(parseJSON(res)).toEqual({ success: false, ...METHOD_NOT_ALLOWED })
-      expect(res._getStatusCode()).toBe(405)
+        const { req, res } = mockPOSTRequest({}, sessionToken)
+
+        await handler(req, res)
+
+        expect(res._getStatusCode()).toBe(401)
+
+        const response = parseJSON(res)
+        expect(response.success).toBeFalse()
+        expect(response.message).toEqual('Authorization required')
+      })
     })
   })
-}
 
-ensureMethodNotAllowed('PUT', ENDPOINT)
-ensureMethodNotAllowed('DELETE', ENDPOINT)
-
-describe(`POST ${ENDPOINT}`, () => {
   describe('validation errors', () => {
+    let sessionToken: string
+
+    beforeEach(async () => {
+      const { sessionToken: _sessionToken } = await createUserWithSession()
+
+      sessionToken = _sessionToken
+    })
+
     describe('when display_name is missing', () => {
       it('returns error', async () => {
-        const { req, res } = mockPOSTRequest({})
+        const { req, res } = mockPOSTRequest({}, sessionToken)
 
         await handler(req, res)
 
@@ -47,7 +72,7 @@ describe(`POST ${ENDPOINT}`, () => {
 
     describe('when display_name is not a string', () => {
       it('returns error', async () => {
-        const { req, res } = mockPOSTRequest({ display_name: 1 })
+        const { req, res } = mockPOSTRequest({ display_name: 1 }, sessionToken)
 
         await handler(req, res)
 
@@ -61,7 +86,10 @@ describe(`POST ${ENDPOINT}`, () => {
 
     describe('when display_name is an empty string', () => {
       it('returns error', async () => {
-        const { req, res } = mockPOSTRequest({ display_name: ' ' })
+        const { req, res } = mockPOSTRequest(
+          { display_name: ' ' },
+          sessionToken
+        )
 
         await handler(req, res)
 
@@ -77,7 +105,10 @@ describe(`POST ${ENDPOINT}`, () => {
 
     describe('when display_name is too short', () => {
       it('returns error', async () => {
-        const { req, res } = mockPOSTRequest({ display_name: ' 1 ' })
+        const { req, res } = mockPOSTRequest(
+          { display_name: ' 1 ' },
+          sessionToken
+        )
 
         await handler(req, res)
 
@@ -93,11 +124,22 @@ describe(`POST ${ENDPOINT}`, () => {
   })
 
   describe('when everything is good', () => {
+    let sessionToken: string
+
+    beforeEach(async () => {
+      const { sessionToken: _sessionToken } = await createUserWithSession()
+
+      sessionToken = _sessionToken
+    })
+
     describe('with only required fields', () => {
       it('returns valid response', async () => {
-        const { req, res } = mockPOSTRequest({
-          display_name: ' Springfield Nuclear Power Plant ',
-        })
+        const { req, res } = mockPOSTRequest(
+          {
+            display_name: ' Springfield Nuclear Power Plant ',
+          },
+          sessionToken
+        )
 
         await handler(req, res)
 
@@ -119,10 +161,13 @@ describe(`POST ${ENDPOINT}`, () => {
 
     describe('with all fields', () => {
       it('returns valid response', async () => {
-        const { req, res } = mockPOSTRequest({
-          display_name: ' Springfield Nuclear Power Plant ',
-          comment: ' Workers ',
-        })
+        const { req, res } = mockPOSTRequest(
+          {
+            display_name: ' Springfield Nuclear Power Plant ',
+            comment: ' Workers ',
+          },
+          sessionToken
+        )
 
         await handler(req, res)
 

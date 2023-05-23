@@ -7,10 +7,70 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Account {
+  id                       String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId                   String   @map("user_id") @db.Uuid
+  type                     String
+  provider                 String
+  providerAccountId        String   @map("provider_account_id")
+  refresh_token            String?  @db.Text
+  access_token             String?  @db.Text
+  expires_at               Int?
+  token_type               String?
+  scope                    String?
+  id_token                 String?  @db.Text
+  session_state            String?
+  // NOTE: This field is required to use GitHub Provider
+  refresh_token_expires_in Int?
+  createdAt                DateTime @default(now()) @map(name: "created_at")
+  updatedAt                DateTime @default(now()) @map(name: "updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  sessionToken String   @unique @map("session_token")
+  userId       String   @map("user_id") @db.Uuid
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model User {
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime? @map("email_verified")
+  image         String?
+  createdAt     DateTime  @default(now()) @map(name: "created_at")
+  updatedAt     DateTime  @default(now()) @map(name: "updated_at")
+  accounts      Account[]
+  Session       Session[]
+  Group         Group[]
+
+  @@map("users")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
 model Group {
   id           String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   display_name String
   comment      String?
+  userId       String      @map(name: "user_id") @db.Uuid
+  user         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   recipients   Recipient[]
   created_at   DateTime    @default(now())
   updated_at   DateTime    @updatedAt
@@ -26,7 +86,7 @@ model Recipient {
   contacts       String?
   wallet_address String?
   salary         Int?      @default(0)
-  group          Group     @relation(fields: [group_id], references: [id], onDelete: Restrict)
+  group          Group     @relation(fields: [group_id], references: [id], onDelete: Cascade)
   group_id       String    @db.Uuid
   payments       Payment[]
   created_at     DateTime  @default(now())
@@ -41,7 +101,7 @@ model Payment {
   transaction_hash String    @unique
   amount           Int
   wallet_address   String
-  recipient        Recipient @relation(fields: [recipient_id], references: [id], onDelete: Restrict)
+  recipient        Recipient @relation(fields: [recipient_id], references: [id], onDelete: Cascade)
   recipient_id     String    @db.Uuid
   created_at       DateTime  @default(now())
 

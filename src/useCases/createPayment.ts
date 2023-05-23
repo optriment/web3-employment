@@ -20,6 +20,7 @@ const fieldNames: { [key: string]: string } = {
 }
 
 export const createPayment = async (
+  userId: string,
   groupId: string,
   recipientId: string,
   body: unknown
@@ -27,6 +28,7 @@ export const createPayment = async (
   try {
     const group = await prisma.group.findFirst({
       where: {
+        userId: userId,
         id: groupId,
       },
     })

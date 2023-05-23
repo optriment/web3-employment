@@ -4,11 +4,13 @@ import { GROUP_DOES_NOT_EXIST, RECIPIENT_DOES_NOT_EXIST } from '@/lib/messages'
 import { prisma } from '@/lib/prisma'
 
 export const archiveRecipient = async (
+  userId: string,
   groupId: string,
   recipientId: string
 ): Promise<RecipientDTO> => {
   const group = await prisma.group.findFirst({
     where: {
+      userId: userId,
       id: groupId,
     },
   })
