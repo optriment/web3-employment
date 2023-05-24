@@ -6,7 +6,7 @@ import { prisma } from '@/lib/prisma'
 import type { NextAuthOptions } from 'next-auth'
 
 export const authOptions: NextAuthOptions = {
-  debug: process.env.NODE_ENV !== 'production',
+  debug: process.env.NODE_ENV === 'development',
   secret: process.env.NEXTAUTH_SECRET,
   adapter: PrismaAdapter(prisma),
   session: {
