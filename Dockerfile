@@ -48,7 +48,7 @@ RUN npm install && \
 
 # Production image, copy all the files and run next
 FROM node:17.9-alpine AS runner
-RUN apk add --update --no-cache curl=8.1.1-r0
+RUN apk add --update --no-cache curl=8.1.1-r1
 
 WORKDIR /app
 
