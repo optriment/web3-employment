@@ -28,18 +28,18 @@ export const getGroupPayments = async (
 
   const recipients = await prisma.recipient.findMany({
     where: {
-      group_id: groupId,
+      groupId: groupId,
     },
   })
 
   const payments = await prisma.payment.findMany({
     where: {
-      recipient_id: {
+      recipientId: {
         in: recipients.map((recipient) => recipient.id),
       },
     },
     orderBy: {
-      created_at: 'desc',
+      createdAt: 'desc',
     },
   })
 

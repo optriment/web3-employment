@@ -109,7 +109,7 @@ describe(`GET ${ENDPOINT}`, () => {
         group = await prisma.group.create({
           data: {
             userId: userId,
-            display_name: 'Springfield Nuclear Power Plant (Workers)',
+            displayName: 'Springfield Nuclear Power Plant (Workers)',
             comment: 'Workers',
           },
         })
@@ -117,7 +117,7 @@ describe(`GET ${ENDPOINT}`, () => {
         anotherGroup = await prisma.group.create({
           data: {
             userId: userId,
-            display_name: 'Springfield Nuclear Power Plant (Staff)',
+            displayName: 'Springfield Nuclear Power Plant (Staff)',
           },
         })
       })
@@ -156,28 +156,28 @@ describe(`GET ${ENDPOINT}`, () => {
         beforeEach(async () => {
           firstRecipient = await prisma.recipient.create({
             data: {
-              group_id: group.id,
-              display_name: 'Homer Jay Simpson',
+              groupId: group.id,
+              displayName: 'Homer Jay Simpson',
               comment: 'Technical supervisor',
-              wallet_address: '0xDEADBEEF',
+              walletAddress: '0xDEADBEEF',
             },
           })
 
           secondRecipient = await prisma.recipient.create({
             data: {
-              group_id: group.id,
-              display_name: 'Lenny Leonard',
-              wallet_address: '0xBEE',
+              groupId: group.id,
+              displayName: 'Lenny Leonard',
+              walletAddress: '0xBEE',
               salary: 42,
-              archived_at: new Date(),
+              archivedAt: new Date(),
             },
           })
 
           anotherRecipient = await prisma.recipient.create({
             data: {
-              group_id: anotherGroup.id,
-              display_name: 'Montgomery Burns',
-              wallet_address: '0xBEER',
+              groupId: anotherGroup.id,
+              displayName: 'Montgomery Burns',
+              walletAddress: '0xBEER',
             },
           })
         })
@@ -233,36 +233,36 @@ describe(`GET ${ENDPOINT}`, () => {
           beforeEach(async () => {
             firstRecipientPayment1 = await prisma.payment.create({
               data: {
-                recipient_id: firstRecipient.id,
-                transaction_hash: '0xHASH1',
-                wallet_address: '0xDEADBEEF',
+                recipientId: firstRecipient.id,
+                transactionHash: '0xHASH1',
+                walletAddress: '0xDEADBEEF',
                 amount: 35,
               },
             })
 
             secondRecipientPayment = await prisma.payment.create({
               data: {
-                recipient_id: secondRecipient.id,
-                transaction_hash: '0xHASH2',
-                wallet_address: '0xBEE',
+                recipientId: secondRecipient.id,
+                transactionHash: '0xHASH2',
+                walletAddress: '0xBEE',
                 amount: 42,
               },
             })
 
             firstRecipientPayment2 = await prisma.payment.create({
               data: {
-                recipient_id: firstRecipient.id,
-                transaction_hash: '0xHASH3',
-                wallet_address: '0xDEADBEEF',
+                recipientId: firstRecipient.id,
+                transactionHash: '0xHASH3',
+                walletAddress: '0xDEADBEEF',
                 amount: 1,
               },
             })
 
             await prisma.payment.create({
               data: {
-                recipient_id: anotherRecipient.id,
-                transaction_hash: '0xHASH4',
-                wallet_address: '0xBEER',
+                recipientId: anotherRecipient.id,
+                transactionHash: '0xHASH4',
+                walletAddress: '0xBEER',
                 amount: 99,
               },
             })

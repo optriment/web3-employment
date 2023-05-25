@@ -114,7 +114,7 @@ describe(`PUT ${ENDPOINT}`, () => {
         group = await prisma.group.create({
           data: {
             userId: userId,
-            display_name: 'Springfield Nuclear Power Plant',
+            displayName: 'Springfield Nuclear Power Plant',
           },
         })
       })
@@ -205,7 +205,7 @@ describe(`PUT ${ENDPOINT}`, () => {
         group = await prisma.group.create({
           data: {
             userId: userId,
-            display_name: 'Springfield Nuclear Power Plant (Workers)',
+            displayName: 'Springfield Nuclear Power Plant (Workers)',
           },
         })
       })
@@ -231,10 +231,10 @@ describe(`PUT ${ENDPOINT}`, () => {
           )
           expect(response.data.comment).toBeNull()
           expect(response.data.created_at).toEqual(
-            group.created_at.toISOString()
+            group.createdAt.toISOString()
           )
           expect(+Date.parse(response.data.updated_at)).toBeGreaterThan(
-            +group.updated_at
+            +group.updatedAt
           )
           expect(response.data.archived_at).toBeNull()
         })
@@ -264,10 +264,10 @@ describe(`PUT ${ENDPOINT}`, () => {
           )
           expect(response.data.comment).toEqual('Staff')
           expect(response.data.created_at).toEqual(
-            group.created_at.toISOString()
+            group.createdAt.toISOString()
           )
           expect(+Date.parse(response.data.updated_at)).toBeGreaterThan(
-            +group.updated_at
+            +group.updatedAt
           )
           expect(response.data.archived_at).toBeNull()
         })

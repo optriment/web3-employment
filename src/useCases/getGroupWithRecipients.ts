@@ -26,7 +26,7 @@ export const getGroupWithRecipients = async (
 
   const recipients = await prisma.recipient.findMany({
     where: {
-      group_id: groupId,
+      groupId: groupId,
     },
   })
 

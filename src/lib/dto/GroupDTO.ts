@@ -10,14 +10,14 @@ export class GroupDTO {
 
   constructor(
     id: string,
-    display_name: string,
+    displayName: string,
     comment: string | null,
     createdAt: Date,
     updatedAt: Date | null,
     archivedAt: Date | null
   ) {
     this.id = id
-    this.display_name = display_name
+    this.display_name = displayName
     this.comment = comment
     this.created_at = createdAt.toISOString()
     this.updated_at = updatedAt ? updatedAt.toISOString() : null
@@ -27,11 +27,11 @@ export class GroupDTO {
   static fromModel(model: Group): GroupDTO {
     return new GroupDTO(
       model.id,
-      model.display_name,
+      model.displayName,
       model.comment,
-      model.created_at,
-      model.updated_at,
-      model.archived_at
+      model.createdAt,
+      model.updatedAt,
+      model.archivedAt
     )
   }
 }

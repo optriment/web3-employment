@@ -33,10 +33,16 @@ export const createRecipient = async (
       throw new ClientError(GROUP_DOES_NOT_EXIST.message, 404)
     }
 
+    const schema = CreateRecipientSchema.parse(body)
+
     const recipient = await prisma.recipient.create({
       data: {
-        group_id: groupId,
-        ...CreateRecipientSchema.parse(body),
+        groupId: groupId,
+        displayName: schema.display_name,
+        comment: schema.comment,
+        walletAddress: schema.wallet_address,
+        contacts: schema.contacts,
+        salary: schema.salary,
       },
     })
 

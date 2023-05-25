@@ -36,7 +36,7 @@ export const updateRecipient = async (
 
     const recipient = await prisma.recipient.findFirst({
       where: {
-        group_id: groupId,
+        groupId: groupId,
         id: recipientId,
       },
     })
@@ -45,11 +45,17 @@ export const updateRecipient = async (
       throw new ClientError(RECIPIENT_DOES_NOT_EXIST.message, 404)
     }
 
+    const schema = UpdateRecipientSchema.parse(body)
+
     const updatedRecipient = await prisma.recipient.update({
       where: { id: recipient.id },
       data: {
-        updated_at: new Date(),
-        ...UpdateRecipientSchema.parse(body),
+        updatedAt: new Date(),
+        displayName: schema.display_name,
+        comment: schema.comment,
+        walletAddress: schema.wallet_address,
+        contacts: schema.contacts,
+        salary: schema.salary,
       },
     })
 

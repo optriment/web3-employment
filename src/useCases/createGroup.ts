@@ -16,10 +16,13 @@ export const createGroup = async (
   body: unknown
 ): Promise<GroupDTO> => {
   try {
+    const schema = CreateGroupSchema.parse(body)
+
     const createdGroup = await prisma.group.create({
       data: {
         userId: userId,
-        ...CreateGroupSchema.parse(body),
+        displayName: schema.display_name,
+        comment: schema.comment,
       },
     })
 
