@@ -71,7 +71,7 @@ describe(`GET ${ENDPOINT}`, () => {
       const group1 = await prisma.group.create({
         data: {
           userId: userId,
-          display_name: 'Springfield Nuclear Power Plant (Workers)',
+          displayName: 'Springfield Nuclear Power Plant (Workers)',
           comment: 'Workers',
         },
       })
@@ -79,8 +79,9 @@ describe(`GET ${ENDPOINT}`, () => {
       const group2 = await prisma.group.create({
         data: {
           userId: userId,
-          display_name: 'Springfield Nuclear Power Plant (Staff)',
+          displayName: 'Springfield Nuclear Power Plant (Staff)',
           comment: 'Staff',
+          archivedAt: new Date(),
         },
       })
 
@@ -96,17 +97,17 @@ describe(`GET ${ENDPOINT}`, () => {
             id: group1.id,
             display_name: 'Springfield Nuclear Power Plant (Workers)',
             comment: 'Workers',
-            created_at: group1.created_at.toISOString(),
-            updated_at: group1.updated_at.toISOString(),
+            created_at: group1.createdAt.toISOString(),
+            updated_at: group1.updatedAt.toISOString(),
             archived_at: null,
           },
           {
             id: group2.id,
             display_name: 'Springfield Nuclear Power Plant (Staff)',
             comment: 'Staff',
-            created_at: group2.created_at.toISOString(),
-            updated_at: group2.updated_at.toISOString(),
-            archived_at: null,
+            created_at: group2.createdAt.toISOString(),
+            updated_at: group2.updatedAt.toISOString(),
+            archived_at: group2.archivedAt?.toISOString(),
           },
         ],
       })

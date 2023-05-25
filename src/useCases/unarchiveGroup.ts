@@ -18,7 +18,7 @@ export const unarchiveGroup = async (
     throw new ClientError(GROUP_DOES_NOT_EXIST.message, 404)
   }
 
-  if (!group.archived_at) {
+  if (!group.archivedAt) {
     return GroupDTO.fromModel(group)
   }
 
@@ -27,7 +27,7 @@ export const unarchiveGroup = async (
       id: groupId,
     },
     data: {
-      archived_at: null,
+      archivedAt: null,
     },
   })
 

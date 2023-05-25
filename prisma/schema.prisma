@@ -66,44 +66,44 @@ model VerificationToken {
 }
 
 model Group {
-  id           String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  display_name String
-  comment      String?
-  userId       String      @map(name: "user_id") @db.Uuid
-  user         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  recipients   Recipient[]
-  created_at   DateTime    @default(now())
-  updated_at   DateTime    @updatedAt
-  archived_at  DateTime?
+  id          String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  displayName String      @map(name: "display_name")
+  comment     String?
+  userId      String      @map(name: "user_id") @db.Uuid
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  recipients  Recipient[]
+  createdAt   DateTime    @default(now()) @map(name: "created_at")
+  updatedAt   DateTime    @updatedAt @map(name: "updated_at")
+  archivedAt  DateTime?   @map(name: "archived_at")
 
   @@map("groups")
 }
 
 model Recipient {
-  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  display_name   String
-  comment        String?
-  contacts       String?
-  wallet_address String?
-  salary         Int?      @default(0)
-  group          Group     @relation(fields: [group_id], references: [id], onDelete: Cascade)
-  group_id       String    @db.Uuid
-  payments       Payment[]
-  created_at     DateTime  @default(now())
-  updated_at     DateTime  @updatedAt
-  archived_at    DateTime?
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  displayName   String    @map(name: "display_name")
+  comment       String?
+  contacts      String?
+  walletAddress String?   @map(name: "wallet_address")
+  salary        Int?      @default(0)
+  group         Group     @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  groupId       String    @map(name: "group_id") @db.Uuid
+  payments      Payment[]
+  createdAt     DateTime  @default(now()) @map(name: "created_at")
+  updatedAt     DateTime  @updatedAt @map(name: "updated_at")
+  archivedAt    DateTime? @map(name: "archived_at")
 
   @@map("recipients")
 }
 
 model Payment {
-  id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  transaction_hash String    @unique
-  amount           Int
-  wallet_address   String
-  recipient        Recipient @relation(fields: [recipient_id], references: [id], onDelete: Cascade)
-  recipient_id     String    @db.Uuid
-  created_at       DateTime  @default(now())
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  transactionHash String    @unique @map(name: "transaction_hash")
+  amount          Int
+  walletAddress   String    @map(name: "wallet_address")
+  recipient       Recipient @relation(fields: [recipientId], references: [id], onDelete: Cascade)
+  recipientId     String    @map(name: "recipient_id") @db.Uuid
+  createdAt       DateTime  @default(now()) @map(name: "created_at")
 
   @@map("payments")
 }

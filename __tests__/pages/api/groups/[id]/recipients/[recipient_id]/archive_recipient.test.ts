@@ -100,7 +100,7 @@ describe(`DELETE ${ENDPOINT}`, () => {
         group = await prisma.group.create({
           data: {
             userId: userId,
-            display_name: 'Springfield Nuclear Power Plant',
+            displayName: 'Springfield Nuclear Power Plant',
           },
         })
       })
@@ -151,9 +151,9 @@ describe(`DELETE ${ENDPOINT}`, () => {
         it('returns HTTP 200 and the archived recipient data', async () => {
           const recipient = await prisma.recipient.create({
             data: {
-              group_id: group.id,
-              display_name: 'Homer Jay Simpson',
-              archived_at: new Date(),
+              groupId: group.id,
+              displayName: 'Homer Jay Simpson',
+              archivedAt: new Date(),
             },
           })
 
@@ -177,9 +177,9 @@ describe(`DELETE ${ENDPOINT}`, () => {
               contacts: null,
               wallet_address: null,
               salary: 0,
-              created_at: recipient.created_at.toISOString(),
-              updated_at: recipient.updated_at.toISOString(),
-              archived_at: recipient.archived_at?.toISOString(),
+              created_at: recipient.createdAt.toISOString(),
+              updated_at: recipient.updatedAt.toISOString(),
+              archived_at: recipient.archivedAt?.toISOString(),
             },
           })
         })
@@ -189,8 +189,8 @@ describe(`DELETE ${ENDPOINT}`, () => {
         it('returns HTTP 200 and the archived recipient data', async () => {
           const recipient = await prisma.recipient.create({
             data: {
-              group_id: group.id,
-              display_name: 'Homer Jay Simpson',
+              groupId: group.id,
+              displayName: 'Homer Jay Simpson',
             },
           })
 
@@ -214,7 +214,7 @@ describe(`DELETE ${ENDPOINT}`, () => {
               contacts: null,
               wallet_address: null,
               salary: 0,
-              created_at: recipient.created_at.toISOString(),
+              created_at: recipient.createdAt.toISOString(),
               updated_at: expect.any(String),
               archived_at: expect.any(String),
             },

@@ -20,7 +20,7 @@ async function main() {
   const group1 = await prisma.group.create({
     data: {
       userId: user.id,
-      display_name: 'Springfield Nuclear Power Plant (Staff)',
+      displayName: 'Springfield Nuclear Power Plant (Staff)',
       comment: 'Staff',
     },
   })
@@ -28,7 +28,7 @@ async function main() {
   const group2 = await prisma.group.create({
     data: {
       userId: user.id,
-      display_name: 'Springfield Nuclear Power Plant (Workers)',
+      displayName: 'Springfield Nuclear Power Plant (Workers)',
       comment: 'Sector 7G',
     },
   })
@@ -37,25 +37,25 @@ async function main() {
 
   await prisma.recipient.create({
     data: {
-      group_id: group1.id,
-      display_name: 'Montgomery Burns',
+      groupId: group1.id,
+      displayName: 'Montgomery Burns',
       comment: 'Owner and CEO of the power plant',
     },
   })
 
   await prisma.recipient.create({
     data: {
-      group_id: group1.id,
-      display_name: 'Waylon Smithers',
+      groupId: group1.id,
+      displayName: 'Waylon Smithers',
       comment: "Burns' loyal assistant",
     },
   })
 
   await prisma.recipient.create({
     data: {
-      group_id: group2.id,
-      display_name: 'Homer Jay Simpson',
-      wallet_address: '0xBEER',
+      groupId: group2.id,
+      displayName: 'Homer Jay Simpson',
+      walletAddress: '0xBEER',
       contacts: 'Homer_Simpson@AOL.com',
       comment: 'Technical supervisor',
     },
@@ -63,16 +63,16 @@ async function main() {
 
   await prisma.recipient.create({
     data: {
-      group_id: group2.id,
-      display_name: 'Lenny Leonard',
+      groupId: group2.id,
+      displayName: 'Lenny Leonard',
       comment: 'Worker in Sector 7G',
     },
   })
 
   await prisma.recipient.create({
     data: {
-      group_id: group2.id,
-      display_name: 'Carl Carlson',
+      groupId: group2.id,
+      displayName: 'Carl Carlson',
       comment: 'Worker in Sector 7G',
     },
   })

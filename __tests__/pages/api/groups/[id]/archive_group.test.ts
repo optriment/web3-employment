@@ -100,9 +100,9 @@ describe(`DELETE ${ENDPOINT}`, () => {
         const group = await prisma.group.create({
           data: {
             userId: userId,
-            display_name: 'Springfield Nuclear Power Plant',
+            displayName: 'Springfield Nuclear Power Plant',
             comment: 'Workers',
-            archived_at: new Date(),
+            archivedAt: new Date(),
           },
         })
 
@@ -120,9 +120,9 @@ describe(`DELETE ${ENDPOINT}`, () => {
             id: group.id,
             display_name: 'Springfield Nuclear Power Plant',
             comment: 'Workers',
-            created_at: group.created_at.toISOString(),
-            updated_at: group.updated_at.toISOString(),
-            archived_at: group.archived_at?.toISOString(),
+            created_at: group.createdAt.toISOString(),
+            updated_at: group.updatedAt.toISOString(),
+            archived_at: group.archivedAt?.toISOString(),
           },
         })
       })
@@ -133,7 +133,7 @@ describe(`DELETE ${ENDPOINT}`, () => {
         const group = await prisma.group.create({
           data: {
             userId: userId,
-            display_name: 'Springfield Nuclear Power Plant',
+            displayName: 'Springfield Nuclear Power Plant',
             comment: 'Workers',
           },
         })
@@ -149,7 +149,7 @@ describe(`DELETE ${ENDPOINT}`, () => {
             id: group.id,
             display_name: 'Springfield Nuclear Power Plant',
             comment: 'Workers',
-            created_at: group.created_at.toISOString(),
+            created_at: group.createdAt.toISOString(),
             updated_at: expect.any(String),
             archived_at: expect.any(String),
           },

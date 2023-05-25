@@ -37,13 +37,13 @@ export const createPayment = async (
       throw new ClientError(GROUP_DOES_NOT_EXIST.message, 404)
     }
 
-    if (group.archived_at) {
+    if (group.archivedAt) {
       throw new ClientError(GROUP_IS_ARCHIVED.message, 400)
     }
 
     const recipient = await prisma.recipient.findFirst({
       where: {
-        group_id: groupId,
+        groupId: groupId,
         id: recipientId,
       },
     })
@@ -52,11 +52,11 @@ export const createPayment = async (
       throw new ClientError(RECIPIENT_DOES_NOT_EXIST.message, 404)
     }
 
-    if (!recipient.wallet_address || recipient.wallet_address.trim() === '') {
+    if (!recipient.walletAddress || recipient.walletAddress.trim() === '') {
       throw new ClientError(RECIPIENT_DOES_NOT_HAVE_WALLET.message, 400)
     }
 
-    if (recipient.archived_at) {
+    if (recipient.archivedAt) {
       throw new ClientError(RECIPIENT_IS_ARCHIVED.message, 400)
     }
 
@@ -66,9 +66,10 @@ export const createPayment = async (
 
     const payment = await prisma.payment.create({
       data: {
-        recipient_id: recipientId,
-        wallet_address: recipient.wallet_address,
-        ...paymentSchema,
+        recipientId: recipientId,
+        walletAddress: recipient.walletAddress,
+        transactionHash: paymentSchema.transaction_hash,
+        amount: paymentSchema.amount,
       },
     })
 

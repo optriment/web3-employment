@@ -111,7 +111,7 @@ describe(`GET ${ENDPOINT}`, () => {
         group = await prisma.group.create({
           data: {
             userId: anotherUserId,
-            display_name: 'Springfield Nuclear Power Plant (Workers)',
+            displayName: 'Springfield Nuclear Power Plant (Workers)',
             comment: 'Workers',
           },
         })
@@ -141,7 +141,7 @@ describe(`GET ${ENDPOINT}`, () => {
         group = await prisma.group.create({
           data: {
             userId: userId,
-            display_name: 'Springfield Nuclear Power Plant (Workers)',
+            displayName: 'Springfield Nuclear Power Plant (Workers)',
             comment: 'Workers',
           },
         })
@@ -149,7 +149,7 @@ describe(`GET ${ENDPOINT}`, () => {
         anotherGroup = await prisma.group.create({
           data: {
             userId: userId,
-            display_name: 'Springfield Nuclear Power Plant (Staff)',
+            displayName: 'Springfield Nuclear Power Plant (Staff)',
           },
         })
       })
@@ -183,25 +183,25 @@ describe(`GET ${ENDPOINT}`, () => {
         beforeEach(async () => {
           firstRecipient = await prisma.recipient.create({
             data: {
-              group_id: group.id,
-              display_name: 'Homer Jay Simpson',
+              groupId: group.id,
+              displayName: 'Homer Jay Simpson',
               comment: 'Technical supervisor',
             },
           })
 
           secondRecipient = await prisma.recipient.create({
             data: {
-              group_id: group.id,
-              display_name: 'Lenny Leonard',
+              groupId: group.id,
+              displayName: 'Lenny Leonard',
               salary: 42,
-              archived_at: new Date(),
+              archivedAt: new Date(),
             },
           })
 
           await prisma.recipient.create({
             data: {
-              group_id: anotherGroup.id,
-              display_name: 'Montgomery Burns',
+              groupId: anotherGroup.id,
+              displayName: 'Montgomery Burns',
             },
           })
         })

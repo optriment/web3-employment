@@ -105,7 +105,7 @@ describe(`POST ${ENDPOINT}`, () => {
         const group = await prisma.group.create({
           data: {
             userId: userId,
-            display_name: 'Springfield Nuclear Power Plant',
+            displayName: 'Springfield Nuclear Power Plant',
             comment: 'Workers',
           },
         })
@@ -125,8 +125,8 @@ describe(`POST ${ENDPOINT}`, () => {
             id: group.id,
             display_name: 'Springfield Nuclear Power Plant',
             comment: 'Workers',
-            created_at: group.created_at.toISOString(),
-            updated_at: group.updated_at.toISOString(),
+            created_at: group.createdAt.toISOString(),
+            updated_at: group.updatedAt.toISOString(),
             archived_at: null,
           },
         })
@@ -138,9 +138,9 @@ describe(`POST ${ENDPOINT}`, () => {
         const group = await prisma.group.create({
           data: {
             userId: userId,
-            display_name: 'Springfield Nuclear Power Plant',
+            displayName: 'Springfield Nuclear Power Plant',
             comment: 'Workers',
-            archived_at: new Date(),
+            archivedAt: new Date(),
           },
         })
 
@@ -159,7 +159,7 @@ describe(`POST ${ENDPOINT}`, () => {
             id: group.id,
             display_name: 'Springfield Nuclear Power Plant',
             comment: 'Workers',
-            created_at: group.created_at.toISOString(),
+            created_at: group.createdAt.toISOString(),
             updated_at: expect.any(String),
             archived_at: null,
           },

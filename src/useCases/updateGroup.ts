@@ -30,11 +30,14 @@ export const updateGroup = async (
       throw new ClientError(GROUP_DOES_NOT_EXIST.message, 404)
     }
 
+    const schema = UpdateGroupSchema.parse(body)
+
     const updatedGroup = await prisma.group.update({
       where: { id: group.id },
       data: {
-        updated_at: new Date(),
-        ...UpdateGroupSchema.parse(body),
+        updatedAt: new Date(),
+        displayName: schema.display_name,
+        comment: schema.comment,
       },
     })
 

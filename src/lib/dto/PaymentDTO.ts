@@ -10,28 +10,28 @@ export class PaymentDTO {
 
   constructor(
     id: string,
-    transaction_hash: string,
+    transactionHash: string,
     amount: number,
-    wallet_address: string,
-    recipient_id: string,
+    walletAddress: string,
+    recipientId: string,
     createdAt: Date
   ) {
     this.id = id
-    this.transaction_hash = transaction_hash
+    this.transaction_hash = transactionHash
     this.amount = amount
-    this.wallet_address = wallet_address
-    this.recipient_id = recipient_id
+    this.wallet_address = walletAddress
+    this.recipient_id = recipientId
     this.created_at = createdAt.toISOString()
   }
 
   static fromModel(model: Payment): PaymentDTO {
     return new PaymentDTO(
       model.id,
-      model.transaction_hash,
+      model.transactionHash,
       model.amount,
-      model.wallet_address,
-      model.recipient_id,
-      model.created_at
+      model.walletAddress,
+      model.recipientId,
+      model.createdAt
     )
   }
 }

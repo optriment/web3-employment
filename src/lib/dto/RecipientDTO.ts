@@ -13,20 +13,20 @@ export class RecipientDTO {
 
   constructor(
     id: string,
-    display_name: string,
+    displayName: string,
     comment: string | null,
     contacts: string | null,
-    wallet_address: string | null,
+    walletAddress: string | null,
     salary: number | null,
     createdAt: Date,
     updatedAt: Date | null,
     archivedAt: Date | null
   ) {
     this.id = id
-    this.display_name = display_name
+    this.display_name = displayName
     this.comment = comment
     this.contacts = contacts
-    this.wallet_address = wallet_address
+    this.wallet_address = walletAddress
     this.salary = salary
     this.created_at = createdAt.toISOString()
     this.updated_at = updatedAt ? updatedAt.toISOString() : null
@@ -36,14 +36,14 @@ export class RecipientDTO {
   static fromModel(model: Recipient): RecipientDTO {
     return new RecipientDTO(
       model.id,
-      model.display_name,
+      model.displayName,
       model.comment,
       model.contacts,
-      model.wallet_address,
+      model.walletAddress,
       model.salary,
-      model.created_at,
-      model.updated_at,
-      model.archived_at
+      model.createdAt,
+      model.updatedAt,
+      model.archivedAt
     )
   }
 }

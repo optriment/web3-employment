@@ -114,7 +114,7 @@ describe(`POST ${ENDPOINT}`, () => {
         group = await prisma.group.create({
           data: {
             userId: userId,
-            display_name: 'Springfield Nuclear Power Plant',
+            displayName: 'Springfield Nuclear Power Plant',
           },
         })
       })
@@ -265,7 +265,7 @@ describe(`POST ${ENDPOINT}`, () => {
         group = await prisma.group.create({
           data: {
             userId: userId,
-            display_name: 'Springfield Nuclear Power Plant',
+            displayName: 'Springfield Nuclear Power Plant',
           },
         })
       })

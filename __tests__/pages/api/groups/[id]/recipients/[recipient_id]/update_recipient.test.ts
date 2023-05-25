@@ -113,7 +113,7 @@ describe(`PUT ${ENDPOINT}`, () => {
           group = await prisma.group.create({
             data: {
               userId: userId,
-              display_name: 'Springfield Nuclear Power Plant',
+              displayName: 'Springfield Nuclear Power Plant',
             },
           })
         })
@@ -165,15 +165,15 @@ describe(`PUT ${ENDPOINT}`, () => {
         group = await prisma.group.create({
           data: {
             userId: userId,
-            display_name: 'Springfield Nuclear Power Plant',
+            displayName: 'Springfield Nuclear Power Plant',
           },
         })
 
         recipient = await prisma.recipient.create({
           data: {
-            group_id: group.id,
-            display_name: 'Homer Jay Simpson',
-            wallet_address: '0xDEADBEEF',
+            groupId: group.id,
+            displayName: 'Homer Jay Simpson',
+            walletAddress: '0xDEADBEEF',
           },
         })
       })
@@ -308,16 +308,16 @@ describe(`PUT ${ENDPOINT}`, () => {
         group = await prisma.group.create({
           data: {
             userId: userId,
-            display_name: 'Springfield Nuclear Power Plant',
+            displayName: 'Springfield Nuclear Power Plant',
           },
         })
 
         recipient = await prisma.recipient.create({
           data: {
-            group_id: group.id,
-            display_name: 'Homer Jay Simpson',
+            groupId: group.id,
+            displayName: 'Homer Jay Simpson',
             comment: 'Technical supervisor',
-            wallet_address: '0xDEADBEEF',
+            walletAddress: '0xDEADBEEF',
             contacts: 'Homer_Simpson@AOL.com',
             salary: 35,
           },
@@ -348,10 +348,10 @@ describe(`PUT ${ENDPOINT}`, () => {
           expect(response.data.contacts).toEqual('Homer_Simpson@AOL.com')
           expect(response.data.salary).toEqual(35)
           expect(response.data.created_at).toEqual(
-            recipient.created_at.toISOString()
+            recipient.createdAt.toISOString()
           )
           expect(+Date.parse(response.data.updated_at)).toBeGreaterThan(
-            +recipient.updated_at
+            +recipient.updatedAt
           )
           expect(response.data.archived_at).toBeNull()
         })
@@ -385,10 +385,10 @@ describe(`PUT ${ENDPOINT}`, () => {
           expect(response.data.contacts).toEqual('Bart@AOL.com')
           expect(response.data.salary).toEqual(42)
           expect(response.data.created_at).toEqual(
-            recipient.created_at.toISOString()
+            recipient.createdAt.toISOString()
           )
           expect(+Date.parse(response.data.updated_at)).toBeGreaterThan(
-            +recipient.updated_at
+            +recipient.updatedAt
           )
           expect(response.data.archived_at).toBeNull()
         })

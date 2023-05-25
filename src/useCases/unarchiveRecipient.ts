@@ -21,7 +21,7 @@ export const unarchiveRecipient = async (
 
   const recipient = await prisma.recipient.findFirst({
     where: {
-      group_id: groupId,
+      groupId: groupId,
       id: recipientId,
     },
   })
@@ -30,7 +30,7 @@ export const unarchiveRecipient = async (
     throw new ClientError(RECIPIENT_DOES_NOT_EXIST.message, 404)
   }
 
-  if (!recipient.archived_at) {
+  if (!recipient.archivedAt) {
     return RecipientDTO.fromModel(recipient)
   }
 
@@ -39,7 +39,7 @@ export const unarchiveRecipient = async (
       id: recipientId,
     },
     data: {
-      archived_at: null,
+      archivedAt: null,
     },
   })
 

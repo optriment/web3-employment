@@ -112,8 +112,8 @@ describe(`POST ${ENDPOINT}`, () => {
             const group = await prisma.group.create({
               data: {
                 userId: userId,
-                display_name: 'Springfield Nuclear Power Plant',
-                archived_at: new Date(),
+                displayName: 'Springfield Nuclear Power Plant',
+                archivedAt: new Date(),
               },
             })
 
@@ -140,7 +140,7 @@ describe(`POST ${ENDPOINT}`, () => {
             group = await prisma.group.create({
               data: {
                 userId: userId,
-                display_name: 'Springfield Nuclear Power Plant',
+                displayName: 'Springfield Nuclear Power Plant',
               },
             })
           })
@@ -187,8 +187,8 @@ describe(`POST ${ENDPOINT}`, () => {
             it('returns error', async () => {
               const recipient = await prisma.recipient.create({
                 data: {
-                  group_id: group.id,
-                  display_name: 'Homer Jay Simpson',
+                  groupId: group.id,
+                  displayName: 'Homer Jay Simpson',
                 },
               })
 
@@ -212,10 +212,10 @@ describe(`POST ${ENDPOINT}`, () => {
             it('returns error', async () => {
               const recipient = await prisma.recipient.create({
                 data: {
-                  group_id: group.id,
-                  display_name: 'Homer Jay Simpson',
-                  wallet_address: '0xDEADBEEF',
-                  archived_at: new Date(),
+                  groupId: group.id,
+                  displayName: 'Homer Jay Simpson',
+                  walletAddress: '0xDEADBEEF',
+                  archivedAt: new Date(),
                 },
               })
 
@@ -245,15 +245,15 @@ describe(`POST ${ENDPOINT}`, () => {
         group = await prisma.group.create({
           data: {
             userId: userId,
-            display_name: 'Springfield Nuclear Power Plant',
+            displayName: 'Springfield Nuclear Power Plant',
           },
         })
 
         recipient = await prisma.recipient.create({
           data: {
-            group_id: group.id,
-            display_name: 'Homer Jay Simpson',
-            wallet_address: '0xDEADBEEF',
+            groupId: group.id,
+            displayName: 'Homer Jay Simpson',
+            walletAddress: '0xDEADBEEF',
           },
         })
       })
@@ -420,15 +420,15 @@ describe(`POST ${ENDPOINT}`, () => {
         group = await prisma.group.create({
           data: {
             userId: userId,
-            display_name: 'Springfield Nuclear Power Plant',
+            displayName: 'Springfield Nuclear Power Plant',
           },
         })
 
         recipient = await prisma.recipient.create({
           data: {
-            group_id: group.id,
-            display_name: 'Homer Jay Simpson',
-            wallet_address: '0xDEADBEEF',
+            groupId: group.id,
+            displayName: 'Homer Jay Simpson',
+            walletAddress: '0xDEADBEEF',
           },
         })
       })
