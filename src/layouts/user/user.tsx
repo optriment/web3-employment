@@ -1,6 +1,6 @@
 import React from 'react'
 import { Grid } from 'semantic-ui-react'
-import { Menu } from './components'
+import { Menu, Footer } from './components'
 
 type Props = {
   isMobile: boolean
@@ -14,6 +14,10 @@ const Layout = ({ isMobile, children }: Props) => (
     </Grid.Column>
 
     <Grid.Column>{children}</Grid.Column>
+
+    <Grid.Column>
+      <Footer />
+    </Grid.Column>
   </Grid>
 )
 
