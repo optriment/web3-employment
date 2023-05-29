@@ -1,6 +1,13 @@
 import Link from 'next/link'
 import React from 'react'
-import { Divider, Container, Segment, Grid, Header } from 'semantic-ui-react'
+import {
+  Button,
+  Divider,
+  Container,
+  Segment,
+  Grid,
+  Header,
+} from 'semantic-ui-react'
 import { useIsMobile } from '@/utils/use-is-mobile'
 
 const Screen = () => {
@@ -38,6 +45,16 @@ const Screen = () => {
             crypto wallets.
           </p>
         </Container>
+      </Grid.Column>
+
+      <Grid.Column textAlign="center">
+        <Button
+          primary
+          size="massive"
+          as="a"
+          href="/api/auth/signin"
+          content="Try Now!"
+        />
       </Grid.Column>
 
       <Grid.Column textAlign="justified">
@@ -195,6 +212,16 @@ const Screen = () => {
             <Link href="/api/auth/signin">OptriTool today!</Link>
           </p>
         </Container>
+      </Grid.Column>
+
+      <Grid.Column textAlign="center">
+        <Button
+          primary
+          size="massive"
+          as="a"
+          href="/api/auth/signin"
+          content="Try Now!"
+        />
       </Grid.Column>
     </Grid>
   )
