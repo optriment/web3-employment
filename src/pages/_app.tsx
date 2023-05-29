@@ -37,7 +37,14 @@ export default function App({
   }, [])
 
   const adapters = useMemo(function () {
-    return [new TronLinkAdapter()]
+    return [
+      new TronLinkAdapter({
+        openTronLinkAppOnMobile: true,
+        openUrlWhenWalletNotFound: true,
+        checkTimeout: 3000,
+        dappName: 'OptriTool',
+      }),
+    ]
   }, [])
 
   return (
