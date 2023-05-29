@@ -11,34 +11,54 @@ wallets.
 
 ## Key Features
 
-- **Group Management:** Create and manage multiple groups of people, each with
-  their own display name, wallet address, default amount value, contacts, and
-  comments. Keep your payment activities organized and easily accessible.
-- **Blockchain Payments:** OptriTool leverages the Tron blockchain to process
-  payments, ensuring secure and efficient transactions. Users are required to
-  have a TronLink wallet and pay gas fees to complete their payments.
-- **Archiving Capability:** Seamlessly archive or unarchive both companies and
-  individuals, allowing for flexible management of payment recipients.
-- **Data Storage:** OptriTool securely stores all payment-related data on the
-  backend, keeping it readily available for future reference and analysis.
-- **User-Friendly Interface:** OptriTool boasts an intuitive and easy-to-use
-  interface, making it effortless for users to navigate through the platform
-  and perform payment tasks.
+**Group Management:** Create and manage multiple groups of people, each with
+their own display name, wallet address, default amount value, contacts, and
+comments. Keep your payment activities organized and easily accessible.
 
-## Future Enhancements
+**Blockchain Payments:** OptriTool leverages the Tron blockchain to process
+payments, ensuring secure and efficient transactions. Users are required to
+have a TronLink wallet and pay gas fees to complete their payments.
 
-In upcoming releases, OptriTool plans to introduce registration mechanisms via
-popular social media accounts such as GitHub, Google, Discord, Twitter, and
-LinkedIn. Additionally, the platform will evolve into a Software-as-a-Service
-(SaaS) model, providing users with increased accessibility and convenience.
-Stay tuned for these exciting updates!
+**Registration Options:** OptriTool supports registration through Email Magic
+Link, GitHub, and Google. In the future, we plan to expand registration
+options to include LinkedIn, Twitter, and Facebook, providing even more
+convenience and accessibility for our users.
 
-## Installation and Compatibility
+**Data Storage:** OptriTool securely stores all payment-related data on the
+backend, keeping it readily available for future reference and analysis.
 
-OptriTool is currently available as a local installation for macOS and Linux
-users. Simply download and set up the tool on your laptop or PC to begin
-utilizing its features. Keep in mind that the current version is a test release
-and does not require registration.
+**Archiving Capability:** Seamlessly archive or unarchive both companies and
+individuals, allowing for flexible management of payment recipients.
+
+**User-Friendly Interface:** OptriTool boasts an intuitive and easy-to-use
+interface, making it effortless for users to navigate through the platform
+and perform payment tasks. It is designed to be responsive and works
+seamlessly on both desktop and mobile devices.
+
+Please note that the availability of features and the user interface may vary
+slightly depending on the device used, but OptriTool is designed to deliver a
+seamless experience across both desktop and mobile platforms.
+
+## Installation
+
+OptriTool is available as a web-based platform accessible to users worldwide.
+Simply visit our website to start using OptriTool and take advantage of its
+powerful features.
+
+However, we understand that some users may prefer to store data locally and
+have greater control over their installation. If you wish to install OptriTool
+on your own server (Linux), laptop, or PC, our team is here to assist you
+throughout the process.
+
+## Compatibility
+
+OptriTool can be accessed through our website and is compatible with both
+desktop and mobile devices. However, it's important to note that payments can
+only be made using the desktop version of OptriTool.
+
+To process payments, users are required to have a TronLink wallet installed and
+connected to the platform. Rest assured that other features of the platform can
+be utilized without the need for an installed wallet.
 
 ## Pricing
 
