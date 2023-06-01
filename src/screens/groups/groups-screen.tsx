@@ -72,13 +72,13 @@ const Screen: React.FC = () => {
         )}
 
         <Grid.Row columns={2}>
-          <Grid.Column width={12}>
+          <Grid.Column width={isMobile ? 8 : 12}>
             <Header as="h1" content="Groups" />
           </Grid.Column>
 
-          <Grid.Column width={4} textAlign="right">
+          <Grid.Column width={isMobile ? 8 : 4} textAlign="right">
             <Button
-              size="large"
+              size={isMobile ? 'medium' : 'large'}
               icon="plus"
               content="Add Group"
               primary
