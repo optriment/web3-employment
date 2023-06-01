@@ -246,9 +246,9 @@ const Screen = ({ groupId }: Props) => {
                 <GroupHeader group={data.group} />
               </Grid.Column>
 
-              <Grid.Column width={8} textAlign="right">
+              <Grid.Column width={8} textAlign={isMobile ? 'center' : 'right'}>
                 <Button
-                  size="large"
+                  size={isMobile ? 'medium' : 'large'}
                   icon="plus"
                   content="Add Recipient"
                   primary
@@ -257,7 +257,7 @@ const Screen = ({ groupId }: Props) => {
                 />
 
                 <Button
-                  size="large"
+                  size={isMobile ? 'medium' : 'large'}
                   icon="money"
                   content="Payments"
                   as="a"
@@ -266,14 +266,14 @@ const Screen = ({ groupId }: Props) => {
 
                 {isGroupArchived ? (
                   <Button
-                    size="large"
+                    size={isMobile ? 'medium' : 'large'}
                     icon="undo"
                     onClick={handleGroupUnarchive}
                     title="Unarchive"
                   />
                 ) : (
                   <Button
-                    size="large"
+                    size={isMobile ? 'medium' : 'large'}
                     icon="archive"
                     onClick={handleGroupArchive}
                     title="Archive"
