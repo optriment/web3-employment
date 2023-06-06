@@ -50,8 +50,8 @@ model User {
   createdAt     DateTime  @default(now()) @map(name: "created_at")
   updatedAt     DateTime  @default(now()) @map(name: "updated_at")
   accounts      Account[]
-  Session       Session[]
-  Group         Group[]
+  sessions      Session[]
+  groups        Group[]
 
   @@map("users")
 }
