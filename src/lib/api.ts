@@ -6,6 +6,7 @@ import {
   UNHANDLED_ERROR,
 } from '@/lib/messages'
 import type { ApiResponse } from '@/lib/types/api'
+import type { GetUserAccountApiResponse } from '@/pages/api/account'
 import type {
   GroupCreateApiResponse,
   GroupGetApiResponse,
@@ -64,6 +65,19 @@ const handleResponse = async <T>(response: Response): Promise<T> => {
 
 // NOTE: Used on frontend side only
 const api = {
+  getMyAccount: async (): Promise<GetUserAccountApiResponse> => {
+    const payload = {
+      method: 'GET',
+      headers: {
+        ...defaultHeaders,
+      },
+    }
+
+    const response = await fetch(`${BASE_URL}/account`, payload)
+
+    return handleResponse<GetUserAccountApiResponse>(response)
+  },
+
   addGroup: async (body: string): Promise<GroupCreateApiResponse> => {
     const payload = {
       method: 'POST',

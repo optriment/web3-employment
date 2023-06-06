@@ -4,10 +4,10 @@ import { authOptions } from '@/lib/auth'
 import type { UserDTO } from '@/lib/dto/UserDTO'
 import { METHOD_NOT_ALLOWED, UNAUTHORIZED } from '@/lib/messages'
 import type { ApiResponse } from '@/lib/types/api'
-import { getUserProfile } from '@/useCases/getUserProfile'
+import { getUserAccount } from '@/useCases/getUserAccount'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
-export type GetUserProfileApiResponse = ApiResponse<UserDTO>
+export type GetUserAccountApiResponse = ApiResponse<UserDTO>
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
@@ -36,12 +36,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 const handleGET = async (
   userId: string,
   _req: NextApiRequest,
-  res: NextApiResponse<GetUserProfileApiResponse>
+  res: NextApiResponse<GetUserAccountApiResponse>
 ) => {
-  const profile = await getUserProfile(userId)
+  const account = await getUserAccount(userId)
 
   res.status(200)
-  res.json({ success: true, data: profile })
+  res.json({ success: true, data: account })
   return res.end()
 }
 
