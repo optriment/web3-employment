@@ -3,7 +3,7 @@ import { prisma } from '@/lib/prisma'
 import handler from '@/pages/api/groups/[id]'
 import {
   cleanDatabase,
-  mockDELETERequest,
+  mockDELETERequestWithQuery,
   parseJSON,
   createUserWithSession,
 } from '../../../../helpers'
@@ -20,7 +20,7 @@ describe(`DELETE ${ENDPOINT}`, () => {
       it('returns error', async () => {
         const groupId = uuidv4()
 
-        const { req, res } = mockDELETERequest({ id: groupId })
+        const { req, res } = mockDELETERequestWithQuery({ id: groupId })
 
         await handler(req, res)
 
@@ -38,7 +38,10 @@ describe(`DELETE ${ENDPOINT}`, () => {
 
         const groupId = uuidv4()
 
-        const { req, res } = mockDELETERequest({ id: groupId }, sessionToken)
+        const { req, res } = mockDELETERequestWithQuery(
+          { id: groupId },
+          sessionToken
+        )
 
         await handler(req, res)
 
@@ -64,7 +67,7 @@ describe(`DELETE ${ENDPOINT}`, () => {
 
     describe('when group_id is not a valid UUID', () => {
       it('returns error ', async () => {
-        const { req, res } = mockDELETERequest(
+        const { req, res } = mockDELETERequestWithQuery(
           { id: 'invalid-id' },
           sessionToken
         )
@@ -83,7 +86,10 @@ describe(`DELETE ${ENDPOINT}`, () => {
       it('returns error', async () => {
         const groupId = uuidv4()
 
-        const { req, res } = mockDELETERequest({ id: groupId }, sessionToken)
+        const { req, res } = mockDELETERequestWithQuery(
+          { id: groupId },
+          sessionToken
+        )
 
         await handler(req, res)
 
@@ -106,7 +112,7 @@ describe(`DELETE ${ENDPOINT}`, () => {
           },
         })
 
-        const { req, res } = mockDELETERequest(
+        const { req, res } = mockDELETERequestWithQuery(
           { id: group.id.toString() },
           sessionToken
         )
@@ -138,7 +144,10 @@ describe(`DELETE ${ENDPOINT}`, () => {
           },
         })
 
-        const { req, res } = mockDELETERequest({ id: group.id }, sessionToken)
+        const { req, res } = mockDELETERequestWithQuery(
+          { id: group.id },
+          sessionToken
+        )
 
         await handler(req, res)
 
