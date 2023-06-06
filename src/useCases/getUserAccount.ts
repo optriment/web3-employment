@@ -3,7 +3,7 @@ import { UserDTO } from '@/lib/dto/UserDTO'
 import { GROUP_DOES_NOT_EXIST } from '@/lib/messages'
 import { prisma } from '@/lib/prisma'
 
-export const getUserProfile = async (userId: string): Promise<UserDTO> => {
+export const getUserAccount = async (userId: string): Promise<UserDTO> => {
   const user = await prisma.user.findUnique({
     where: {
       id: userId,

@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid'
 import { prisma } from '@/lib/prisma'
-import handler from '@/pages/api/me'
+import handler from '@/pages/api/account'
 import {
   mockGETRequest,
   parseJSON,
@@ -8,7 +8,7 @@ import {
   createUserWithSession,
 } from '../../../helpers'
 
-const ENDPOINT = '/api/me'
+const ENDPOINT = '/api/account'
 
 describe(`GET ${ENDPOINT}`, () => {
   beforeEach(async () => {
