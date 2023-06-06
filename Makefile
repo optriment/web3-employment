@@ -58,7 +58,7 @@ test-db-stop: # Stop dockerized database only
 # make sure you have a valid DATABASE_URL value in your .env file.
 # It should be set to `db` hostname, instead of `127.0.0.1`
 prod-docker-build: # Build Docker image
-	@${DOCKER_COMPOSE} build --no-cache
+	@${DOCKER_COMPOSE} build
 
 prod-docker-start: # Run Docker container
 	@${DOCKER_COMPOSE} up -d
