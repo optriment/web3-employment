@@ -82,7 +82,15 @@ export const mockPUTRequestWithQuery = (
     },
   })
 
-export const mockDELETERequest = (
+export const mockDELETERequest = (sessionToken?: string) =>
+  createMocks({
+    method: 'DELETE',
+    cookies: {
+      'next-auth.session-token': sessionToken || '',
+    },
+  })
+
+export const mockDELETERequestWithQuery = (
   query: RequestOptions['query'],
   sessionToken?: string
 ) =>

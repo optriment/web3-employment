@@ -6,7 +6,10 @@ import {
   UNHANDLED_ERROR,
 } from '@/lib/messages'
 import type { ApiResponse } from '@/lib/types/api'
-import type { GetUserAccountApiResponse } from '@/pages/api/account'
+import type {
+  DeleteUserAccountApiResponse,
+  GetUserAccountApiResponse,
+} from '@/pages/api/account'
 import type {
   GroupCreateApiResponse,
   GroupGetApiResponse,
@@ -284,6 +287,19 @@ const api = {
     )
 
     return handleResponse<GroupPaymentsApiResponse>(response)
+  },
+
+  deleteMyAccount: async (): Promise<DeleteUserAccountApiResponse> => {
+    const payload = {
+      method: 'DELETE',
+      headers: {
+        ...defaultHeaders,
+      },
+    }
+
+    const response = await fetch(`${BASE_URL}/account`, payload)
+
+    return handleResponse<DeleteUserAccountApiResponse>(response)
   },
 }
 

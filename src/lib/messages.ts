@@ -18,6 +18,10 @@ export const UNAUTHORIZED = {
   message: 'Authorization required',
 }
 
+export const USER_DOES_NOT_EXIST = {
+  message: 'User does not exist',
+}
+
 export const GROUP_DOES_NOT_EXIST = {
   message: 'Group does not exist',
 }
