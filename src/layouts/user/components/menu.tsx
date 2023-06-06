@@ -1,6 +1,6 @@
 import { WalletActionButton } from '@tronweb3/tronwallet-adapter-react-ui'
 import React from 'react'
-import { Button, Menu } from 'semantic-ui-react'
+import { Menu } from 'semantic-ui-react'
 
 const Component = () => (
   <Menu stackable size="huge">
@@ -11,14 +11,8 @@ const Component = () => (
       <Menu.Item>
         <WalletActionButton />
       </Menu.Item>
-      <Menu.Item>
-        <Button
-          as="a"
-          href="/api/auth/signout"
-          icon="sign out"
-          content="Sign out"
-        />
-      </Menu.Item>
+      <Menu.Item as="a" href="/account" content="Account" />
+      <Menu.Item as="a" href="/api/auth/signout" content="Sign out" />
     </Menu.Menu>
   </Menu>
 )
