@@ -99,25 +99,31 @@ interface UserIdAndSessionToken {
   sessionToken: string
 }
 
-export const createUserWithSession =
-  async (): Promise<UserIdAndSessionToken> => {
-    const sessionToken = uuidv4()
+interface CreateUserProps {
+  name?: string
+}
 
-    const adapter = PrismaAdapter(prisma)
+export const createUserWithSession = async (
+  props?: CreateUserProps
+): Promise<UserIdAndSessionToken> => {
+  const sessionToken = uuidv4()
 
-    const user = await adapter.createUser({
-      email: `${sessionToken}@domain.tld`,
-      emailVerified: new Date(),
-    })
+  const adapter = PrismaAdapter(prisma)
 
-    await adapter.createSession({
-      userId: user.id,
-      sessionToken: sessionToken,
-      expires: new Date('2100-01-01'),
-    })
+  const user = await adapter.createUser({
+    name: props?.name,
+    email: `${sessionToken}@domain.tld`,
+    emailVerified: new Date(),
+  })
 
-    return {
-      userId: user.id,
-      sessionToken,
-    }
+  await adapter.createSession({
+    userId: user.id,
+    sessionToken: sessionToken,
+    expires: new Date('2100-01-01'),
+  })
+
+  return {
+    userId: user.id,
+    sessionToken,
   }
+}
