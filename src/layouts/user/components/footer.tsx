@@ -37,7 +37,7 @@ const Component = () => (
       </List.Item>
       <List.Item
         as="a"
-        href="https://app.websitepolicies.com/policies/view/34u6v3er"
+        href="/policy"
         target="_blank"
         rel="nofollow noreferrer noopener"
       >
