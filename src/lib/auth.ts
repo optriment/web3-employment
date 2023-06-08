@@ -2,6 +2,7 @@ import { PrismaAdapter } from '@next-auth/prisma-adapter'
 import EmailProvider from 'next-auth/providers/email'
 import GitHubProvider from 'next-auth/providers/github'
 import GoogleProvider from 'next-auth/providers/google'
+import LinkedInProvider from 'next-auth/providers/linkedin'
 import { prisma } from '@/lib/prisma'
 import type { NextAuthOptions } from 'next-auth'
 import type { Provider } from 'next-auth/providers'
@@ -29,6 +30,15 @@ if (process.env.GOOGLE_CLIENT_ID) {
           response_type: 'code',
         },
       },
+    })
+  )
+}
+
+if (process.env.LINKEDIN_CLIENT_ID) {
+  providers.push(
+    LinkedInProvider({
+      clientId: process.env.LINKEDIN_CLIENT_ID,
+      clientSecret: process.env.LINKEDIN_CLIENT_SECRET,
     })
   )
 }

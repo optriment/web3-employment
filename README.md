@@ -20,8 +20,8 @@ payments, ensuring secure and efficient transactions. Users are required to
 have a TronLink wallet and pay gas fees to complete their payments.
 
 **Registration Options:** OptriTool supports registration through Email Magic
-Link, GitHub, and Google. In the future, we plan to expand registration
-options to include LinkedIn, Twitter, and Facebook, providing even more
+Link, GitHub, Google, and LinkedIn. In the future, we plan to expand registration
+options to include Twitter, and Facebook, providing even more
 convenience and accessibility for our users.
 
 **Data Storage:** OptriTool securely stores all payment-related data on the
