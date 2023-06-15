@@ -1,5 +1,6 @@
 import { useSession } from 'next-auth/react'
 import React from 'react'
+import { NotMountedYet } from '@/components'
 import { useHasMounted } from '@/hooks'
 import { UserLayout } from '@/layouts'
 import { GroupsScreen } from '@/screens/groups'
@@ -14,7 +15,7 @@ const Page: React.FC = () => {
   useSession({ required: true })
 
   if (!hasMounted) {
-    return <p>Not mounted yet</p>
+    return <NotMountedYet />
   }
 
   return (

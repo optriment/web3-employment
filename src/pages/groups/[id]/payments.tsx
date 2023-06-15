@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router'
 import { useSession } from 'next-auth/react'
 import React from 'react'
-import { WalletLoader } from '@/components'
+import { NotMountedYet } from '@/components'
 import { useHasMounted } from '@/hooks'
 import { UserLayout } from '@/layouts'
 import { GroupPaymentsScreen } from '@/screens/groups'
@@ -17,17 +17,14 @@ const Page: React.FC = () => {
   useSession({ required: true })
 
   if (!hasMounted) {
-    return <p>Not mounted yet</p>
+    return <NotMountedYet />
   }
 
   const groupId = router.query.id as string
 
   return (
     <UserLayout isMobile={isMobile}>
-      <WalletLoader
-        onDisconnected={() => <GroupPaymentsScreen groupId={groupId} />}
-        onConnected={() => <GroupPaymentsScreen groupId={groupId} />}
-      />
+      <GroupPaymentsScreen groupId={groupId} />
     </UserLayout>
   )
 }
