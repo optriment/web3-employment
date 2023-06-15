@@ -1,15 +1,7 @@
-import ConnectWalletButton from './connect-wallet-button'
-import ConnectWalletMessage from './connect-wallet-message'
-import ErrorMessage from './error-message'
-import LoadingMessage from './loading-message'
-import TransactionLoadingMessage from './transaction-loading-message'
-import WalletLoader from './wallet-loader'
-
-export {
-  ConnectWalletButton,
-  ConnectWalletMessage,
-  ErrorMessage,
-  LoadingMessage,
-  TransactionLoadingMessage,
-  WalletLoader,
-}
+export { default as ConnectWalletButton } from './connect-wallet-button'
+export { default as ConnectWalletMessage } from './connect-wallet-message'
+export { default as ErrorMessage } from './error-message'
+export { default as LoadingMessage } from './loading-message'
+export { default as TransactionLoadingMessage } from './transaction-loading-message'
+export { default as WalletLoader } from './wallet-loader'
+export { default as NotMountedYet } from './not-mounted-yet'

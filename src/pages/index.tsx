@@ -1,6 +1,6 @@
 import { useSession } from 'next-auth/react'
 import React from 'react'
-import { WalletLoader } from '@/components'
+import { NotMountedYet } from '@/components'
 import { useHasMounted } from '@/hooks/use-has-mounted'
 import { LandingLayout, UserLayout } from '@/layouts'
 import { LandingPage } from '@/screens/landing'
@@ -16,7 +16,7 @@ const Page: React.FC = () => {
   const { data: session } = useSession()
 
   if (!hasMounted) {
-    return <p>Not mounted yet</p>
+    return <NotMountedYet />
   }
 
   if (!session) {
@@ -29,10 +29,7 @@ const Page: React.FC = () => {
 
   return (
     <UserLayout isMobile={isMobile}>
-      <WalletLoader
-        onDisconnected={() => <UserDashboardScreen />}
-        onConnected={() => <UserDashboardScreen />}
-      />
+      <UserDashboardScreen />
     </UserLayout>
   )
 }
