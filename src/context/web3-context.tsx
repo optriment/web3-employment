@@ -38,6 +38,7 @@ interface IWeb3Context {
   fromTokens(_: number): number
   toTokens(_: number): number
   addressToHex(_: string): string
+  batchContractAddress: string
   buildTronScanTransactionURL(_: string): string
 }
 
@@ -56,6 +57,7 @@ export const Web3Context = createContext<IWeb3Context>({
   fromTokens: () => 0,
   toTokens: () => 0,
   addressToHex: () => '',
+  batchContractAddress: '',
   buildTronScanTransactionURL: () => '',
 })
 
@@ -63,9 +65,13 @@ type Props = {
   children: React.ReactNode
 }
 
-const { tokenAddress, tokenDecimals, tokenSymbol, tronNetwork } =
-  publicRuntimeConfig
-
+const {
+  tokenAddress,
+  tokenDecimals,
+  tokenSymbol,
+  batchContractAddress,
+  tronNetwork,
+} = publicRuntimeConfig
 const Web3Provider = ({ children }: Props) => {
   const { address, connected, connecting, wallet: tronWallet } = useWallet()
 
@@ -178,6 +184,7 @@ const Web3Provider = ({ children }: Props) => {
       toTokens,
       fromTokens,
       addressToHex,
+      batchContractAddress,
       buildTronScanTransactionURL,
     }),
     [

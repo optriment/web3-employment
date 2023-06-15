@@ -17,5 +17,7 @@ declare namespace NodeJS {
 
     LINKEDIN_CLIENT_ID: string
     LINKEDIN_CLIENT_SECRET: string
+
+    BATCH_CONTRACT_ADDRESS: string
   }
 }

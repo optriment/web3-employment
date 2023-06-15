@@ -1,4 +1,5 @@
+import BatchTransactionDialog from './batch-transaction-dialog'
 import TransactionDialog from './transaction-dialog'
 import type { PaymentTransactionData } from './transaction-dialog'
 
-export { TransactionDialog, PaymentTransactionData }
+export { BatchTransactionDialog, TransactionDialog, PaymentTransactionData }
