@@ -26,6 +26,7 @@ const Screen = ({ groupId }: Props) => {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [error, setError] = useState<string>('')
 
+  const [totalAmount, setTotalAmount] = useState<number>(0)
   const [selectedRecipients, setSelectedRecipients] =
     useState<SelectedRecipients>({})
   const [transaction, setTransaction] = useState<string>('')
@@ -57,10 +58,19 @@ const Screen = ({ groupId }: Props) => {
     const newSelectedRecipients: SelectedRecipients = {}
 
     allIds?.forEach((id) => {
-      newSelectedRecipients[id] = {
-        selected: !areAllSelected,
-        amount: selectedRecipients[id]?.amount,
-        address: selectedRecipients[id]?.address,
+      const amount = selectedRecipients[id]?.amount
+      if (amount !== 0) {
+        newSelectedRecipients[id] = {
+          selected: !areAllSelected,
+          amount: selectedRecipients[id]?.amount,
+          address: selectedRecipients[id]?.address,
+        }
+      } else {
+        newSelectedRecipients[id] = {
+          selected: selectedRecipients[id]?.selected,
+          amount: selectedRecipients[id]?.amount,
+          address: selectedRecipients[id]?.address,
+        }
       }
     })
 
@@ -71,12 +81,13 @@ const Screen = ({ groupId }: Props) => {
     setSelectedRecipients((prevState) => ({
       ...prevState,
       [id]: {
-        selected: prevState[id]?.selected,
+        selected: prevState[id]?.selected && amount !== 0,
         amount: amount,
         address: prevState[id]?.address,
       },
     }))
   }
+
   const isSelectAllChecked =
     Object.values(selectedRecipients).filter((recipient) => recipient.selected)
       .length === data?.recipients.length
@@ -146,6 +157,19 @@ const Screen = ({ groupId }: Props) => {
     }
   }, [data])
 
+  useEffect(() => {
+    const newTotalAmount = Object.values(selectedRecipients).reduce(
+      (total, recipient) => {
+        if (recipient.selected) {
+          return total + recipient.amount
+        }
+        return total
+      },
+      0
+    )
+    setTotalAmount(newTotalAmount)
+  }, [selectedRecipients])
+
   return (
     <>
       <Grid stackable={isMobile} container={!isMobile} columns={1}>
@@ -183,7 +207,7 @@ const Screen = ({ groupId }: Props) => {
                   ).length === 0
                 }
               >
-                Send Payments
+                Send Payments ({totalAmount.toFixed(2)} USDT)
               </Button>
             </Grid.Column>
           </Grid.Row>

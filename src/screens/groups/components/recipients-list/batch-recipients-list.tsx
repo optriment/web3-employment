@@ -1,5 +1,5 @@
 import React from 'react'
-import { Checkbox, Input, Table } from 'semantic-ui-react'
+import { Checkbox, Header, Input, Table } from 'semantic-ui-react'
 import type { RecipientDTO } from '@/lib/dto/RecipientDTO'
 import type { SelectedRecipients } from '@/screens/groups/batch-payment-screen'
 
@@ -21,6 +21,8 @@ const Component = ({
   isSelectAllChecked,
 }: Props) => {
   const handleRowSelect = (id: string) => {
+    const selectedAmount = selectedRecipients[id]?.amount
+    if (selectedAmount === 0) return // Disallow selection if the amount is zero
     onRowSelect(id)
   }
 
@@ -41,9 +43,8 @@ const Component = ({
             <Checkbox checked={isSelectAllChecked} onChange={onSelectAll} />
           </Table.HeaderCell>
           <Table.HeaderCell>Recipient</Table.HeaderCell>
-          <Table.HeaderCell>Comment</Table.HeaderCell>
           <Table.HeaderCell>Wallet</Table.HeaderCell>
-          <Table.HeaderCell collapsing>Amount</Table.HeaderCell>
+          <Table.HeaderCell collapsing>Amount (USDT)</Table.HeaderCell>
         </Table.Row>
       </Table.Header>
       <Table.Body>
@@ -55,8 +56,14 @@ const Component = ({
                 onChange={() => handleRowSelect(recipient.id)}
               />
             </Table.Cell>
-            <Table.Cell>{recipient.display_name}</Table.Cell>
-            <Table.Cell>{recipient.comment}</Table.Cell>
+            <Table.Cell>
+              <Header as="h3">
+                <Header.Content>
+                  {recipient.display_name}
+                  <Header.Subheader>{recipient.comment}</Header.Subheader>
+                </Header.Content>
+              </Header>
+            </Table.Cell>
             <Table.Cell>{recipient.wallet_address}</Table.Cell>
             <Table.Cell textAlign="center">
               {' '}
