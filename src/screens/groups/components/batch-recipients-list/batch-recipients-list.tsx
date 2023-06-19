@@ -1,7 +1,8 @@
 import React from 'react'
-import { Checkbox, Header, Input, Table } from 'semantic-ui-react'
+import { Checkbox, Table } from 'semantic-ui-react'
 import type { RecipientDTO } from '@/lib/dto/RecipientDTO'
 import type { SelectedRecipients } from '@/screens/groups/batch-payment-screen'
+import BatchRecipientInfo from './batch-recipient-info'
 
 interface Props {
   recipients: RecipientDTO[]
@@ -49,36 +50,13 @@ const Component = ({
       </Table.Header>
       <Table.Body>
         {recipients.map((recipient) => (
-          <Table.Row warning={!!recipient.archived_at} key={recipient.id}>
-            <Table.Cell>
-              <Checkbox
-                checked={selectedRecipients[recipient.id]?.selected}
-                onChange={() => handleRowSelect(recipient.id)}
-              />
-            </Table.Cell>
-            <Table.Cell>
-              <Header as="h3">
-                <Header.Content>
-                  {recipient.display_name}
-                  <Header.Subheader>{recipient.comment}</Header.Subheader>
-                </Header.Content>
-              </Header>
-            </Table.Cell>
-            <Table.Cell>{recipient.wallet_address}</Table.Cell>
-            <Table.Cell textAlign="center">
-              <Input
-                type="number"
-                value={
-                  selectedRecipients[recipient.id]?.amount !== undefined
-                    ? selectedRecipients[recipient.id]?.amount
-                    : recipient.salary
-                }
-                onChange={(event) => handleAmountChange(recipient.id, event)}
-                min={0}
-                transparent
-              />
-            </Table.Cell>
-          </Table.Row>
+          <BatchRecipientInfo
+            key={recipient.id}
+            recipient={recipient}
+            selectedRecipients={selectedRecipients}
+            handleRowSelect={handleRowSelect}
+            handleAmountChange={handleAmountChange}
+          />
         ))}
       </Table.Body>
     </Table>
