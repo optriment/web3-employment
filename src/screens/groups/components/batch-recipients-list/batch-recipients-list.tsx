@@ -22,7 +22,7 @@ const Component = ({
 }: Props) => {
   const handleRowSelect = (id: string) => {
     const selectedAmount = selectedRecipients[id]?.amount
-    if (selectedAmount === 0) return // Disallow selection if the amount is zero
+    if (selectedAmount === 0) return
     onRowSelect(id)
   }
 
@@ -66,7 +66,6 @@ const Component = ({
             </Table.Cell>
             <Table.Cell>{recipient.wallet_address}</Table.Cell>
             <Table.Cell textAlign="center">
-              {' '}
               <Input
                 type="number"
                 value={

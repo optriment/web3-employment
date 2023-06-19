@@ -6,10 +6,10 @@ import { Web3Context } from '@/context/web3-context'
 import api, { APIError } from '@/lib/api'
 import type { GroupWithRecipients } from '@/pages/api/groups/[id]'
 import { useIsMobile } from '@/utils/use-is-mobile'
-import { BatchRecipientsList } from './components/recipients-list'
-import { BatchTransactionDialog } from './components/transaction-dialog'
+import { BatchRecipientsList } from './components/batch-recipients-list'
+import { BatchTransactionDialog } from './components/batch-transaction-dialog'
 import { TransactionInfoDialog } from './components/transaction-info-dialog'
-import type { PaymentTransactionData } from './components/transaction-dialog/batch-transaction-dialog'
+import type { BatchPaymentTransactionData } from './components/batch-transaction-dialog'
 
 interface Props {
   groupId: string
@@ -31,7 +31,7 @@ const Screen = ({ groupId }: Props) => {
     useState<SelectedRecipients>({})
   const [transaction, setTransaction] = useState<string>('')
   const [paymentTransactionData, setPaymentTransactionData] =
-    useState<PaymentTransactionData | null>(null)
+    useState<BatchPaymentTransactionData | null>(null)
 
   const [transactionDialogOpen, setTransactionDialogOpen] =
     useState<boolean>(false)
@@ -146,6 +146,7 @@ const Screen = ({ groupId }: Props) => {
   useEffect(() => {
     if (data && data.recipients) {
       const initialSelectedRecipients: SelectedRecipients = {}
+
       data.recipients.forEach((recipient) => {
         initialSelectedRecipients[recipient.id] = {
           selected: false,
@@ -153,6 +154,7 @@ const Screen = ({ groupId }: Props) => {
           address: recipient.wallet_address ? recipient.wallet_address : '',
         }
       })
+
       setSelectedRecipients(initialSelectedRecipients)
     }
   }, [data])
@@ -163,6 +165,7 @@ const Screen = ({ groupId }: Props) => {
         if (recipient.selected) {
           return total + recipient.amount
         }
+
         return total
       },
       0

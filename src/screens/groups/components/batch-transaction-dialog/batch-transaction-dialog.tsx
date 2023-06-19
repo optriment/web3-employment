@@ -4,7 +4,7 @@ import { ErrorMessage, TransactionLoadingMessage } from '@/components'
 import { Web3Context } from '@/context/web3-context'
 import { useBatchTransfer } from '@/utils/batchTransfer'
 
-export interface PaymentTransactionData {
+export interface BatchPaymentTransactionData {
   recipients: string[]
   amounts: number[]
   totalAmount: number
@@ -15,7 +15,7 @@ type Props = {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>
   groupId: string
   groupName: string
-  payment: PaymentTransactionData
+  payment: BatchPaymentTransactionData
   onTransactionSaved: (_tx: string) => void
 }
 
@@ -68,7 +68,7 @@ const Component = ({
       open={open}
       size="tiny"
     >
-      <Modal.Header>Send money to {' ' + groupName}</Modal.Header>
+      <Modal.Header>Send money to {groupName}</Modal.Header>
       <Modal.Content>
         {paymentError && (
           <Message error size="big">
