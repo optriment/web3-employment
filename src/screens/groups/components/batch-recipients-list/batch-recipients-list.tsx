@@ -22,8 +22,7 @@ const Component = ({
   isSelectAllChecked,
 }: Props) => {
   const handleRowSelect = (id: string) => {
-    const selectedAmount = selectedRecipients[id]?.amount
-    if (selectedAmount === 0) return
+    if (selectedRecipients[id]?.amount <= 0) return
     onRowSelect(id)
   }
 
@@ -31,9 +30,8 @@ const Component = ({
     id: string,
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    const amount = event.target.value ? parseFloat(event.target.value) : null
-    const finalAmount = amount !== null ? amount : 0
-    onAmountChange(id, finalAmount)
+    const amount = Math.abs(parseFloat(event.target.value)) || 0
+    onAmountChange(id, amount)
   }
 
   return (
@@ -53,7 +51,7 @@ const Component = ({
           <BatchRecipientInfo
             key={recipient.id}
             recipient={recipient}
-            selectedRecipients={selectedRecipients}
+            selectedRecipient={selectedRecipients[recipient.id]}
             handleRowSelect={handleRowSelect}
             handleAmountChange={handleAmountChange}
           />

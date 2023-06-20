@@ -1,11 +1,10 @@
 import React from 'react'
 import { Header, Table, Checkbox, Input } from 'semantic-ui-react'
 import type { RecipientDTO } from '@/lib/dto/RecipientDTO'
-import type { SelectedRecipients } from '@/screens/groups/batch-payment-screen'
 
 interface Props {
   recipient: RecipientDTO
-  selectedRecipients: SelectedRecipients
+  selectedRecipient: { selected: boolean; amount: number; address: string }
   handleRowSelect: (_id: string) => void
   handleAmountChange: (
     _id: string,
@@ -15,42 +14,40 @@ interface Props {
 
 const BatchRecipientInfo = ({
   recipient,
-  selectedRecipients,
+  selectedRecipient,
   handleRowSelect,
   handleAmountChange,
 }: Props) => (
-  <>
-    <Table.Row warning={!!recipient.archived_at}>
-      <Table.Cell>
-        <Checkbox
-          checked={selectedRecipients[recipient.id]?.selected}
-          onChange={() => handleRowSelect(recipient.id)}
-        />
-      </Table.Cell>
-      <Table.Cell>
-        <Header as="h3">
-          <Header.Content>
-            {recipient.display_name}
-            <Header.Subheader>{recipient.comment}</Header.Subheader>
-          </Header.Content>
-        </Header>
-      </Table.Cell>
-      <Table.Cell>{recipient.wallet_address}</Table.Cell>
-      <Table.Cell textAlign="center">
-        <Input
-          type="number"
-          value={
-            selectedRecipients[recipient.id]?.amount !== undefined
-              ? selectedRecipients[recipient.id]?.amount
-              : recipient.salary
-          }
-          onChange={(event) => handleAmountChange(recipient.id, event)}
-          min={0}
-          transparent
-        />
-      </Table.Cell>
-    </Table.Row>
-  </>
+  <Table.Row warning={!!recipient.archived_at}>
+    <Table.Cell>
+      <Checkbox
+        checked={selectedRecipient?.selected}
+        onChange={() => handleRowSelect(recipient.id)}
+      />
+    </Table.Cell>
+    <Table.Cell>
+      <Header as="h3">
+        <Header.Content>
+          {recipient.display_name}
+          <Header.Subheader>{recipient.comment}</Header.Subheader>
+        </Header.Content>
+      </Header>
+    </Table.Cell>
+    <Table.Cell>{recipient.wallet_address}</Table.Cell>
+    <Table.Cell textAlign="center">
+      <Input
+        type="number"
+        value={
+          selectedRecipient?.amount >= 0
+            ? selectedRecipient?.amount
+            : recipient.salary
+        }
+        onChange={(event) => handleAmountChange(recipient.id, event)}
+        min={0}
+        transparent
+      />
+    </Table.Cell>
+  </Table.Row>
 )
 
 export default BatchRecipientInfo
