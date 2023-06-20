@@ -93,6 +93,7 @@ export const useBatchTransfer = ({
       } catch (e) {
         setError(handleError(e))
         onError()
+        setIsLoading(false)
       }
     }
 
