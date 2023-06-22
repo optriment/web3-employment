@@ -39,12 +39,10 @@ const RecipientInfo = ({
             </Header.Content>
           </Header>
         </Table.Cell>
-        <Table.Cell collapsing>{recipient.wallet_address}</Table.Cell>
-        <Table.Cell collapsing>{recipient.salary}</Table.Cell>
-        <Table.Cell collapsing>
-          {isRecipientArchived ? 'Archived' : 'Active'}
-        </Table.Cell>
-        <Table.Cell collapsing textAlign="right">
+        <Table.Cell>{recipient.wallet_address}</Table.Cell>
+        <Table.Cell>{recipient.salary}</Table.Cell>
+        <Table.Cell>{isRecipientArchived ? 'Archived' : 'Active'}</Table.Cell>
+        <Table.Cell textAlign="right">
           <Button
             positive
             icon="dollar"
