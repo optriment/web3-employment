@@ -31,6 +31,7 @@ const nextConfig = {
     tokenAddress: process.env.TOKEN_ADDRESS,
     tokenDecimals: process.env.TOKEN_DECIMALS,
     tokenSymbol: process.env.TOKEN_SYMBOL,
+    batchContractAddress: process.env.BATCH_CONTRACT_ADDRESS,
   },
 }
 

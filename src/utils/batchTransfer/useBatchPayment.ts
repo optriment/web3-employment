@@ -2,19 +2,11 @@ import { useState, useEffect, useContext } from 'react'
 import { Web3Context } from '@/context/web3-context'
 import { handleError } from '@/lib/errorHandler'
 
-interface TRC20 {
-  balanceOf(_account: string): {
-    call: () => Promise<string>
-  }
-  transfer(
-    _recipient: string,
-    _amount: number
-  ): {
-    send: (_args: unknown) => Promise<string>
-  }
-  approve(
-    _spender: string,
-    _amount: number
+interface BatchPaymentContract {
+  batchTransfer(
+    _totalAmount: number,
+    _recipients: string[],
+    _amounts: number[]
   ): {
     send: (_args: unknown) => Promise<string>
   }
@@ -22,20 +14,21 @@ interface TRC20 {
 
 interface Result {
   isLoading: boolean
-  data: TRC20 | null
+  data: BatchPaymentContract | null
+  batchContractAddress: string
   error: string
 }
 
-export const useToken = (): Result => {
-  const { wallet, tokenAddress } = useContext(Web3Context)
+export const useBatchPayment = (): Result => {
+  const { wallet, batchContractAddress } = useContext(Web3Context)
 
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [error, setError] = useState<string>('')
-  const [data, setData] = useState<TRC20 | null>(null)
+  const [data, setData] = useState<BatchPaymentContract | null>(null)
 
   useEffect(() => {
     if (!wallet) return
-    if (!tokenAddress) return
+    if (!batchContractAddress) return
     if (data) return
 
     const perform = async () => {
@@ -43,9 +36,8 @@ export const useToken = (): Result => {
       setIsLoading(true)
 
       try {
-        const response = await wallet.contract().at(tokenAddress)
-
-        setData(response as TRC20)
+        const response = await wallet.contract().at(batchContractAddress)
+        setData(response as BatchPaymentContract)
       } catch (e) {
         setError(handleError(e))
       } finally {
@@ -54,7 +46,6 @@ export const useToken = (): Result => {
     }
 
     perform()
-  }, [data, wallet, tokenAddress])
-
-  return { isLoading, data, error }
+  }, [data, wallet, batchContractAddress])
+  return { isLoading, data, batchContractAddress, error }
 }

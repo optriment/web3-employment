@@ -20,6 +20,7 @@ declare namespace NodeJS {
     LINKEDIN_CLIENT_ID: string
     LINKEDIN_CLIENT_SECRET: string
 
+    BATCH_CONTRACT_ADDRESS: string
     NEXT_PUBLIC_LINKEDIN_TRACKING_PARTNER_ID: string
   }
 }
