@@ -5,6 +5,7 @@ import {
 import { WalletProvider } from '@tronweb3/tronwallet-adapter-react-hooks'
 import { WalletModalProvider } from '@tronweb3/tronwallet-adapter-react-ui'
 import { TronLinkAdapter } from '@tronweb3/tronwallet-adapters'
+import getConfig from 'next/config'
 import { useRouter } from 'next/router'
 import Script from 'next/script'
 import { SessionProvider } from 'next-auth/react'
@@ -18,9 +19,9 @@ import type { Session } from 'next-auth'
 import 'semantic-ui-css/semantic.min.css'
 import '@tronweb3/tronwallet-adapter-react-ui/style.css'
 
-const GOOGLE_ANALYTICS_ID = process.env.NEXT_PUBLIC_GA_ID
-const LINKEDIN_TRACKING_PARTNER_ID =
-  process.env.NEXT_PUBLIC_LINKEDIN_TRACKING_PARTNER_ID
+const { publicRuntimeConfig } = getConfig()
+
+const { googleAnalyticsID, linkedInTrackingPartnerID } = publicRuntimeConfig
 
 export default function App({
   Component,
@@ -57,7 +58,7 @@ export default function App({
       {/* Google Analytics */}
 
       <Script
-        src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ANALYTICS_ID}`}
+        src={`https://www.googletagmanager.com/gtag/js?id=${googleAnalyticsID}`}
         strategy="afterInteractive"
       />
 
@@ -67,7 +68,7 @@ export default function App({
           function gtag(){window.dataLayer.push(arguments);}
           gtag('js', new Date());
 
-          gtag('config', '${GOOGLE_ANALYTICS_ID}', { page_path: window.location.pathname });
+          gtag('config', '${googleAnalyticsID}', { page_path: window.location.pathname });
         `}
       </Script>
 
@@ -75,7 +76,7 @@ export default function App({
 
       <Script id="linkedin-vars" strategy="afterInteractive">
         {`
-          _linkedin_partner_id = "${LINKEDIN_TRACKING_PARTNER_ID}";
+          _linkedin_partner_id = "${linkedInTrackingPartnerID}";
           window._linkedin_data_partner_ids = window._linkedin_data_partner_ids || [];
           window._linkedin_data_partner_ids.push(_linkedin_partner_id);
         `}

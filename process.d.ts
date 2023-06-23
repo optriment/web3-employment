@@ -1,7 +1,5 @@
 declare namespace NodeJS {
   export interface ProcessEnv {
-    NEXT_PUBLIC_GA_ID: string
-
     NEXTAUTH_URL: string
     NEXTAUTH_SECRET: string
 
@@ -21,6 +19,8 @@ declare namespace NodeJS {
     LINKEDIN_CLIENT_SECRET: string
 
     BATCH_CONTRACT_ADDRESS: string
-    NEXT_PUBLIC_LINKEDIN_TRACKING_PARTNER_ID: string
+
+    GOOGLE_ANALYTICS_ID: string
+    LINKEDIN_TRACKING_PARTNER_ID: string
   }
 }
