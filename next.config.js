@@ -32,6 +32,8 @@ const nextConfig = {
     tokenDecimals: process.env.TOKEN_DECIMALS,
     tokenSymbol: process.env.TOKEN_SYMBOL,
     batchContractAddress: process.env.BATCH_CONTRACT_ADDRESS,
+    googleAnalyticsID: process.env.GOOGLE_ANALYTICS_ID,
+    linkedInTrackingPartnerID: process.env.LINKEDIN_TRACKING_PARTNER_ID,
   },
 }
 
