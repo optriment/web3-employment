@@ -123,7 +123,7 @@ describe(`POST ${ENDPOINT}`, () => {
         it('returns error', async () => {
           const { req, res } = mockPOSTRequestWithQuery(
             { id: group.id },
-            {},
+            { wallet_address: 'TCLJzGqHZFPYMCPAdEUJxGH1wXVkef8aHJ' },
             sessionToken
           )
 
@@ -145,6 +145,7 @@ describe(`POST ${ENDPOINT}`, () => {
             },
             {
               display_name: 1,
+              wallet_address: 'TCLJzGqHZFPYMCPAdEUJxGH1wXVkef8aHJ',
             },
             sessionToken
           )
@@ -169,6 +170,7 @@ describe(`POST ${ENDPOINT}`, () => {
             },
             {
               display_name: ' ',
+              wallet_address: 'TCLJzGqHZFPYMCPAdEUJxGH1wXVkef8aHJ',
             },
             sessionToken
           )
@@ -193,6 +195,7 @@ describe(`POST ${ENDPOINT}`, () => {
             },
             {
               display_name: ' 1 ',
+              wallet_address: 'TCLJzGqHZFPYMCPAdEUJxGH1wXVkef8aHJ',
             },
             sessionToken
           )
@@ -209,6 +212,95 @@ describe(`POST ${ENDPOINT}`, () => {
         })
       })
 
+      describe('when wallet_address is missing', () => {
+        it('returns error', async () => {
+          const { req, res } = mockPOSTRequestWithQuery(
+            { id: group.id },
+            { display_name: ' Homer Jay Simpson ' },
+            sessionToken
+          )
+
+          await handler(req, res)
+
+          expect(res._getStatusCode()).toBe(422)
+          expect(parseJSON(res)).toEqual({
+            success: false,
+            validation_errors: ['Wallet address: Required'],
+          })
+        })
+      })
+
+      describe('when wallet_address is not a string', () => {
+        it('returns error', async () => {
+          const { req, res } = mockPOSTRequestWithQuery(
+            {
+              id: group.id,
+            },
+            {
+              display_name: ' Homer Jay Simpson ',
+              wallet_address: 1,
+            },
+            sessionToken
+          )
+
+          await handler(req, res)
+
+          expect(res._getStatusCode()).toBe(422)
+          expect(parseJSON(res)).toEqual({
+            success: false,
+            validation_errors: [
+              'Wallet address: Expected string, received number',
+            ],
+          })
+        })
+      })
+
+      describe('when wallet_address is an empty string', () => {
+        it('returns error', async () => {
+          const { req, res } = mockPOSTRequestWithQuery(
+            {
+              id: group.id,
+            },
+            {
+              display_name: ' Homer Jay Simpson ',
+              wallet_address: ' ',
+            },
+            sessionToken
+          )
+
+          await handler(req, res)
+
+          expect(res._getStatusCode()).toBe(422)
+          expect(parseJSON(res)).toEqual({
+            success: false,
+            validation_errors: ['Wallet address: Invalid wallet address'],
+          })
+        })
+      })
+
+      describe('when wallet_address is an invalid address', () => {
+        it('returns error', async () => {
+          const { req, res } = mockPOSTRequestWithQuery(
+            {
+              id: group.id,
+            },
+            {
+              display_name: ' Homer Jay Simpson ',
+              wallet_address: '0xabc',
+            },
+            sessionToken
+          )
+
+          await handler(req, res)
+
+          expect(res._getStatusCode()).toBe(422)
+          expect(parseJSON(res)).toEqual({
+            success: false,
+            validation_errors: ['Wallet address: Invalid wallet address'],
+          })
+        })
+      })
+
       describe('when salary is a negative number', () => {
         it('returns error', async () => {
           const { req, res } = mockPOSTRequestWithQuery(
@@ -217,6 +309,7 @@ describe(`POST ${ENDPOINT}`, () => {
             },
             {
               display_name: 'Homer Jay Simpson',
+              wallet_address: 'TCLJzGqHZFPYMCPAdEUJxGH1wXVkef8aHJ',
               salary: -1,
             },
             sessionToken
@@ -242,6 +335,7 @@ describe(`POST ${ENDPOINT}`, () => {
             },
             {
               display_name: 'Homer Jay Simpson',
+              wallet_address: 'TCLJzGqHZFPYMCPAdEUJxGH1wXVkef8aHJ',
               salary: 0.1,
             },
             sessionToken
@@ -278,6 +372,7 @@ describe(`POST ${ENDPOINT}`, () => {
             },
             {
               display_name: ' Homer Jay Simpson ',
+              wallet_address: 'TCLJzGqHZFPYMCPAdEUJxGH1wXVkef8aHJ',
             },
             sessionToken
           )
@@ -292,7 +387,9 @@ describe(`POST ${ENDPOINT}`, () => {
           expect(response.data.id).not.toBeEmpty()
           expect(response.data.display_name).toEqual('Homer Jay Simpson')
           expect(response.data.comment).toBeNull()
-          expect(response.data.wallet_address).toBeNull()
+          expect(response.data.wallet_address).toEqual(
+            'TCLJzGqHZFPYMCPAdEUJxGH1wXVkef8aHJ'
+          )
           expect(response.data.contacts).toBeNull()
           expect(response.data.salary).toEqual(0)
           expect(response.data.created_at).not.toBeEmpty()
@@ -310,7 +407,7 @@ describe(`POST ${ENDPOINT}`, () => {
             {
               display_name: ' Homer Jay Simpson ',
               comment: ' Technical supervisor ',
-              wallet_address: ' 0xDEADBEEF ',
+              wallet_address: 'TCLJzGqHZFPYMCPAdEUJxGH1wXVkef8aHJ',
               contacts: ' Homer_Simpson@AOL.com ',
               salary: 42,
             },
@@ -327,7 +424,9 @@ describe(`POST ${ENDPOINT}`, () => {
           expect(response.data.id).not.toBeEmpty()
           expect(response.data.display_name).toEqual('Homer Jay Simpson')
           expect(response.data.comment).toEqual('Technical supervisor')
-          expect(response.data.wallet_address).toEqual('0xDEADBEEF')
+          expect(response.data.wallet_address).toEqual(
+            'TCLJzGqHZFPYMCPAdEUJxGH1wXVkef8aHJ'
+          )
           expect(response.data.contacts).toEqual('Homer_Simpson@AOL.com')
           expect(response.data.salary).toEqual(42)
           expect(response.data.created_at).not.toBeEmpty()
