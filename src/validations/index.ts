@@ -1,3 +1,4 @@
+import { isAddress } from 'tronweb'
 import { z } from 'zod'
 
 const GroupSchema = z.object({
@@ -11,7 +12,12 @@ export const UpdateGroupSchema = GroupSchema
 const RecipientSchema = z.object({
   display_name: z.string().trim().min(2),
   comment: z.string().trim().optional(),
-  wallet_address: z.string().trim().optional(),
+  wallet_address: z
+    .string()
+    .trim()
+    .refine((value) => isAddress(value), {
+      message: 'Invalid wallet address',
+    }),
   contacts: z.string().trim().optional(),
   salary: z.coerce.number().nonnegative().int().optional(),
 })

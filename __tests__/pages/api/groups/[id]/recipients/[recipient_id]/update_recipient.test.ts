@@ -173,7 +173,7 @@ describe(`PUT ${ENDPOINT}`, () => {
           data: {
             groupId: group.id,
             displayName: 'Homer Jay Simpson',
-            walletAddress: '0xDEADBEEF',
+            walletAddress: 'TCLJzGqHZFPYMCPAdEUJxGH1wXVkef8aHJ',
           },
         })
       })
@@ -182,7 +182,7 @@ describe(`PUT ${ENDPOINT}`, () => {
         it('returns error', async () => {
           const { req, res } = mockPUTRequestWithQuery(
             { id: group.id, recipient_id: recipient.id },
-            {},
+            { wallet_address: recipient.walletAddress },
             sessionToken
           )
 
@@ -200,7 +200,7 @@ describe(`PUT ${ENDPOINT}`, () => {
         it('returns error', async () => {
           const { req, res } = mockPUTRequestWithQuery(
             { id: group.id, recipient_id: recipient.id },
-            { display_name: 1 },
+            { display_name: 1, wallet_address: recipient.walletAddress },
             sessionToken
           )
 
@@ -220,7 +220,7 @@ describe(`PUT ${ENDPOINT}`, () => {
         it('returns error', async () => {
           const { req, res } = mockPUTRequestWithQuery(
             { id: group.id, recipient_id: recipient.id },
-            { display_name: ' ' },
+            { display_name: ' ', wallet_address: recipient.walletAddress },
             sessionToken
           )
 
@@ -240,7 +240,7 @@ describe(`PUT ${ENDPOINT}`, () => {
         it('returns error', async () => {
           const { req, res } = mockPUTRequestWithQuery(
             { id: group.id, recipient_id: recipient.id },
-            { display_name: ' 1 ' },
+            { display_name: ' 1 ', wallet_address: recipient.walletAddress },
             sessionToken
           )
 
@@ -256,12 +256,87 @@ describe(`PUT ${ENDPOINT}`, () => {
         })
       })
 
+      describe('when wallet_address is missing', () => {
+        it('returns error', async () => {
+          const { req, res } = mockPUTRequestWithQuery(
+            { id: group.id, recipient_id: recipient.id },
+            { display_name: recipient.displayName },
+            sessionToken
+          )
+
+          await handler(req, res)
+
+          expect(res._getStatusCode()).toBe(422)
+          expect(parseJSON(res)).toEqual({
+            success: false,
+            validation_errors: ['Wallet address: Required'],
+          })
+        })
+      })
+
+      describe('when wallet_address is not a string', () => {
+        it('returns error', async () => {
+          const { req, res } = mockPUTRequestWithQuery(
+            { id: group.id, recipient_id: recipient.id },
+            { display_name: recipient.displayName, wallet_address: 1 },
+            sessionToken
+          )
+
+          await handler(req, res)
+
+          expect(res._getStatusCode()).toBe(422)
+          expect(parseJSON(res)).toEqual({
+            success: false,
+            validation_errors: [
+              'Wallet address: Expected string, received number',
+            ],
+          })
+        })
+      })
+
+      describe('when wallet_address is an empty string', () => {
+        it('returns error', async () => {
+          const { req, res } = mockPUTRequestWithQuery(
+            { id: group.id, recipient_id: recipient.id },
+            { display_name: recipient.displayName, wallet_address: ' ' },
+            sessionToken
+          )
+
+          await handler(req, res)
+
+          expect(res._getStatusCode()).toBe(422)
+          expect(parseJSON(res)).toEqual({
+            success: false,
+            validation_errors: ['Wallet address: Invalid wallet address'],
+          })
+        })
+      })
+
+      describe('when wallet_address is an invalid address', () => {
+        it('returns error', async () => {
+          const { req, res } = mockPUTRequestWithQuery(
+            { id: group.id, recipient_id: recipient.id },
+            { display_name: recipient.displayName, wallet_address: '0xabc' },
+            sessionToken
+          )
+
+          await handler(req, res)
+
+          expect(res._getStatusCode()).toBe(422)
+          expect(parseJSON(res)).toEqual({
+            success: false,
+            validation_errors: ['Wallet address: Invalid wallet address'],
+          })
+        })
+      })
+
       describe('when salary is a negative number', () => {
         it('returns error', async () => {
           const { req, res } = mockPUTRequestWithQuery(
             { id: group.id, recipient_id: recipient.id },
             {
               display_name: 'Homer Jay Simpson',
+              wallet_address: recipient.walletAddress,
               salary: -1,
             },
             sessionToken
@@ -285,6 +360,7 @@ describe(`PUT ${ENDPOINT}`, () => {
             { id: group.id, recipient_id: recipient.id },
             {
               display_name: 'Homer Jay Simpson',
+              wallet_address: recipient.walletAddress,
               salary: 0.1,
             },
             sessionToken
@@ -317,7 +393,7 @@ describe(`PUT ${ENDPOINT}`, () => {
             groupId: group.id,
             displayName: 'Homer Jay Simpson',
             comment: 'Technical supervisor',
-            walletAddress: '0xDEADBEEF',
+            walletAddress: 'TCLJzGqHZFPYMCPAdEUJxGH1wXVkef8aHJ',
             contacts: 'Homer_Simpson@AOL.com',
             salary: 35,
           },
@@ -330,6 +406,7 @@ describe(`PUT ${ENDPOINT}`, () => {
             { id: group.id, recipient_id: recipient.id },
             {
               display_name: ' Bart ',
+              wallet_address: recipient.walletAddress,
             },
             sessionToken
           )
@@ -344,7 +421,9 @@ describe(`PUT ${ENDPOINT}`, () => {
           expect(response.data.id).not.toBeEmpty()
           expect(response.data.display_name).toEqual('Bart')
           expect(response.data.comment).toEqual('Technical supervisor')
-          expect(response.data.wallet_address).toEqual('0xDEADBEEF')
+          expect(response.data.wallet_address).toEqual(
+            'TCLJzGqHZFPYMCPAdEUJxGH1wXVkef8aHJ'
+          )
           expect(response.data.contacts).toEqual('Homer_Simpson@AOL.com')
           expect(response.data.salary).toEqual(35)
           expect(response.data.created_at).toEqual(
@@ -364,7 +443,7 @@ describe(`PUT ${ENDPOINT}`, () => {
             {
               display_name: ' Bart Simpson ',
               comment: ' Son ',
-              wallet_address: ' 0xBEE ',
+              wallet_address: ' TCLJzGqHZFPYMCPAdEUJxGH1wXVkef8aHJ ',
               contacts: ' Bart@AOL.com ',
               salary: 42,
             },
@@ -381,7 +460,9 @@ describe(`PUT ${ENDPOINT}`, () => {
           expect(response.data.id).not.toBeEmpty()
           expect(response.data.display_name).toEqual('Bart Simpson')
           expect(response.data.comment).toEqual('Son')
-          expect(response.data.wallet_address).toEqual('0xBEE')
+          expect(response.data.wallet_address).toEqual(
+            'TCLJzGqHZFPYMCPAdEUJxGH1wXVkef8aHJ'
+          )
           expect(response.data.contacts).toEqual('Bart@AOL.com')
           expect(response.data.salary).toEqual(42)
           expect(response.data.created_at).toEqual(
