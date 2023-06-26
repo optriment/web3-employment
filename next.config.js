@@ -35,6 +35,17 @@ const nextConfig = {
     googleAnalyticsID: process.env.GOOGLE_ANALYTICS_ID,
     linkedInTrackingPartnerID: process.env.LINKEDIN_TRACKING_PARTNER_ID,
   },
+
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'px.ads.linkedin.com',
+        port: '',
+        pathname: '/collect/**',
+      },
+    ],
+  },
 }
 
 // Make sure adding Sentry options is the last code to run before exporting, to
