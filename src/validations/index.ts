@@ -33,3 +33,9 @@ export const CreatePaymentSchema = z.object({
   transaction_hash: z.string().trim().min(2),
   amount: z.number().int().positive(),
 })
+
+export const CreateBatchPaymentSchema = z.object({
+  transaction_hash: z.string().trim().min(2),
+  recipients_count: z.number().int().positive(),
+  total_amount: z.number().int().positive(),
+})

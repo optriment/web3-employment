@@ -30,7 +30,7 @@ const Component = ({
     id: string,
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    const amount = Math.abs(parseFloat(event.target.value)) || 0
+    const amount = Math.abs(parseInt(event.target.value)) || 0
     onAmountChange(id, amount)
   }
 

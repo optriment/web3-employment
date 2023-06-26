@@ -66,15 +66,16 @@ model VerificationToken {
 }
 
 model Group {
-  id          String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  displayName String      @map(name: "display_name")
-  comment     String?
-  userId      String      @map(name: "user_id") @db.Uuid
-  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  recipients  Recipient[]
-  createdAt   DateTime    @default(now()) @map(name: "created_at")
-  updatedAt   DateTime    @updatedAt @map(name: "updated_at")
-  archivedAt  DateTime?   @map(name: "archived_at")
+  id            String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  displayName   String         @map(name: "display_name")
+  comment       String?
+  userId        String         @map(name: "user_id") @db.Uuid
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  recipients    Recipient[]
+  batchPayments BatchPayment[]
+  createdAt     DateTime       @default(now()) @map(name: "created_at")
+  updatedAt     DateTime       @updatedAt @map(name: "updated_at")
+  archivedAt    DateTime?      @map(name: "archived_at")
 
   @@map("groups")
 }
@@ -106,4 +107,16 @@ model Payment {
   createdAt       DateTime  @default(now()) @map(name: "created_at")
 
   @@map("payments")
+}
+
+model BatchPayment {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  transactionHash String   @unique @map(name: "transaction_hash")
+  recipientsCount Int      @map(name: "recipients_count")
+  totalAmount     Int    @map(name: "total_amount")
+  group           Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  groupId         String   @map(name: "group_id") @db.Uuid
+  createdAt       DateTime @default(now()) @map(name: "created_at")
+
+  @@map("batch_payments")
 }

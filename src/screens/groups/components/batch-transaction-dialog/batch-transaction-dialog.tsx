@@ -2,6 +2,7 @@ import React, { useContext, useState } from 'react'
 import { Modal, Message, Button } from 'semantic-ui-react'
 import { ErrorMessage, TransactionLoadingMessage } from '@/components'
 import { Web3Context } from '@/context/web3-context'
+import api, { APIError } from '@/lib/api'
 import { useBatchTransfer } from '@/utils/batchTransfer'
 
 export interface BatchPaymentTransactionData {
@@ -22,11 +23,15 @@ type Props = {
 const Component = ({
   open,
   setOpen,
+  groupId,
   groupName,
   payment,
   onTransactionSaved,
 }: Props) => {
   const [paymentError, setPaymentError] = useState<string>('')
+  const [paymentValidationErrors, setPaymentValidationErrors] = useState<
+    string[]
+  >([])
   const [enabled, setEnabled] = useState<boolean>(false)
   const [transaction, setTransaction] = useState<string>('')
 
@@ -54,9 +59,25 @@ const Component = ({
     if (!payment) return
 
     try {
+      setPaymentError('')
+      setPaymentValidationErrors([])
+
+      const data = JSON.stringify({
+        transaction_hash: tx,
+        recipients_count: payment.recipients.length,
+        total_amount: payment.totalAmount,
+      })
+
+      await api.addBatchPaymentToGroup(groupId, data)
+
       onTransactionSaved(tx)
     } catch (e) {
-      setPaymentError(`${e}`)
+      if (e instanceof APIError) {
+        setPaymentError(e.message)
+        setPaymentValidationErrors(e.validationErrors)
+      } else {
+        setPaymentError(`${e}`)
+      }
     }
   }
 
@@ -75,6 +96,15 @@ const Component = ({
             <Message.Header content="Unable to create payment" />
             <p>{paymentError}</p>
           </Message>
+        )}
+
+        {paymentValidationErrors.length > 0 && (
+          <Message
+            error
+            size="big"
+            header="Validation errors"
+            list={paymentValidationErrors}
+          />
         )}
 
         {isLoading && <TransactionLoadingMessage />}
