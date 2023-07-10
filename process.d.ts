@@ -20,7 +20,7 @@ declare namespace NodeJS {
 
     BATCH_CONTRACT_ADDRESS: string
 
-    GOOGLE_ANALYTICS_ID: string
-    LINKEDIN_TRACKING_PARTNER_ID: string
+    NEXT_PUBLIC_GOOGLE_ANALYTICS_ID: string
+    NEXT_PUBLIC_LINKEDIN_TRACKING_PARTNER_ID: string
   }
 }
