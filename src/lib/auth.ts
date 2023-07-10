@@ -61,6 +61,9 @@ export const authOptions: NextAuthOptions = {
   debug: process.env.NODE_ENV === 'development',
   secret: process.env.NEXTAUTH_SECRET,
   adapter: PrismaAdapter(prisma),
+  pages: {
+    signIn: '/sign-in',
+  },
   session: {
     strategy: 'database', // Store sessions in the database and store a sessionToken in the cookie for lookups
     maxAge: 30 * 24 * 60 * 60, // 30 days to session expiry
