@@ -17,6 +17,23 @@ export default function SignIn({
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const hasMounted = useHasMounted()
   const [email, setEmail] = useState<string>('')
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+
+  const handleSignInGoogle = () => {
+    signIn('google', { callbackUrl: '/groups' })
+  }
+
+  const handleSignInLinkedIn = () => {
+    signIn('linkedin', { callbackUrl: '/groups' })
+  }
+
+  const handleSignInEmail = async () => {
+    setIsLoading(true)
+
+    await signIn('email', { email, callbackUrl: '/groups' })
+
+    setIsLoading(false)
+  }
 
   return (
     <LandingLayout isMobile={isSsrMobile}>
@@ -35,11 +52,12 @@ export default function SignIn({
           <Button
             fluid
             size="large"
-            onClick={() => signIn('linkedin')}
+            onClick={() => handleSignInLinkedIn()}
             content="Sign in with LinkedIn"
             color="linkedin"
             icon="linkedin"
             labelPosition="left"
+            disabled={isLoading}
           />
         </p>
 
@@ -47,11 +65,12 @@ export default function SignIn({
           <Button
             fluid
             size="large"
-            onClick={() => signIn('google')}
+            onClick={() => handleSignInGoogle()}
             content="Sign in with Google"
             color="blue"
             icon="google"
             labelPosition="left"
+            disabled={isLoading}
           />
         </p>
 
@@ -64,18 +83,23 @@ export default function SignIn({
 
               <Form.Input
                 autoComplete="email"
+                type="email"
+                required={true}
                 label="Email"
                 value={email}
                 size="large"
                 onChange={(e) => setEmail(e.target.value)}
+                disabled={isLoading}
               />
 
               <Form.Button
                 fluid
                 size="large"
                 secondary
-                onClick={() => signIn('email', { email })}
+                onClick={() => handleSignInEmail()}
                 content="Sign in with Email"
+                loading={isLoading}
+                disabled={isLoading}
               />
             </Form>
           </p>
