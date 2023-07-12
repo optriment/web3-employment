@@ -46,7 +46,6 @@ export default function App({
       new TronLinkAdapter({
         openTronLinkAppOnMobile: true,
         openUrlWhenWalletNotFound: true,
-        checkTimeout: 3000,
         dappName: 'OptriTool',
       }),
     ]
