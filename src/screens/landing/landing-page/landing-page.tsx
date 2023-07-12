@@ -52,7 +52,7 @@ const Screen = () => {
           primary
           size="massive"
           as="a"
-          href="/api/auth/signin"
+          href="/sign-in"
           content="Try Now!"
         />
       </Grid.Column>
@@ -142,9 +142,8 @@ const Screen = () => {
         <Container text>
           <p>
             OptriTool is available as a web-based platform accessible to users
-            worldwide. Simply visit{' '}
-            <Link href="/api/auth/signin">our website</Link> to start using
-            OptriTool and take advantage of its powerful features.
+            worldwide. Simply visit <Link href="/sign-in">our website</Link> to
+            start using OptriTool and take advantage of its powerful features.
           </p>
 
           <p>
@@ -209,7 +208,7 @@ const Screen = () => {
 
           <p>
             Simplify your payment workflow and experience the power of{' '}
-            <Link href="/api/auth/signin">OptriTool today!</Link>
+            <Link href="/sign-in">OptriTool today!</Link>
           </p>
         </Container>
       </Grid.Column>
@@ -219,7 +218,7 @@ const Screen = () => {
           primary
           size="massive"
           as="a"
-          href="/api/auth/signin"
+          href="/sign-in"
           content="Try Now!"
         />
       </Grid.Column>
