@@ -1,7 +1,15 @@
+import { useRouter } from 'next/router'
 import { getServerSession } from 'next-auth/next'
 import { signIn, getCsrfToken } from 'next-auth/react'
-import React, { useState } from 'react'
-import { Segment, Form, Button, Divider, Header } from 'semantic-ui-react'
+import React, { useEffect, useState } from 'react'
+import {
+  Segment,
+  Message,
+  Form,
+  Button,
+  Divider,
+  Header,
+} from 'semantic-ui-react'
 import { useHasMounted } from '@/hooks'
 import { LandingLayout } from '@/layouts'
 import { authOptions } from '@/lib/auth'
@@ -15,25 +23,53 @@ export default function SignIn({
   csrfToken,
   isSsrMobile,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  const router = useRouter()
   const hasMounted = useHasMounted()
   const [email, setEmail] = useState<string>('')
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [error, setError] = useState<string>('')
 
-  const handleSignInGoogle = () => {
-    signIn('google', { callbackUrl: '/groups' })
-  }
+  const handleSignIn = async (account: string) => {
+    setIsLoading(true)
 
-  const handleSignInLinkedIn = () => {
-    signIn('linkedin', { callbackUrl: '/groups' })
+    await signIn(account, {
+      callbackUrl: '/groups',
+      redirect: false,
+    })
+
+    setIsLoading(false)
   }
 
   const handleSignInEmail = async () => {
     setIsLoading(true)
 
-    await signIn('email', { email, callbackUrl: '/groups' })
+    const response = await signIn('email', { email, callbackUrl: '/groups' })
+
+    if (response?.error) {
+      setError(response.error)
+    }
 
     setIsLoading(false)
   }
+
+  useEffect(() => {
+    if (router.query.error) {
+      switch (router.query.error) {
+        case 'SessionRequired':
+          break
+
+        case 'OAuthAccountNotLinked': {
+          setError(
+            'To confirm your identity, sign in with the same account you used originally.'
+          )
+          break
+        }
+
+        default:
+          setError('Error: ' + router.query.error)
+      }
+    }
+  }, [router.query.error])
 
   return (
     <LandingLayout isMobile={isSsrMobile}>
@@ -44,15 +80,24 @@ export default function SignIn({
       <Segment
         secondary
         padded={!isSsrMobile ? 'very' : undefined}
-        compact
+        compact={!isSsrMobile}
         textAlign="center"
         style={{ margin: '1em auto' }}
       >
+        {error && (
+          <Message
+            size="large"
+            warning
+            header="Unable to sign in"
+            content={error}
+          />
+        )}
+
         <p>
           <Button
             fluid
             size="large"
-            onClick={() => handleSignInLinkedIn()}
+            onClick={() => handleSignIn('linkedin')}
             content="Sign in with LinkedIn"
             color="linkedin"
             icon="linkedin"
@@ -65,7 +110,7 @@ export default function SignIn({
           <Button
             fluid
             size="large"
-            onClick={() => handleSignInGoogle()}
+            onClick={() => handleSignIn('google')}
             content="Sign in with Google"
             color="blue"
             icon="google"
@@ -77,32 +122,30 @@ export default function SignIn({
         <Divider />
 
         {hasMounted && (
-          <p>
-            <Form size="large">
-              <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
+          <Form size="large">
+            <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
 
-              <Form.Input
-                autoComplete="email"
-                type="email"
-                required={true}
-                label="Email"
-                value={email}
-                size="large"
-                onChange={(e) => setEmail(e.target.value)}
-                disabled={isLoading}
-              />
+            <Form.Input
+              autoComplete="email"
+              type="email"
+              required={true}
+              label="Email"
+              value={email}
+              size="large"
+              onChange={(e) => setEmail(e.target.value)}
+              disabled={isLoading}
+            />
 
-              <Form.Button
-                fluid
-                size="large"
-                secondary
-                onClick={() => handleSignInEmail()}
-                content="Sign in with Email"
-                loading={isLoading}
-                disabled={isLoading}
-              />
-            </Form>
-          </p>
+            <Form.Button
+              fluid
+              size="large"
+              secondary
+              onClick={() => handleSignInEmail()}
+              content="Sign in with Email"
+              loading={isLoading}
+              disabled={isLoading}
+            />
+          </Form>
         )}
       </Segment>
     </LandingLayout>
