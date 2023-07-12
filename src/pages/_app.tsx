@@ -5,11 +5,11 @@ import {
 import { WalletProvider } from '@tronweb3/tronwallet-adapter-react-hooks'
 import { WalletModalProvider } from '@tronweb3/tronwallet-adapter-react-ui'
 import { TronLinkAdapter } from '@tronweb3/tronwallet-adapters'
-import getConfig from 'next/config'
 import { useRouter } from 'next/router'
-import Script from 'next/script'
 import { SessionProvider } from 'next-auth/react'
 import React, { useCallback, useMemo } from 'react'
+import { GoogleAnalyticsTag } from '@/components/GoogleAnalyticsTag'
+import { LinkedInInsightTag } from '@/components/LinkedInInsightTag'
 import Web3Provider from '@/context/web3-context'
 import { IsSsrMobileContext } from '@/utils/use-is-mobile'
 import type { WalletError } from '@tronweb3/tronwallet-abstract-adapter'
@@ -19,9 +19,8 @@ import type { Session } from 'next-auth'
 import 'semantic-ui-css/semantic.min.css'
 import '@tronweb3/tronwallet-adapter-react-ui/style.css'
 
-const { publicRuntimeConfig } = getConfig()
-
-const { googleAnalyticsID, linkedInTrackingPartnerID } = publicRuntimeConfig
+const googleAnalyticsID = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID
+const linkedInPartner = process.env.NEXT_PUBLIC_LINKEDIN_TRACKING_PARTNER_ID
 
 export default function App({
   Component,
@@ -47,7 +46,6 @@ export default function App({
       new TronLinkAdapter({
         openTronLinkAppOnMobile: true,
         openUrlWhenWalletNotFound: true,
-        checkTimeout: 3000,
         dappName: 'OptriTool',
       }),
     ]
@@ -55,45 +53,11 @@ export default function App({
 
   return (
     <>
-      {/* Google Analytics */}
+      {googleAnalyticsID && (
+        <GoogleAnalyticsTag googleAnalyticsID={googleAnalyticsID} />
+      )}
 
-      <Script
-        src={`https://www.googletagmanager.com/gtag/js?id=${googleAnalyticsID}`}
-        strategy="afterInteractive"
-      />
-
-      <Script id="google-analytics" strategy="afterInteractive">
-        {`
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){window.dataLayer.push(arguments);}
-          gtag('js', new Date());
-
-          gtag('config', '${googleAnalyticsID}', { page_path: window.location.pathname });
-        `}
-      </Script>
-
-      {/* LinkedIn */}
-
-      <Script id="linkedin-vars" strategy="afterInteractive">
-        {`
-          _linkedin_partner_id = "${linkedInTrackingPartnerID}";
-          window._linkedin_data_partner_ids = window._linkedin_data_partner_ids || [];
-          window._linkedin_data_partner_ids.push(_linkedin_partner_id);
-        `}
-      </Script>
-
-      <Script id="linkedin-tracking-code" strategy="afterInteractive">
-        {`
-          (function(l) {
-          if (!l){window.lintrk = function(a,b){window.lintrk.q.push([a,b])};
-          window.lintrk.q=[]}
-          var s = document.getElementsByTagName("script")[0];
-          var b = document.createElement("script");
-          b.type = "text/javascript";b.async = true;
-          b.src = "https://snap.licdn.com/li.lms-analytics/insight.min.js";
-          s.parentNode.insertBefore(b, s);})(window.lintrk);
-        `}
-      </Script>
+      {linkedInPartner && <LinkedInInsightTag partnerId={linkedInPartner} />}
 
       <SessionProvider session={session}>
         <WalletProvider onError={onError} adapters={adapters}>
