@@ -154,7 +154,7 @@ const api = {
     return handleResponse<GroupArchiveApiResponse>(response)
   },
 
-  addBatchPaymentToGroup: async (
+  addBatchPayment: async (
     groupId: string,
     body: string
   ): Promise<BatchPaymentCreateApiResponse> => {

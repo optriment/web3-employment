@@ -4,10 +4,10 @@ import { ErrorMessage, TransactionLoadingMessage } from '@/components'
 import { Web3Context } from '@/context/web3-context'
 import api, { APIError } from '@/lib/api'
 import { useBatchTransfer } from '@/utils/batchTransfer'
+import type { BatchPaymentRecipient } from '../../batch-payment-screen'
 
 export interface BatchPaymentTransactionData {
-  recipients: string[]
-  amounts: number[]
+  recipients: BatchPaymentRecipient[]
   totalAmount: number
 }
 
@@ -38,6 +38,14 @@ const Component = ({
   const { tokenSymbol, toTokens, buildTronScanTransactionURL } =
     useContext(Web3Context)
 
+  const recipientAddresses = payment.recipients.map(
+    (recipient) => recipient.wallet_address
+  )
+
+  const recipientAmountsInTokens = payment.recipients.map((recipient) =>
+    toTokens(recipient.payment_amount)
+  )
+
   const { isLoading, error } = useBatchTransfer({
     enabled: enabled,
     onSuccess: (tx: string) => {
@@ -50,8 +58,8 @@ const Component = ({
     },
     data: {
       totalAmount: toTokens(payment.totalAmount),
-      recipients: payment.recipients,
-      amounts: payment.amounts.map((amount) => toTokens(amount)),
+      recipients: recipientAddresses,
+      amounts: recipientAmountsInTokens,
     },
   })
 
@@ -64,11 +72,10 @@ const Component = ({
 
       const data = JSON.stringify({
         transaction_hash: tx,
-        recipients_count: payment.recipients.length,
-        total_amount: payment.totalAmount,
+        recipients: payment.recipients,
       })
 
-      await api.addBatchPaymentToGroup(groupId, data)
+      await api.addBatchPayment(groupId, data)
 
       onTransactionSaved(tx)
     } catch (e) {

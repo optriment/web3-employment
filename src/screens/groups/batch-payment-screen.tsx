@@ -14,6 +14,13 @@ import type { BatchPaymentTransactionData } from './components/batch-transaction
 interface Props {
   groupId: string
 }
+
+export interface BatchPaymentRecipient {
+  recipient_id: string
+  wallet_address: string
+  payment_amount: number
+}
+
 export interface SelectedRecipients {
   [key: string]: { selected: boolean; amount: number; address: string }
 }
@@ -93,23 +100,27 @@ const Screen = ({ groupId }: Props) => {
       .length === data?.recipients.length
 
   const onSendPaymentClicked = () => {
-    const recipients: string[] = []
-    const amounts: number[] = []
+    const recipients: BatchPaymentRecipient[] = []
 
     let totalAmount = 0
-    Object.entries(selectedRecipients).forEach(([, recipient]) => {
-      if (recipient.selected && recipient.amount > 0) {
-        recipients.push(recipient.address)
-        amounts.push(recipient.amount)
-        totalAmount += recipient.amount
-      }
+
+    Object.entries(selectedRecipients).forEach(([id, recipient]) => {
+      if (!recipient.selected || recipient.amount <= 0) return
+
+      recipients.push({
+        recipient_id: id,
+        wallet_address: recipient.address,
+        payment_amount: recipient.amount,
+      })
+
+      totalAmount += recipient.amount
     })
 
     setPaymentTransactionData({
       recipients: recipients,
-      amounts: amounts,
       totalAmount: totalAmount,
     })
+
     setTransactionDialogOpen(true)
   }
 

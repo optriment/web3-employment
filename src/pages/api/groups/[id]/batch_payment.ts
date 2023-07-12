@@ -38,11 +38,7 @@ const handlePOST = async (
   req: NextApiRequest,
   res: NextApiResponse<BatchPaymentCreateApiResponse>
 ) => {
-  const batchPayment = await createBatchPayment(
-    userId,
-    req.query.id as string,
-    req.body
-  )
+  const batchPayment = await createBatchPayment(userId, req.body)
 
   res.status(201)
   res.json({ success: true, data: batchPayment })
