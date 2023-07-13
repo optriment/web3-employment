@@ -86,8 +86,8 @@ const Screen = () => {
 
           <p>
             <b>Registration Options:</b> OptriTool supports registration through
-            Email Magic Link, GitHub, and Google. In the future, we plan to
-            expand registration options to include LinkedIn, Twitter, and
+            Email Magic Link, LinkedIn, and Google. In the future, we plan to
+            expand registration options to include GitHub, Twitter, and
             Facebook, providing even more convenience and accessibility for our
             users.
           </p>
