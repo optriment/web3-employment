@@ -1,30 +1,36 @@
+import { useRouter } from 'next/router'
 import { useSession } from 'next-auth/react'
 import React from 'react'
 import { NotMountedYet } from '@/components'
 import { useHasMounted } from '@/hooks/use-has-mounted'
 import { LandingLayout, UserLayout } from '@/layouts'
-import { LandingPage } from '@/screens/landing'
 import { UserDashboardScreen } from '@/screens/user/dashboard'
 import { getIsSsrMobile } from '@/utils/get-is-ssr-mobile'
 import { useIsMobile } from '@/utils/use-is-mobile'
 import type { GetServerSidePropsContext } from 'next'
 
-const Page: React.FC = () => {
+const Page = () => {
+  const router = useRouter()
   const hasMounted = useHasMounted()
   const isMobile = useIsMobile()
 
-  const { data: session } = useSession()
+  const { data: session, status } = useSession()
 
   if (!hasMounted) {
     return <NotMountedYet />
   }
 
-  if (!session) {
+  if (status === 'loading') {
     return (
       <LandingLayout isMobile={isMobile}>
-        <LandingPage />
+        <p>Loading...</p>
       </LandingLayout>
     )
+  }
+
+  if (!session) {
+    router.push('https://optriment.com/optritool/')
+    return
   }
 
   return (
