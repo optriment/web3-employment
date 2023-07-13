@@ -19,6 +19,7 @@ import type {
   GroupUpdateApiResponse,
   GroupWithRecipientsApiResponse,
 } from '@/pages/api/groups/[id]'
+import type { BatchPaymentCreateApiResponse } from '@/pages/api/groups/[id]/batch_payment'
 import type { GroupPaymentsApiResponse } from '@/pages/api/groups/[id]/payments'
 import type { RecipientCreateApiResponse } from '@/pages/api/groups/[id]/recipients'
 import type {
@@ -151,6 +152,26 @@ const api = {
     const response = await fetch(`${BASE_URL}/groups/${groupId}`, payload)
 
     return handleResponse<GroupArchiveApiResponse>(response)
+  },
+
+  addBatchPayment: async (
+    groupId: string,
+    body: string
+  ): Promise<BatchPaymentCreateApiResponse> => {
+    const payload = {
+      method: 'POST',
+      headers: {
+        ...defaultHeaders,
+      },
+      body,
+    }
+
+    const response = await fetch(
+      `${BASE_URL}/groups/${groupId}/batch_payment`,
+      payload
+    )
+
+    return handleResponse<BatchPaymentCreateApiResponse>(response)
   },
 
   unarchiveGroup: async (

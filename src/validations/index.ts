@@ -33,3 +33,21 @@ export const CreatePaymentSchema = z.object({
   transaction_hash: z.string().trim().min(2),
   amount: z.number().int().positive(),
 })
+
+export const CreateBatchPaymentSchema = z.object({
+  transaction_hash: z.string().trim().min(2),
+  recipients: z
+    .array(
+      z.object({
+        recipient_id: z.string().trim().min(2),
+        payment_amount: z.number().int().positive(),
+        wallet_address: z
+          .string()
+          .trim()
+          .refine((value) => isAddress(value), {
+            message: 'Invalid wallet address',
+          }),
+      })
+    )
+    .nonempty(),
+})
