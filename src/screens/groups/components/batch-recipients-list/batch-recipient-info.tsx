@@ -44,7 +44,6 @@ const BatchRecipientInfo = ({
         }
         onChange={(event) => handleAmountChange(recipient.id, event)}
         min={0}
-        transparent
       />
     </Table.Cell>
   </Table.Row>
