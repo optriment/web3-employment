@@ -77,6 +77,20 @@ export default function SignIn({
 
       <Divider hidden />
 
+      <Segment compact textAlign="center" style={{ margin: '0px auto' }}>
+        <iframe
+          width="700"
+          height="394"
+          src="https://www.youtube.com/embed/5tpQaDKjMpA"
+          title="Introducing OptriTool: Simplifying Payroll Management in Just 2 Minutes!"
+          frameBorder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope"
+          allowFullScreen
+        />
+      </Segment>
+
+      <Divider hidden />
+
       <Segment
         secondary
         padded={!isSsrMobile ? 'very' : undefined}
