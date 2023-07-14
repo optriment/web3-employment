@@ -250,9 +250,19 @@ const Screen = ({ groupId }: Props) => {
                 <Button
                   size={isMobile ? 'medium' : 'large'}
                   icon="plus"
-                  content="Add Recipient"
+                  content="Recipient"
                   primary
                   onClick={() => setNewRecipientDialogOpen(true)}
+                  disabled={!!isGroupArchived}
+                />
+
+                <Button
+                  size={isMobile ? 'medium' : 'large'}
+                  icon="plus"
+                  content="Batch"
+                  primary
+                  as="a"
+                  href={`/groups/${data.group.id}/batch`}
                   disabled={!!isGroupArchived}
                 />
 
