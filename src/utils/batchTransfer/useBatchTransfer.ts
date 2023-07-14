@@ -69,7 +69,7 @@ export const useBatchTransfer = ({
           onSuccess: async () => {
             try {
               const transferTx = await contract
-                .batchTransfer(data.totalAmount, data.recipients, data.amounts)
+                .batchTransfer(data.recipients, data.amounts)
                 .send({
                   gasLimit: 1_000_000_000,
                   callValue: 0,

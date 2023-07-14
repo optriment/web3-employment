@@ -4,7 +4,6 @@ import { handleError } from '@/lib/errorHandler'
 
 interface BatchPaymentContract {
   batchTransfer(
-    _totalAmount: number,
     _recipients: string[],
     _amounts: number[]
   ): {
