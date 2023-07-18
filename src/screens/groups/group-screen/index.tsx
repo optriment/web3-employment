@@ -1,8 +1,8 @@
+import { useWallet } from '@tronweb3/tronwallet-adapter-react-hooks'
 import { useRouter } from 'next/router'
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Button, Message, Grid } from 'semantic-ui-react'
 import { ErrorMessage, LoadingMessage } from '@/components'
-import { Web3Context } from '@/context/web3-context'
 import api, { APIError } from '@/lib/api'
 import type { RecipientDTO } from '@/lib/dto/RecipientDTO'
 import type { GroupWithRecipients } from '@/pages/api/groups/[id]'
@@ -24,7 +24,8 @@ interface Props {
 const Screen = ({ groupId }: Props) => {
   const router = useRouter()
   const isMobile = useIsMobile()
-  const { connected } = useContext(Web3Context)
+
+  const { connected } = useWallet()
 
   const [data, setData] = useState<GroupWithRecipients | undefined>(undefined)
   const [isLoading, setIsLoading] = useState<boolean>(false)

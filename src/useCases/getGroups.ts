@@ -6,6 +6,9 @@ export const getGroups = async (userId: string): Promise<GroupDTO[]> => {
     where: {
       userId: userId,
     },
+    orderBy: {
+      createdAt: 'desc',
+    },
   })
 
   return groups.map((group) => GroupDTO.fromModel(group))

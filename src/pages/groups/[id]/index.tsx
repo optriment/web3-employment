@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router'
 import { useSession } from 'next-auth/react'
 import React from 'react'
-import { NotMountedYet, WalletLoader } from '@/components'
+import { NotMountedYet } from '@/components'
 import { useHasMounted } from '@/hooks'
 import { UserLayout } from '@/layouts'
 import { GroupScreen } from '@/screens/groups'
@@ -24,10 +24,7 @@ const Page: React.FC = () => {
 
   return (
     <UserLayout isMobile={isMobile}>
-      <WalletLoader
-        onDisconnected={() => <GroupScreen groupId={groupId} />}
-        onConnected={() => <GroupScreen groupId={groupId} />}
-      />
+      <GroupScreen groupId={groupId} />
     </UserLayout>
   )
 }

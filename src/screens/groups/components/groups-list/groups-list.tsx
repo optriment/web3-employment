@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import React from 'react'
 import { Button, Table } from 'semantic-ui-react'
 import type { GroupDTO } from '@/lib/dto/GroupDTO'
@@ -20,7 +21,9 @@ const Component = ({ groups, onEditClicked }: Props) => (
     <Table.Body>
       {groups.map((group) => (
         <Table.Row key={group.id} warning={!!group.archived_at}>
-          <Table.Cell>{group.display_name}</Table.Cell>
+          <Table.Cell>
+            <Link href={`/groups/${group.id}`}>{group.display_name}</Link>
+          </Table.Cell>
           <Table.Cell>{group.comment}</Table.Cell>
           <Table.Cell collapsing>
             {group.archived_at ? 'Archived' : 'Active'}

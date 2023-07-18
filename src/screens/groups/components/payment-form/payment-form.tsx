@@ -1,12 +1,15 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import React, { useContext } from 'react'
+import getConfig from 'next/config'
+import React from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { Header, Grid, Button, Form } from 'semantic-ui-react'
-import { Web3Context } from '@/context/web3-context'
 import { useIsMobile } from '@/utils/use-is-mobile'
 import { PaymentSchema } from '@/validations'
 import type { SubmitHandler } from 'react-hook-form'
 import type { z } from 'zod'
+
+const { publicRuntimeConfig } = getConfig()
+const { tokenSymbol } = publicRuntimeConfig
 
 export type ValidationSchema = z.infer<typeof PaymentSchema>
 
@@ -16,7 +19,6 @@ type Props = {
 }
 
 const Component = ({ onFormSubmitted, salary }: Props) => {
-  const { tokenSymbol } = useContext(Web3Context)
   const isMobile = useIsMobile()
 
   const {

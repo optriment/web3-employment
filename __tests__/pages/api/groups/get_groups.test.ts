@@ -94,20 +94,20 @@ describe(`GET ${ENDPOINT}`, () => {
         success: true,
         data: [
           {
-            id: group1.id,
-            display_name: 'Springfield Nuclear Power Plant (Workers)',
-            comment: 'Workers',
-            created_at: group1.createdAt.toISOString(),
-            updated_at: group1.updatedAt.toISOString(),
-            archived_at: null,
-          },
-          {
             id: group2.id,
             display_name: 'Springfield Nuclear Power Plant (Staff)',
             comment: 'Staff',
             created_at: group2.createdAt.toISOString(),
             updated_at: group2.updatedAt.toISOString(),
             archived_at: group2.archivedAt?.toISOString(),
+          },
+          {
+            id: group1.id,
+            display_name: 'Springfield Nuclear Power Plant (Workers)',
+            comment: 'Workers',
+            created_at: group1.createdAt.toISOString(),
+            updated_at: group1.updatedAt.toISOString(),
+            archived_at: null,
           },
         ],
       })
