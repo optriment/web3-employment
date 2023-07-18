@@ -1,10 +1,14 @@
-import React, { useContext, useState } from 'react'
+import getConfig from 'next/config'
+import React, { useState } from 'react'
 import { Modal, Message, Button } from 'semantic-ui-react'
 import { ErrorMessage, TransactionLoadingMessage } from '@/components'
-import { Web3Context } from '@/context/web3-context'
 import api, { APIError } from '@/lib/api'
+import { toTokens, buildTronScanTransactionURL } from '@/lib/blockchain'
 import { useBatchTransfer } from '@/utils/batchTransfer'
 import type { BatchPaymentRecipient } from '../../batch-payment-screen'
+
+const { publicRuntimeConfig } = getConfig()
+const { tokenSymbol } = publicRuntimeConfig
 
 export interface BatchPaymentTransactionData {
   recipients: BatchPaymentRecipient[]
@@ -34,9 +38,6 @@ const Component = ({
   >([])
   const [enabled, setEnabled] = useState<boolean>(false)
   const [transaction, setTransaction] = useState<string>('')
-
-  const { tokenSymbol, toTokens, buildTronScanTransactionURL } =
-    useContext(Web3Context)
 
   const recipientAddresses = payment.recipients.map(
     (recipient) => recipient.wallet_address

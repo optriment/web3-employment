@@ -1,8 +1,12 @@
+import { useWallet } from '@tronweb3/tronwallet-adapter-react-hooks'
+import getConfig from 'next/config'
 import { useState, useEffect } from 'react'
 import { handleError } from '@/lib/errorHandler'
+import { tronWeb } from '@/lib/tronweb'
 import { pollBlockchainResponse } from '@/utils/poll-blockchain-response'
-import { useToken } from '../tokens/useToken'
-import { useBatchPayment } from './useBatchPayment'
+
+const { publicRuntimeConfig } = getConfig()
+const { batchContractAddress, tokenAddress } = publicRuntimeConfig
 
 interface Result {
   isLoading: boolean
@@ -26,61 +30,103 @@ export const useBatchTransfer = ({
   onError,
   data,
 }: Props): Result => {
-  const {
-    data: contract,
-    isLoading: contractLoading,
-    batchContractAddress: batchContractAddress,
-    error: contractError,
-  } = useBatchPayment()
-  const { data: token } = useToken()
+  const { connected, signTransaction, address } = useWallet()
 
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [error, setError] = useState<string>('')
 
   useEffect(() => {
-    if (contractError) {
-      setError(contractError)
-    }
-  }, [contractError])
-
-  useEffect(() => {
-    if (!token) return
-    if (!contract) return
     if (!enabled) return
+    if (!connected) return
+    if (!address || address === '') return
     if (isLoading) return
 
     const perform = async () => {
-      setError('')
-      setIsLoading(true)
-
       try {
-        const approveTx = await token
-          .approve(batchContractAddress, data.totalAmount)
-          .send({
-            gasLimit: 1_000_000_000,
-            callValue: 0,
-          })
+        setError('')
+        setIsLoading(true)
+
+        const parameter = [
+          {
+            type: 'address',
+            value: batchContractAddress,
+          },
+          {
+            type: 'uint256',
+            // NOTE: Here we have already tokenized value
+            value: data.totalAmount,
+          },
+        ]
+
+        const options = {
+          feeLimit: 1_000_000_000,
+          callValue: 0,
+        }
+
+        const transaction =
+          await tronWeb.transactionBuilder.triggerSmartContract(
+            tokenAddress,
+            'approve(address,uint256)',
+            options,
+            parameter,
+            address
+          )
+
+        const signedTransaction = await signTransaction(transaction.transaction)
+
+        const approveTx = await tronWeb.trx.sendRawTransaction(
+          signedTransaction
+        )
+
         await pollBlockchainResponse({
-          tx: approveTx,
+          tx: approveTx.transaction.txID,
           onError: (e: string) => {
             setError(e)
             onError()
           },
           onSuccess: async () => {
             try {
-              const transferTx = await contract
-                .batchTransfer(data.recipients, data.amounts)
-                .send({
-                  gasLimit: 1_000_000_000,
-                  callValue: 0,
-                })
+              const parameter = [
+                {
+                  type: 'address[]',
+                  value: data.recipients,
+                },
+                {
+                  type: 'uint256[]',
+                  // NOTE: Here we have already tokenized values
+                  value: data.amounts,
+                },
+              ]
+
+              const options = {
+                feeLimit: 1_000_000_000,
+                callValue: 0,
+              }
+
+              const transaction =
+                await tronWeb.transactionBuilder.triggerSmartContract(
+                  batchContractAddress,
+                  'batchTransfer(address[],uint256[])',
+                  options,
+                  parameter,
+                  address
+                )
+
+              const signedTransaction = await signTransaction(
+                transaction.transaction
+              )
+
+              const batchTransferTx = await tronWeb.trx.sendRawTransaction(
+                signedTransaction
+              )
+
               await pollBlockchainResponse({
-                tx: transferTx,
+                tx: batchTransferTx.transaction.txID,
                 onError: (e: string) => {
                   setError(e)
                   onError()
                 },
-                onSuccess: () => onSuccess(transferTx),
+                onSuccess: () => onSuccess(batchTransferTx.transaction.txID),
               })
             } catch (e) {
               setError(handleError(e))
@@ -100,14 +146,14 @@ export const useBatchTransfer = ({
     perform()
   }, [
     isLoading,
-    contract,
+    address,
+    connected,
+    signTransaction,
     enabled,
     data,
     onSuccess,
     onError,
-    token,
-    batchContractAddress,
   ])
 
-  return { isLoading: contractLoading || isLoading, error }
+  return { isLoading: isLoading, error }
 }

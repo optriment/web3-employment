@@ -1,6 +1,6 @@
-import React, { useState, useContext, useEffect } from 'react'
+import { useWallet } from '@tronweb3/tronwallet-adapter-react-hooks'
+import React, { useState, useEffect } from 'react'
 import { Header, Table, Button } from 'semantic-ui-react'
-import { Web3Context } from '@/context/web3-context'
 import type { RecipientDTO } from '@/lib/dto/RecipientDTO'
 
 interface Props {
@@ -20,7 +20,7 @@ const RecipientInfo = ({
   onArchiveClicked,
   onUnarchiveClicked,
 }: Props) => {
-  const { connected } = useContext(Web3Context)
+  const { connected } = useWallet()
 
   const [isRecipientArchived, setIsRecipientArchived] = useState<boolean>(false)
 

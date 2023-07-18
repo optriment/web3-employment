@@ -1,7 +1,12 @@
+import { useWallet } from '@tronweb3/tronwallet-adapter-react-hooks'
+import getConfig from 'next/config'
 import { useState, useEffect } from 'react'
 import { handleError } from '@/lib/errorHandler'
+import { tronWeb } from '@/lib/tronweb'
 import { pollBlockchainResponse } from '@/utils/poll-blockchain-response'
-import { useToken } from './useToken'
+
+const { publicRuntimeConfig } = getConfig()
+const { tokenAddress } = publicRuntimeConfig
 
 interface Result {
   isLoading: boolean
@@ -24,20 +29,15 @@ export const useTokenTransfer = ({
   onError,
   data,
 }: Props): Result => {
-  const { data: token, isLoading: tokenLoading, error: tokenError } = useToken()
+  const { connected, signTransaction, address } = useWallet()
 
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [error, setError] = useState<string>('')
 
   useEffect(() => {
-    if (tokenError) {
-      setError(tokenError)
-    }
-  }, [tokenError])
-
-  useEffect(() => {
-    if (!token) return
     if (!enabled) return
+    if (!connected) return
+    if (!address || address === '') return
     if (isLoading) return
 
     const perform = async () => {
@@ -45,18 +45,45 @@ export const useTokenTransfer = ({
       setIsLoading(true)
 
       try {
-        const tx = await token.transfer(data.recipient, data.amount).send({
+        const parameter = [
+          {
+            type: 'address',
+            value: data.recipient,
+          },
+          {
+            type: 'uint256',
+            // NOTE: Here we have already tokenized value
+            value: data.amount,
+          },
+        ]
+
+        const options = {
           feeLimit: 1_000_000_000,
           callValue: 0,
-        })
+        }
+
+        const transaction =
+          await tronWeb.transactionBuilder.triggerSmartContract(
+            tokenAddress,
+            'transfer(address,uint256)',
+            options,
+            parameter,
+            address
+          )
+
+        const signedTransaction = await signTransaction(transaction.transaction)
+
+        const transferTx = await tronWeb.trx.sendRawTransaction(
+          signedTransaction
+        )
 
         await pollBlockchainResponse({
-          tx: tx,
+          tx: transferTx.transaction.txID,
           onError: (e: string) => {
             setError(e)
             onError()
           },
-          onSuccess: () => onSuccess(tx),
+          onSuccess: () => onSuccess(transferTx.transaction.txID),
         })
       } catch (e) {
         setError(handleError(e))
@@ -67,7 +94,16 @@ export const useTokenTransfer = ({
     }
 
     perform()
-  }, [isLoading, token, enabled, data, onSuccess, onError])
+  }, [
+    connected,
+    isLoading,
+    enabled,
+    data,
+    onSuccess,
+    onError,
+    address,
+    signTransaction,
+  ])
 
-  return { isLoading: tokenLoading || isLoading, error }
+  return { isLoading: isLoading, error }
 }

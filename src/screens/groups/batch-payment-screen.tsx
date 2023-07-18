@@ -1,8 +1,9 @@
+import { useWallet } from '@tronweb3/tronwallet-adapter-react-hooks'
+import getConfig from 'next/config'
 import Link from 'next/link'
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Message, Grid, Header, Button } from 'semantic-ui-react'
 import { ErrorMessage, LoadingMessage } from '@/components'
-import { Web3Context } from '@/context/web3-context'
 import api, { APIError } from '@/lib/api'
 import type { GroupWithRecipients } from '@/pages/api/groups/[id]'
 import { useIsMobile } from '@/utils/use-is-mobile'
@@ -10,6 +11,9 @@ import { BatchRecipientsList } from './components/batch-recipients-list'
 import { BatchTransactionDialog } from './components/batch-transaction-dialog'
 import { TransactionInfoDialog } from './components/transaction-info-dialog'
 import type { BatchPaymentTransactionData } from './components/batch-transaction-dialog'
+
+const { publicRuntimeConfig } = getConfig()
+const { tokenSymbol } = publicRuntimeConfig
 
 interface Props {
   groupId: string
@@ -27,7 +31,7 @@ export interface SelectedRecipients {
 
 const Screen = ({ groupId }: Props) => {
   const isMobile = useIsMobile()
-  const { connected } = useContext(Web3Context)
+  const { connected } = useWallet()
 
   const [data, setData] = useState<GroupWithRecipients | undefined>(undefined)
   const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -213,7 +217,7 @@ const Screen = ({ groupId }: Props) => {
             <Grid.Column width={8} textAlign={isMobile ? 'center' : 'right'}>
               <Button
                 positive
-                size="medium"
+                size="large"
                 onClick={onSendPaymentClicked}
                 disabled={
                   Object.values(selectedRecipients).filter(
@@ -221,7 +225,7 @@ const Screen = ({ groupId }: Props) => {
                   ).length === 0
                 }
               >
-                Send Payments ({totalAmount.toFixed(2)} USDT)
+                Send Payments ({totalAmount.toFixed(2)} {tokenSymbol})
               </Button>
             </Grid.Column>
           </Grid.Row>

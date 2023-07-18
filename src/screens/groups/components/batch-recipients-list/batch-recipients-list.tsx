@@ -1,8 +1,12 @@
+import getConfig from 'next/config'
 import React from 'react'
 import { Checkbox, Table } from 'semantic-ui-react'
 import type { RecipientDTO } from '@/lib/dto/RecipientDTO'
 import type { SelectedRecipients } from '@/screens/groups/batch-payment-screen'
 import BatchRecipientInfo from './batch-recipient-info'
+
+const { publicRuntimeConfig } = getConfig()
+const { tokenSymbol } = publicRuntimeConfig
 
 interface Props {
   recipients: RecipientDTO[]
@@ -43,7 +47,7 @@ const Component = ({
           </Table.HeaderCell>
           <Table.HeaderCell>Recipient</Table.HeaderCell>
           <Table.HeaderCell>Wallet</Table.HeaderCell>
-          <Table.HeaderCell collapsing>Amount (USDT)</Table.HeaderCell>
+          <Table.HeaderCell collapsing>Amount ({tokenSymbol})</Table.HeaderCell>
         </Table.Row>
       </Table.Header>
       <Table.Body>

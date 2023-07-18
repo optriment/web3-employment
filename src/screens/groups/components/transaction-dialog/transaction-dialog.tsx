@@ -1,10 +1,15 @@
-import React, { useContext, useState } from 'react'
+import { useWallet } from '@tronweb3/tronwallet-adapter-react-hooks'
+import getConfig from 'next/config'
+import React, { useState } from 'react'
 import { Modal, Message, Button } from 'semantic-ui-react'
 import { ErrorMessage, TransactionLoadingMessage } from '@/components'
-import { Web3Context } from '@/context/web3-context'
 import api, { APIError } from '@/lib/api'
+import { toTokens, buildTronScanTransactionURL } from '@/lib/blockchain'
 import type { RecipientDTO } from '@/lib/dto/RecipientDTO'
 import { useTokenTransfer } from '@/utils/tokens'
+
+const { publicRuntimeConfig } = getConfig()
+const { tokenSymbol } = publicRuntimeConfig
 
 export interface PaymentTransactionData {
   recipient: string
@@ -28,15 +33,14 @@ const Component = ({
   payment,
   onTransactionSaved,
 }: Props) => {
+  const { connected, address } = useWallet()
+
   const [paymentError, setPaymentError] = useState<string>('')
   const [paymentValidationErrors, setPaymentValidationErrors] = useState<
     string[]
   >([])
 
-  const { tokenSymbol, toTokens, buildTronScanTransactionURL } =
-    useContext(Web3Context)
   const [enabled, setEnabled] = useState<boolean>(false)
-
   const [transaction, setTransaction] = useState<string>('')
 
   const { isLoading, error } = useTokenTransfer({
@@ -133,7 +137,7 @@ const Component = ({
             size="huge"
             onClick={() => setEnabled(true)}
             content={`Transfer ${payment.amount} ${tokenSymbol}`}
-            disabled={isLoading}
+            disabled={!connected || !address || address === '' || isLoading}
           />
         )}
       </Modal.Content>

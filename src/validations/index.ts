@@ -1,5 +1,5 @@
-import { isAddress } from 'tronweb'
 import { z } from 'zod'
+import { tronWeb } from '@/lib/tronweb'
 
 const GroupSchema = z.object({
   display_name: z.string().trim().min(2),
@@ -15,7 +15,7 @@ const RecipientSchema = z.object({
   wallet_address: z
     .string()
     .trim()
-    .refine((value) => isAddress(value), {
+    .refine((value) => tronWeb.isAddress(value), {
       message: 'Invalid wallet address',
     }),
   contacts: z.string().trim().optional(),
@@ -44,7 +44,7 @@ export const CreateBatchPaymentSchema = z.object({
         wallet_address: z
           .string()
           .trim()
-          .refine((value) => isAddress(value), {
+          .refine((value) => tronWeb.isAddress(value), {
             message: 'Invalid wallet address',
           }),
       })
