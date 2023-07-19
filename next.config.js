@@ -32,6 +32,7 @@ const nextConfig = {
     tokenDecimals: process.env.TOKEN_DECIMALS,
     tokenSymbol: process.env.TOKEN_SYMBOL,
     batchContractAddress: process.env.BATCH_CONTRACT_ADDRESS,
+    walletConnectProjectId: process.env.WALLET_CONNECT_PROJECT_ID,
   },
 
   images: {

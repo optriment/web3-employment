@@ -26,7 +26,7 @@ import 'semantic-ui-css/semantic.min.css'
 import '@tronweb3/tronwallet-adapter-react-ui/style.css'
 
 const { publicRuntimeConfig } = getConfig()
-const { tronNetwork } = publicRuntimeConfig
+const { tronNetwork, walletConnectProjectId } = publicRuntimeConfig
 
 const googleAnalyticsID = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID
 const linkedInPartner = process.env.NEXT_PUBLIC_LINKEDIN_TRACKING_PARTNER_ID
@@ -68,7 +68,7 @@ export default function App({
       options: {
         relayUrl: 'wss://relay.walletconnect.com',
         // example walletconnect app project ID
-        // projectId: 'project-id',
+        projectId: walletConnectProjectId,
         metadata: {
           name: 'OptriTool',
           description: 'OptriTool',
