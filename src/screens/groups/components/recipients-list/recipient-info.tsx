@@ -34,7 +34,9 @@ const RecipientInfo = ({
         <Table.Cell>
           <Header as="h3">
             <Header.Content>
-              {recipient.display_name}
+              {recipient.display_name.length > 20
+                ? recipient.display_name.substring(0, 20) + '...'
+                : recipient.display_name}
               <Header.Subheader>{recipient.comment}</Header.Subheader>
             </Header.Content>
           </Header>

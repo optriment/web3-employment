@@ -20,6 +20,7 @@ import type {
   GroupWithRecipientsApiResponse,
 } from '@/pages/api/groups/[id]'
 import type { BatchPaymentCreateApiResponse } from '@/pages/api/groups/[id]/batch_payment'
+import type { ImportRecipientsApiResponse } from '@/pages/api/groups/[id]/import'
 import type { GroupPaymentsApiResponse } from '@/pages/api/groups/[id]/payments'
 import type { RecipientCreateApiResponse } from '@/pages/api/groups/[id]/recipients'
 import type {
@@ -190,6 +191,26 @@ const api = {
     )
 
     return handleResponse<GroupUnarchiveApiResponse>(response)
+  },
+
+  importRecipients: async (
+    groupId: string,
+    body: File
+  ): Promise<ImportRecipientsApiResponse> => {
+    const payload = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'text/csv',
+      },
+      body,
+    }
+
+    const response = await fetch(
+      `${BASE_URL}/groups/${groupId}/import`,
+      payload
+    )
+
+    return handleResponse<ImportRecipientsApiResponse>(response)
   },
 
   addRecipientToGroup: async (
