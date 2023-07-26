@@ -78,12 +78,12 @@ export const useTokenTransfer = ({
         )
 
         await pollBlockchainResponse({
-          tx: transferTx.transaction.txID,
+          tx: transferTx.txid,
           onError: (e: string) => {
             setError(e)
             onError()
           },
-          onSuccess: () => onSuccess(transferTx.transaction.txID),
+          onSuccess: () => onSuccess(transferTx.txid),
         })
       } catch (e) {
         setError(handleError(e))
