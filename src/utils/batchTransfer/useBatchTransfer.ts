@@ -79,7 +79,7 @@ export const useBatchTransfer = ({
         )
 
         await pollBlockchainResponse({
-          tx: approveTx.transaction.txID,
+          tx: approveTx.txid,
           onError: (e: string) => {
             setError(e)
             onError()
@@ -121,12 +121,12 @@ export const useBatchTransfer = ({
               )
 
               await pollBlockchainResponse({
-                tx: batchTransferTx.transaction.txID,
+                tx: batchTransferTx.txid,
                 onError: (e: string) => {
                   setError(e)
                   onError()
                 },
-                onSuccess: () => onSuccess(batchTransferTx.transaction.txID),
+                onSuccess: () => onSuccess(batchTransferTx.txid),
               })
             } catch (e) {
               setError(handleError(e))
