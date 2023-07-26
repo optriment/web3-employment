@@ -51,7 +51,7 @@ const Screen = () => {
   }, [])
 
   return (
-    <Grid container={!isMobile} columns={1}>
+    <Grid container={!isMobile} columns={1} stackable>
       {isLoading && (
         <Grid.Column>
           <LoadingMessage content="Loading account" />
