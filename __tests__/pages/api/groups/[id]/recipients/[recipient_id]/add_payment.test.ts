@@ -275,7 +275,7 @@ describe(`POST ${ENDPOINT}`, () => {
           expect(result.validation_errors).toHaveLength(2)
           expect(result.validation_errors).toIncludeAllMembers([
             'Transaction hash: Required',
-            'Amount: Required',
+            'Amount: Expected number, received nan',
           ])
         })
       })
@@ -344,7 +344,7 @@ describe(`POST ${ENDPOINT}`, () => {
         it('returns error', async () => {
           const { req, res } = mockPOSTRequestWithQuery(
             { id: group.id, recipient_id: recipient.id },
-            { transaction_hash: '123', amount: '1' },
+            { transaction_hash: '123', amount: '1,1' },
             sessionToken
           )
 
@@ -353,7 +353,7 @@ describe(`POST ${ENDPOINT}`, () => {
           expect(res._getStatusCode()).toBe(422)
           expect(parseJSON(res)).toEqual({
             success: false,
-            validation_errors: ['Amount: Expected number, received string'],
+            validation_errors: ['Amount: Expected number, received nan'],
           })
         })
       })
@@ -394,11 +394,11 @@ describe(`POST ${ENDPOINT}`, () => {
         })
       })
 
-      describe('when amount is a float number', () => {
+      describe('when amount is a floating number', () => {
         it('returns error', async () => {
           const { req, res } = mockPOSTRequestWithQuery(
             { id: group.id, recipient_id: recipient.id },
-            { transaction_hash: '123', amount: 0.01 },
+            { transaction_hash: '123', amount: 0.1 },
             sessionToken
           )
 
@@ -436,7 +436,10 @@ describe(`POST ${ENDPOINT}`, () => {
       it('returns valid response', async () => {
         const { req, res } = mockPOSTRequestWithQuery(
           { id: group.id, recipient_id: recipient.id },
-          { transaction_hash: '123', amount: 42 },
+          {
+            transaction_hash: '123',
+            amount: 10000 * 10 ** 6, // 10K USDT
+          },
           sessionToken
         )
 
@@ -451,7 +454,7 @@ describe(`POST ${ENDPOINT}`, () => {
         expect(response.data.recipient_id).toEqual(recipient.id)
         expect(response.data.wallet_address).toEqual('0xDEADBEEF')
         expect(response.data.transaction_hash).toEqual('123')
-        expect(response.data.amount).toEqual(42)
+        expect(response.data.amount).toEqual(10000000000)
         expect(response.data.created_at).not.toBeEmpty()
       })
     })

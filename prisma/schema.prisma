@@ -86,7 +86,7 @@ model Recipient {
   comment       String?
   contacts      String?
   walletAddress String?   @map(name: "wallet_address")
-  salary        Int?      @default(0)
+  salary        BigInt?   @default(0)
   group         Group     @relation(fields: [groupId], references: [id], onDelete: Cascade)
   groupId       String    @map(name: "group_id") @db.Uuid
   payments      Payment[]
@@ -100,7 +100,7 @@ model Recipient {
 model Payment {
   id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   transactionHash String    @unique @map(name: "transaction_hash")
-  amount          Int
+  amount          BigInt
   walletAddress   String    @map(name: "wallet_address")
   recipient       Recipient @relation(fields: [recipientId], references: [id], onDelete: Cascade)
   recipientId     String    @map(name: "recipient_id") @db.Uuid
@@ -125,7 +125,7 @@ model BatchPaymentRecipient {
   recipientId    String       @map(name: "recipient_id") @db.Uuid
   batchPaymentId String       @map(name: "batch_payment_id") @db.Uuid
   batchPayment   BatchPayment @relation(fields: [batchPaymentId], references: [id], onDelete: Cascade)
-  amount         Int
+  amount         BigInt
   walletAddress  String       @map(name: "wallet_address")
   createdAt      DateTime     @default(now()) @map(name: "created_at")
 

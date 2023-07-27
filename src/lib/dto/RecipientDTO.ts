@@ -40,7 +40,9 @@ export class RecipientDTO {
       model.comment,
       model.contacts,
       model.walletAddress,
-      model.salary,
+      typeof model.salary === 'bigint'
+        ? +model.salary.toString()
+        : model.salary,
       model.createdAt,
       model.updatedAt,
       model.archivedAt

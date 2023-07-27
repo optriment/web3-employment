@@ -31,7 +31,9 @@ const Component = ({ recipient, open, setOpen, onPaymentPrepared }: Props) => {
       <Modal.Content>
         <PaymentForm
           onFormSubmitted={onPaymentFormSubmitted}
-          salary={recipient.salary || 0}
+          salary={
+            recipient && recipient.salary ? +recipient.salary.toString() : 0
+          }
         />
       </Modal.Content>
     </Modal>

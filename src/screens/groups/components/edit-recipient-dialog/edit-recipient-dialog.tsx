@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Modal, Message } from 'semantic-ui-react'
 import api, { APIError } from '@/lib/api'
+import { toTokens } from '@/lib/blockchain'
 import type { RecipientDTO } from '@/lib/dto/RecipientDTO'
 import { RecipientForm } from '../recipient-form'
 import type { ValidationSchema } from '../recipient-form'
@@ -32,7 +33,14 @@ const Component = ({
       setUpdateError('')
       setUpdateValidationErrors([])
 
-      await api.updateRecipient(groupId, recipient.id, JSON.stringify(data))
+      await api.updateRecipient(
+        groupId,
+        recipient.id,
+        JSON.stringify({
+          ...data,
+          salary: data?.salary ? toTokens(data.salary) : data.salary,
+        })
+      )
 
       onRecipientUpdated()
     } catch (e) {

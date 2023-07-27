@@ -5,6 +5,7 @@ import React, { useState, useEffect } from 'react'
 import { Message, Grid, Header, Button } from 'semantic-ui-react'
 import { ErrorMessage, LoadingMessage } from '@/components'
 import api, { APIError } from '@/lib/api'
+import { fromTokens } from '@/lib/blockchain'
 import type { GroupWithRecipients } from '@/pages/api/groups/[id]'
 import { useIsMobile } from '@/utils/use-is-mobile'
 import { BatchRecipientsList } from './components/batch-recipients-list'
@@ -163,9 +164,14 @@ const Screen = ({ groupId }: Props) => {
       const initialSelectedRecipients: SelectedRecipients = {}
 
       data.recipients.forEach((recipient) => {
+        const amount =
+          recipient.salary && recipient.salary > 0
+            ? fromTokens(recipient.salary)
+            : 0
+
         initialSelectedRecipients[recipient.id] = {
           selected: false,
-          amount: recipient.salary ? recipient.salary : 0,
+          amount: amount,
           address: recipient.wallet_address ? recipient.wallet_address : '',
         }
       })
@@ -225,7 +231,7 @@ const Screen = ({ groupId }: Props) => {
                   ).length === 0
                 }
               >
-                Send Payments ({totalAmount.toFixed(2)} {tokenSymbol})
+                Send Payments ({totalAmount.toFixed(6)} {tokenSymbol})
               </Button>
             </Grid.Column>
           </Grid.Row>

@@ -168,7 +168,7 @@ describe(`GET ${ENDPOINT}`, () => {
               groupId: group.id,
               displayName: 'Lenny Leonard',
               walletAddress: '0xBEE',
-              salary: 42,
+              salary: 42000000,
               archivedAt: new Date(),
             },
           })
@@ -220,7 +220,7 @@ describe(`GET ${ENDPOINT}`, () => {
               'Lenny Leonard'
             )
             expect(result.data.recipients[1].comment).toBeNull()
-            expect(result.data.recipients[1].salary).toEqual(42)
+            expect(result.data.recipients[1].salary).toEqual(42000000)
             expect(result.data.recipients[1].archived_at).not.toBeNull()
           })
         })
@@ -236,7 +236,7 @@ describe(`GET ${ENDPOINT}`, () => {
                 recipientId: firstRecipient.id,
                 transactionHash: '0xHASH1',
                 walletAddress: '0xDEADBEEF',
-                amount: 35,
+                amount: 35000000,
               },
             })
 
@@ -245,7 +245,7 @@ describe(`GET ${ENDPOINT}`, () => {
                 recipientId: secondRecipient.id,
                 transactionHash: '0xHASH2',
                 walletAddress: '0xBEE',
-                amount: 42,
+                amount: 42000000,
               },
             })
 
@@ -254,7 +254,7 @@ describe(`GET ${ENDPOINT}`, () => {
                 recipientId: firstRecipient.id,
                 transactionHash: '0xHASH3',
                 walletAddress: '0xDEADBEEF',
-                amount: 1,
+                amount: 1000000,
               },
             })
 
@@ -305,7 +305,7 @@ describe(`GET ${ENDPOINT}`, () => {
               'Lenny Leonard'
             )
             expect(result.data.recipients[1].comment).toBeNull()
-            expect(result.data.recipients[1].salary).toEqual(42)
+            expect(result.data.recipients[1].salary).toEqual(42000000)
             expect(result.data.recipients[1].archived_at).not.toBeNull()
 
             expect(result.data.payments).toHaveLength(3)
@@ -315,7 +315,7 @@ describe(`GET ${ENDPOINT}`, () => {
             )
             expect(result.data.payments[0].transaction_hash).toEqual('0xHASH3')
             expect(result.data.payments[0].wallet_address).toEqual('0xDEADBEEF')
-            expect(result.data.payments[0].amount).toEqual(1)
+            expect(result.data.payments[0].amount).toEqual(1000000)
             expect(result.data.payments[0].recipient_id).toEqual(
               firstRecipient.id
             )
@@ -326,7 +326,7 @@ describe(`GET ${ENDPOINT}`, () => {
             )
             expect(result.data.payments[1].transaction_hash).toEqual('0xHASH2')
             expect(result.data.payments[1].wallet_address).toEqual('0xBEE')
-            expect(result.data.payments[1].amount).toEqual(42)
+            expect(result.data.payments[1].amount).toEqual(42000000)
             expect(result.data.payments[1].recipient_id).toEqual(
               secondRecipient.id
             )
@@ -337,7 +337,7 @@ describe(`GET ${ENDPOINT}`, () => {
             )
             expect(result.data.payments[2].transaction_hash).toEqual('0xHASH1')
             expect(result.data.payments[2].wallet_address).toEqual('0xDEADBEEF')
-            expect(result.data.payments[2].amount).toEqual(35)
+            expect(result.data.payments[2].amount).toEqual(35000000)
             expect(result.data.payments[2].recipient_id).toEqual(
               firstRecipient.id
             )

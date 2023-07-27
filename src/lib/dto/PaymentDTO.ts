@@ -28,7 +28,7 @@ export class PaymentDTO {
     return new PaymentDTO(
       model.id,
       model.transactionHash,
-      model.amount,
+      +model.amount.toString(),
       model.walletAddress,
       model.recipientId,
       model.createdAt

@@ -354,7 +354,7 @@ describe(`PUT ${ENDPOINT}`, () => {
         })
       })
 
-      describe('when salary is a float number', () => {
+      describe('when salary is a floating number', () => {
         it('returns error', async () => {
           const { req, res } = mockPUTRequestWithQuery(
             { id: group.id, recipient_id: recipient.id },
@@ -395,7 +395,7 @@ describe(`PUT ${ENDPOINT}`, () => {
             comment: 'Technical supervisor',
             walletAddress: 'TCLJzGqHZFPYMCPAdEUJxGH1wXVkef8aHJ',
             contacts: 'Homer_Simpson@AOL.com',
-            salary: 35,
+            salary: 35000000,
           },
         })
       })
@@ -425,7 +425,7 @@ describe(`PUT ${ENDPOINT}`, () => {
             'TCLJzGqHZFPYMCPAdEUJxGH1wXVkef8aHJ'
           )
           expect(response.data.contacts).toEqual('Homer_Simpson@AOL.com')
-          expect(response.data.salary).toEqual(35)
+          expect(response.data.salary).toEqual(35000000)
           expect(response.data.created_at).toEqual(
             recipient.createdAt.toISOString()
           )
@@ -445,7 +445,7 @@ describe(`PUT ${ENDPOINT}`, () => {
               comment: ' Son ',
               wallet_address: ' TCLJzGqHZFPYMCPAdEUJxGH1wXVkef8aHJ ',
               contacts: ' Bart@AOL.com ',
-              salary: 42,
+              salary: 10000 * 10 ** 6, // 10K USDT
             },
             sessionToken
           )
@@ -464,7 +464,7 @@ describe(`PUT ${ENDPOINT}`, () => {
             'TCLJzGqHZFPYMCPAdEUJxGH1wXVkef8aHJ'
           )
           expect(response.data.contacts).toEqual('Bart@AOL.com')
-          expect(response.data.salary).toEqual(42)
+          expect(response.data.salary).toEqual(10000000000)
           expect(response.data.created_at).toEqual(
             recipient.createdAt.toISOString()
           )
@@ -472,6 +472,21 @@ describe(`PUT ${ENDPOINT}`, () => {
             +recipient.updatedAt
           )
           expect(response.data.archived_at).toBeNull()
+
+          const updatedRecipient = await prisma.recipient.findUnique({
+            where: {
+              id: recipient.id,
+            },
+          })
+
+          expect(updatedRecipient).not.toBeNull()
+          expect(updatedRecipient?.displayName).toEqual('Bart Simpson')
+          expect(updatedRecipient?.comment).toEqual('Son')
+          expect(updatedRecipient?.walletAddress).toEqual(
+            'TCLJzGqHZFPYMCPAdEUJxGH1wXVkef8aHJ'
+          )
+          expect(updatedRecipient?.contacts).toEqual('Bart@AOL.com')
+          expect(updatedRecipient?.salary).toEqual(BigInt(10000 * 10 ** 6))
         })
       })
     })

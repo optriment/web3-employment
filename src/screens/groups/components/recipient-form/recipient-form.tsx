@@ -2,13 +2,14 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import React from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { Header, Grid, Button, Form } from 'semantic-ui-react'
+import { fromTokens } from '@/lib/blockchain'
 import type { RecipientDTO } from '@/lib/dto/RecipientDTO'
 import { useIsMobile } from '@/utils/use-is-mobile'
-import { CreateRecipientSchema } from '@/validations'
+import { RecipientSchema } from '@/validations'
 import type { SubmitHandler } from 'react-hook-form'
 import type { z } from 'zod'
 
-export type ValidationSchema = z.infer<typeof CreateRecipientSchema>
+export type ValidationSchema = z.infer<typeof RecipientSchema>
 
 type Props = {
   onFormSubmitted: (_: ValidationSchema) => void
@@ -24,13 +25,16 @@ const Component = ({ onFormSubmitted, recipient }: Props) => {
     formState: { errors, isSubmitting, isValid },
   } = useForm<ValidationSchema>({
     mode: 'onChange',
-    resolver: zodResolver(CreateRecipientSchema),
+    resolver: zodResolver(RecipientSchema),
     defaultValues: {
       display_name: recipient?.display_name || '',
       comment: recipient?.comment || '',
       wallet_address: recipient?.wallet_address || '',
       contacts: recipient?.contacts || '',
-      salary: recipient?.salary || 0,
+      salary:
+        recipient && recipient.salary
+          ? fromTokens(+recipient.salary.toString())
+          : 0,
     },
   })
 
@@ -90,7 +94,7 @@ const Component = ({ onFormSubmitted, recipient }: Props) => {
                 error={errors.salary && errors.salary?.message}
                 placeholder=""
                 autoComplete="off"
-                maxLength={6}
+                maxLength={13}
               />
             )}
           />

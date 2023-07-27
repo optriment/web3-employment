@@ -30,14 +30,6 @@ const Component = ({
     onRowSelect(id)
   }
 
-  const handleAmountChange = (
-    id: string,
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const amount = Math.abs(parseInt(event.target.value)) || 0
-    onAmountChange(id, amount)
-  }
-
   return (
     <Table size="large" celled>
       <Table.Header>
@@ -57,7 +49,9 @@ const Component = ({
             recipient={recipient}
             selectedRecipient={selectedRecipients[recipient.id]}
             handleRowSelect={handleRowSelect}
-            handleAmountChange={handleAmountChange}
+            handleAmountChange={(id: string, amount: number) =>
+              onAmountChange(id, amount)
+            }
           />
         ))}
       </Table.Body>
