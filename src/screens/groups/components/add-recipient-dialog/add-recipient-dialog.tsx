@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Modal, Message } from 'semantic-ui-react'
 import api, { APIError } from '@/lib/api'
+import { toTokens } from '@/lib/blockchain'
 import { RecipientForm } from '../recipient-form'
 import type { ValidationSchema } from '../recipient-form'
 
@@ -22,7 +23,13 @@ const Component = ({ groupId, open, setOpen, onRecipientCreated }: Props) => {
       setCreateError('')
       setCreateValidationErrors([])
 
-      await api.addRecipientToGroup(groupId, JSON.stringify(data))
+      await api.addRecipientToGroup(
+        groupId,
+        JSON.stringify({
+          ...data,
+          salary: data?.salary ? toTokens(data.salary) : data.salary,
+        })
+      )
 
       onRecipientCreated()
     } catch (e) {

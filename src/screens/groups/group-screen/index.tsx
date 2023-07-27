@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react'
 import { Button, Message, Grid } from 'semantic-ui-react'
 import { ErrorMessage, LoadingMessage } from '@/components'
 import api, { APIError } from '@/lib/api'
+import { toTokens } from '@/lib/blockchain'
 import type { RecipientDTO } from '@/lib/dto/RecipientDTO'
 import type { GroupWithRecipients } from '@/pages/api/groups/[id]'
 import { useIsMobile } from '@/utils/use-is-mobile'
@@ -93,7 +94,7 @@ const Screen = ({ groupId }: Props) => {
     if (!recipientToPay?.wallet_address) return
 
     setPaymentTransactionData({
-      amount: data.amount,
+      amount: toTokens(data.amount),
       recipient: recipientToPay.wallet_address,
     })
     setPreparePaymentDialogOpen(false)

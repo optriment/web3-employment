@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import { Modal, Message, Button } from 'semantic-ui-react'
 import { ErrorMessage, TransactionLoadingMessage } from '@/components'
 import api, { APIError } from '@/lib/api'
-import { toTokens, buildTronScanTransactionURL } from '@/lib/blockchain'
+import { buildTronScanTransactionURL, fromTokens } from '@/lib/blockchain'
 import type { RecipientDTO } from '@/lib/dto/RecipientDTO'
 import { useTokenTransfer } from '@/utils/tokens'
 
@@ -13,6 +13,7 @@ const { tokenSymbol } = publicRuntimeConfig
 
 export interface PaymentTransactionData {
   recipient: string
+  // In tokens
   amount: number
 }
 
@@ -47,7 +48,7 @@ const Component = ({
     enabled: enabled,
     data: {
       recipient: payment.recipient,
-      amount: toTokens(payment.amount),
+      amount: payment.amount,
     },
     onSuccess: (tx: string) => {
       setTransaction(tx)
@@ -136,7 +137,7 @@ const Component = ({
             primary
             size="huge"
             onClick={() => setEnabled(true)}
-            content={`Transfer ${payment.amount} ${tokenSymbol}`}
+            content={`Transfer ${fromTokens(payment.amount)} ${tokenSymbol}`}
             disabled={!connected || !address || address === '' || isLoading}
           />
         )}

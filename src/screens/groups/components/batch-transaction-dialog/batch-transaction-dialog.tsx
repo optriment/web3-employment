@@ -73,7 +73,10 @@ const Component = ({
 
       const data = JSON.stringify({
         transaction_hash: tx,
-        recipients: payment.recipients,
+        recipients: payment.recipients.map((recipient) => ({
+          ...recipient,
+          payment_amount: toTokens(recipient.payment_amount),
+        })),
       })
 
       await api.addBatchPayment(groupId, data)

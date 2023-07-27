@@ -1,6 +1,7 @@
 import { useWallet } from '@tronweb3/tronwallet-adapter-react-hooks'
 import React, { useState, useEffect } from 'react'
 import { Header, Table, Button } from 'semantic-ui-react'
+import { fromTokens } from '@/lib/blockchain'
 import type { RecipientDTO } from '@/lib/dto/RecipientDTO'
 
 interface Props {
@@ -28,6 +29,8 @@ const RecipientInfo = ({
     setIsRecipientArchived(!!recipient.archived_at)
   }, [recipient.archived_at])
 
+  const salary = recipient.salary ? fromTokens(+recipient.salary.toString()) : 0
+
   return (
     <>
       <Table.Row warning={!!recipient.archived_at}>
@@ -40,7 +43,7 @@ const RecipientInfo = ({
           </Header>
         </Table.Cell>
         <Table.Cell>{recipient.wallet_address}</Table.Cell>
-        <Table.Cell>{recipient.salary}</Table.Cell>
+        <Table.Cell>{salary}</Table.Cell>
         <Table.Cell>{isRecipientArchived ? 'Archived' : 'Active'}</Table.Cell>
         <Table.Cell textAlign="right">
           <Button

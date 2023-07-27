@@ -3,6 +3,7 @@ import getConfig from 'next/config'
 import React from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { Header, Grid, Button, Form } from 'semantic-ui-react'
+import { fromTokens } from '@/lib/blockchain'
 import { useIsMobile } from '@/utils/use-is-mobile'
 import { PaymentSchema } from '@/validations'
 import type { SubmitHandler } from 'react-hook-form'
@@ -29,7 +30,7 @@ const Component = ({ onFormSubmitted, salary }: Props) => {
     mode: 'onChange',
     resolver: zodResolver(PaymentSchema),
     defaultValues: {
-      amount: salary,
+      amount: fromTokens(salary),
     },
   })
 
@@ -53,7 +54,7 @@ const Component = ({ onFormSubmitted, salary }: Props) => {
                 error={errors.amount && errors.amount?.message}
                 placeholder=""
                 autoComplete="off"
-                maxLength={6}
+                maxLength={13}
               />
             )}
           />

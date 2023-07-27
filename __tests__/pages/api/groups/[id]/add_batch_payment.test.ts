@@ -293,7 +293,7 @@ describe(`POST ${ENDPOINT}`, () => {
               recipients: [
                 {
                   recipient_id: recipientId,
-                  payment_amount: '1',
+                  payment_amount: '1,1',
                   wallet_address: 'TCLJzGqHZFPYMCPAdEUJxGH1wXVkef8aHJ',
                 },
               ],
@@ -306,7 +306,7 @@ describe(`POST ${ENDPOINT}`, () => {
           expect(res._getStatusCode()).toBe(422)
           expect(parseJSON(res)).toEqual({
             success: false,
-            validation_errors: ['Recipients: Expected number, received string'],
+            validation_errors: ['Recipients: Expected number, received nan'],
           })
         })
       })
@@ -359,32 +359,6 @@ describe(`POST ${ENDPOINT}`, () => {
           expect(parseJSON(res)).toEqual({
             success: false,
             validation_errors: ['Recipients: Number must be greater than 0'],
-          })
-        })
-      })
-
-      describe('when payment_amount is float number', () => {
-        it('returns error', async () => {
-          const { req, res } = mockPOSTRequest(
-            {
-              transaction_hash: '123',
-              recipients: [
-                {
-                  recipient_id: recipientId,
-                  payment_amount: 1.1,
-                  wallet_address: 'TCLJzGqHZFPYMCPAdEUJxGH1wXVkef8aHJ',
-                },
-              ],
-            },
-            sessionToken
-          )
-
-          await handler(req, res)
-
-          expect(res._getStatusCode()).toBe(422)
-          expect(parseJSON(res)).toEqual({
-            success: false,
-            validation_errors: ['Recipients: Expected integer, received float'],
           })
         })
       })
@@ -443,33 +417,56 @@ describe(`POST ${ENDPOINT}`, () => {
     })
 
     describe('when everything is good', () => {
-      it('returns valid response', async () => {
-        const { req, res } = mockPOSTRequest(
-          {
-            transaction_hash: '123',
-            recipients: [
-              {
-                recipient_id: recipientId,
-                payment_amount: 1,
-                wallet_address: 'TCLJzGqHZFPYMCPAdEUJxGH1wXVkef8aHJ',
-              },
-            ],
-          },
-          sessionToken
-        )
+      describe('when payment amount is an integer', () => {
+        it('returns valid response', async () => {
+          const { req, res } = mockPOSTRequest(
+            {
+              transaction_hash: '123',
+              recipients: [
+                {
+                  recipient_id: recipientId,
+                  payment_amount: 10000 * 10 ** 6, // 10K USDT
+                  wallet_address: 'TCLJzGqHZFPYMCPAdEUJxGH1wXVkef8aHJ',
+                },
+              ],
+            },
+            sessionToken
+          )
 
-        await handler(req, res)
+          await handler(req, res)
 
-        expect(res._getStatusCode()).toBe(201)
+          expect(res._getStatusCode()).toBe(201)
 
-        const response = parseJSON(res)
+          const response = parseJSON(res)
 
-        expect(response.success).toBeTruthy()
-        expect(response.data).not.toBeEmptyObject()
-        expect(response.data.id).not.toBeEmpty()
-        expect(response.data.transaction_hash).toEqual('123')
-        expect(response.data.user_id).not.toBeEmpty()
-        expect(response.data.created_at).not.toBeEmpty()
+          expect(response.success).toBeTruthy()
+          expect(response.data).not.toBeEmptyObject()
+          expect(response.data.id).not.toBeEmpty()
+          expect(response.data.transaction_hash).toEqual('123')
+          expect(response.data.user_id).not.toBeEmpty()
+          expect(response.data.created_at).not.toBeEmpty()
+
+          const batchPayment = await prisma.batchPayment.findUnique({
+            where: {
+              id: response.data.id,
+            },
+            include: {
+              batchRecipients: true,
+            },
+          })
+
+          expect(batchPayment?.transactionHash).toEqual('123')
+          expect(batchPayment?.batchRecipients).toHaveLength(1)
+          expect(batchPayment?.batchRecipients[0].recipientId).toEqual(
+            recipientId
+          )
+          expect(batchPayment?.batchRecipients[0].walletAddress).toEqual(
+            'TCLJzGqHZFPYMCPAdEUJxGH1wXVkef8aHJ'
+          )
+          expect(batchPayment?.batchRecipients[0].amount).toEqual(
+            BigInt('10000000000')
+          )
+        })
       })
     })
   })

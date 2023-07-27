@@ -193,7 +193,7 @@ describe(`GET ${ENDPOINT}`, () => {
             data: {
               groupId: group.id,
               displayName: 'Lenny Leonard',
-              salary: 42,
+              salary: 42000000,
               archivedAt: new Date(),
             },
           })
@@ -243,7 +243,7 @@ describe(`GET ${ENDPOINT}`, () => {
             'Lenny Leonard'
           )
           expect(result.data.recipients[1].comment).toBeNull()
-          expect(result.data.recipients[1].salary).toEqual(42)
+          expect(result.data.recipients[1].salary).toEqual(42000000)
           expect(result.data.recipients[1].archived_at).not.toBeNull()
         })
       })

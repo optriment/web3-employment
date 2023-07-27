@@ -327,7 +327,7 @@ describe(`POST ${ENDPOINT}`, () => {
         })
       })
 
-      describe('when salary is a float number', () => {
+      describe('when salary is not a valid number', () => {
         it('returns error', async () => {
           const { req, res } = mockPOSTRequestWithQuery(
             {
@@ -336,7 +336,31 @@ describe(`POST ${ENDPOINT}`, () => {
             {
               display_name: 'Homer Jay Simpson',
               wallet_address: 'TCLJzGqHZFPYMCPAdEUJxGH1wXVkef8aHJ',
-              salary: 0.1,
+              salary: '1,1',
+            },
+            sessionToken
+          )
+
+          await handler(req, res)
+
+          expect(res._getStatusCode()).toBe(422)
+          expect(parseJSON(res)).toEqual({
+            success: false,
+            validation_errors: ['Salary: Expected number, received nan'],
+          })
+        })
+      })
+
+      describe('when salary is a floating number', () => {
+        it('returns error', async () => {
+          const { req, res } = mockPOSTRequestWithQuery(
+            {
+              id: group.id,
+            },
+            {
+              display_name: 'Homer Jay Simpson',
+              wallet_address: 'TCLJzGqHZFPYMCPAdEUJxGH1wXVkef8aHJ',
+              salary: '0.1',
             },
             sessionToken
           )
@@ -409,7 +433,7 @@ describe(`POST ${ENDPOINT}`, () => {
               comment: ' Technical supervisor ',
               wallet_address: 'TCLJzGqHZFPYMCPAdEUJxGH1wXVkef8aHJ',
               contacts: ' Homer_Simpson@AOL.com ',
-              salary: 42,
+              salary: 10000 * 10 ** 6, // 10K USDT
             },
             sessionToken
           )
@@ -428,10 +452,24 @@ describe(`POST ${ENDPOINT}`, () => {
             'TCLJzGqHZFPYMCPAdEUJxGH1wXVkef8aHJ'
           )
           expect(response.data.contacts).toEqual('Homer_Simpson@AOL.com')
-          expect(response.data.salary).toEqual(42)
+          expect(response.data.salary).toEqual(10000000000)
           expect(response.data.created_at).not.toBeEmpty()
           expect(response.data.updated_at).not.toBeEmpty()
           expect(response.data.archived_at).toBeNull()
+
+          const createdRecipient = await prisma.recipient.findUnique({
+            where: {
+              id: response.data.id,
+            },
+          })
+
+          expect(createdRecipient?.displayName).toEqual('Homer Jay Simpson')
+          expect(createdRecipient?.comment).toEqual('Technical supervisor')
+          expect(createdRecipient?.walletAddress).toEqual(
+            'TCLJzGqHZFPYMCPAdEUJxGH1wXVkef8aHJ'
+          )
+          expect(createdRecipient?.contacts).toEqual('Homer_Simpson@AOL.com')
+          expect(createdRecipient?.salary).toEqual(BigInt('10000000000'))
         })
       })
     })

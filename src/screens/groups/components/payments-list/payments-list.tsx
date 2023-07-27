@@ -1,6 +1,6 @@
 import React from 'react'
-import { Button, Header, Table } from 'semantic-ui-react'
-import { buildTronScanTransactionURL } from '@/lib/blockchain'
+import { Table } from 'semantic-ui-react'
+import PaymentInfo from './payment-info'
 
 export interface GroupPayment {
   payment_id: string
@@ -27,34 +27,10 @@ const Component = ({ groupPayments }: Props) => (
     </Table.Header>
     <Table.Body>
       {groupPayments.map((groupPayment) => (
-        <Table.Row key={groupPayment.payment_id}>
-          <Table.Cell>
-            <Header as="h3">
-              <Header.Content>
-                {groupPayment.recipient_display_name}
-                <Header.Subheader>
-                  Wallet: {groupPayment.payment_recipient}
-                </Header.Subheader>
-              </Header.Content>
-            </Header>
-          </Table.Cell>
-          <Table.Cell collapsing>{groupPayment.payment_amount}</Table.Cell>
-          <Table.Cell collapsing>
-            {new Date(groupPayment.payment_date).toLocaleString()}
-          </Table.Cell>
-          <Table.Cell collapsing textAlign="right">
-            <Button
-              as="a"
-              href={`${buildTronScanTransactionURL(
-                groupPayment.payment_transaction
-              )}`}
-              target="_blank"
-              rel="noopener nofollow noreferrer"
-              icon="eye"
-              title="Transaction"
-            />
-          </Table.Cell>
-        </Table.Row>
+        <PaymentInfo
+          key={groupPayment.payment_id}
+          groupPayment={groupPayment}
+        />
       ))}
     </Table.Body>
   </Table>
