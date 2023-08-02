@@ -5,9 +5,6 @@ import {
 import { WalletProvider } from '@tronweb3/tronwallet-adapter-react-hooks'
 import { WalletModalProvider } from '@tronweb3/tronwallet-adapter-react-ui'
 import {
-  BitKeepAdapter,
-  OkxWalletAdapter,
-  TokenPocketAdapter,
   TronLinkAdapter,
   WalletConnectAdapter,
 } from '@tronweb3/tronwallet-adapters'
@@ -58,16 +55,10 @@ export default function App({
       dappIcon: 'https://optritool.optriment.com/apple-touch-icon.png',
     })
 
-    const okxwalletAdapter = new OkxWalletAdapter()
-    const bitKeepAdapter = new BitKeepAdapter()
-    const tokenPocketAdapter = new TokenPocketAdapter()
-
-    // NOTE: Wasn't tested yet
     const walletConnectAdapter = new WalletConnectAdapter({
       network: tronNetwork === 'mainnet' ? 'Mainnet' : 'Shasta',
       options: {
         relayUrl: 'wss://relay.walletconnect.com',
-        // example walletconnect app project ID
         projectId: walletConnectProjectId,
         metadata: {
           name: 'OptriTool',
@@ -78,13 +69,7 @@ export default function App({
       },
     })
 
-    return [
-      tronLinkAdapter,
-      okxwalletAdapter,
-      bitKeepAdapter,
-      tokenPocketAdapter,
-      walletConnectAdapter,
-    ]
+    return [tronLinkAdapter, walletConnectAdapter]
   }, [])
 
   return (
