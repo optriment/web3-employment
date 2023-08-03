@@ -9,6 +9,22 @@ describe('toTokens', () => {
     })
   })
 
+  describe('with 0.000099', () => {
+    it('returns converted value', () => {
+      const result = toTokens(0.000099)
+
+      expect(result).toEqual(99)
+    })
+  })
+
+  describe('with 0.009900', () => {
+    it('returns converted value', () => {
+      const result = toTokens(0.0099)
+
+      expect(result).toEqual(9900)
+    })
+  })
+
   describe('with 2.31', () => {
     it('returns converted value', () => {
       const result = toTokens(2.31)

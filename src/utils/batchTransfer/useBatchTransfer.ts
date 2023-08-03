@@ -10,6 +10,7 @@ const { batchContractAddress, tokenAddress } = publicRuntimeConfig
 
 interface Result {
   isLoading: boolean
+  status: string
   error: string
 }
 
@@ -32,6 +33,7 @@ export const useBatchTransfer = ({
 }: Props): Result => {
   const { connected, signTransaction, address } = useWallet()
 
+  const [status, setStatus] = useState<string>('idle')
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [error, setError] = useState<string>('')
 
@@ -44,6 +46,7 @@ export const useBatchTransfer = ({
     const perform = async () => {
       try {
         setError('')
+        setStatus('loading_approval')
         setIsLoading(true)
 
         const parameter = [
@@ -72,11 +75,15 @@ export const useBatchTransfer = ({
             address
           )
 
+        setStatus('signing_approval')
+
         const signedTransaction = await signTransaction(transaction.transaction)
 
         const approveTx = await tronWeb.trx.sendRawTransaction(
           signedTransaction
         )
+
+        setStatus('polling_approval')
 
         await pollBlockchainResponse({
           tx: approveTx.txid,
@@ -86,6 +93,8 @@ export const useBatchTransfer = ({
           },
           onSuccess: async () => {
             try {
+              setStatus('loading_batch_payment')
+
               const parameter = [
                 {
                   type: 'address[]',
@@ -112,6 +121,8 @@ export const useBatchTransfer = ({
                   address
                 )
 
+              setStatus('signing_batch_payment')
+
               const signedTransaction = await signTransaction(
                 transaction.transaction
               )
@@ -120,31 +131,38 @@ export const useBatchTransfer = ({
                 signedTransaction
               )
 
+              setStatus('polling_batch_payment')
+
               await pollBlockchainResponse({
                 tx: batchTransferTx.txid,
                 onError: (e: string) => {
                   setError(e)
                   onError()
                 },
-                onSuccess: () => onSuccess(batchTransferTx.txid),
+                onSuccess: () => {
+                  onSuccess(batchTransferTx.txid)
+                },
               })
             } catch (e) {
               setError(handleError(e))
               onError()
             } finally {
               setIsLoading(false)
+              setStatus('idle')
             }
           },
         })
       } catch (e) {
+        setIsLoading(false)
+        setStatus('idle')
         setError(handleError(e))
         onError()
-        setIsLoading(false)
       }
     }
 
     perform()
   }, [
+    status,
     isLoading,
     address,
     connected,
@@ -155,5 +173,5 @@ export const useBatchTransfer = ({
     onError,
   ])
 
-  return { isLoading: isLoading, error }
+  return { isLoading: isLoading, status, error }
 }
