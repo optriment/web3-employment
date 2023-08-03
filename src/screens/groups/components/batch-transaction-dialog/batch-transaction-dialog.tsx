@@ -1,7 +1,12 @@
 import getConfig from 'next/config'
 import React, { useState } from 'react'
 import { Modal, Message, Button } from 'semantic-ui-react'
-import { ErrorMessage, TransactionLoadingMessage } from '@/components'
+import {
+  ErrorMessage,
+  InitializingTransactionMessage,
+  TransactionLoadingMessage,
+  WaitingForSigningTransactionMessage,
+} from '@/components'
 import api, { APIError } from '@/lib/api'
 import { toTokens, buildTronScanTransactionURL } from '@/lib/blockchain'
 import { useBatchTransfer } from '@/utils/batchTransfer'
@@ -47,7 +52,7 @@ const Component = ({
     toTokens(recipient.payment_amount)
   )
 
-  const { isLoading, error } = useBatchTransfer({
+  const { isLoading, status, error } = useBatchTransfer({
     enabled: enabled,
     onSuccess: (tx: string) => {
       setTransaction(tx)
@@ -118,7 +123,28 @@ const Component = ({
           />
         )}
 
-        {isLoading && <TransactionLoadingMessage />}
+        {isLoading && (
+          <>
+            {(status === 'loading_approval' ||
+              status === 'loading_batch_payment') && (
+              <InitializingTransactionMessage />
+            )}
+
+            {status === 'signing_approval' && (
+              <WaitingForSigningTransactionMessage header="Signing token approval transaction" />
+            )}
+
+            {status === 'signing_batch_payment' && (
+              <WaitingForSigningTransactionMessage header="Signing batch payment transaction" />
+            )}
+
+            {status === 'polling_approval' && <TransactionLoadingMessage />}
+
+            {status === 'polling_batch_payment' && (
+              <TransactionLoadingMessage />
+            )}
+          </>
+        )}
 
         {error && (
           <ErrorMessage header="Unable to process a payment" content={error} />

@@ -1,3 +1,4 @@
+import { BigNumber } from 'ethers'
 import getConfig from 'next/config'
 import { tronWeb } from '@/lib/tronweb'
 
@@ -15,19 +16,9 @@ export const buildTronScanTransactionURL = (tx: string) => {
   return `${url}/${tx}`
 }
 
-export const toTokens = (value: number) => {
-  const valueString = value.toString()
-  const decimalIndex = valueString.indexOf('.')
-
-  if (decimalIndex !== -1) {
-    const fractionalPart = valueString.substring(decimalIndex + 1)
-    const missingZeros = tokenDecimals - fractionalPart.length
-    const zeros = '0'.repeat(missingZeros)
-
-    return Number(valueString.replace('.', '') + zeros)
-  }
-
-  return Number(valueString + '0'.repeat(tokenDecimals))
+export const toTokens = (value: number): number => {
+  const result = BigNumber.from(Math.round(value * 10 ** tokenDecimals))
+  return result.toNumber()
 }
 
 export const fromTokens = (value: number) => value / 10 ** tokenDecimals

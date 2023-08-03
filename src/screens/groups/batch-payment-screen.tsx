@@ -5,7 +5,7 @@ import React, { useState, useEffect } from 'react'
 import { Message, Grid, Header, Button } from 'semantic-ui-react'
 import { ErrorMessage, LoadingMessage } from '@/components'
 import api, { APIError } from '@/lib/api'
-import { fromTokens } from '@/lib/blockchain'
+import { fromTokens, toTokens } from '@/lib/blockchain'
 import type { GroupWithRecipients } from '@/pages/api/groups/[id]'
 import { useIsMobile } from '@/utils/use-is-mobile'
 import { BatchRecipientsList } from './components/batch-recipients-list'
@@ -118,7 +118,7 @@ const Screen = ({ groupId }: Props) => {
         payment_amount: recipient.amount,
       })
 
-      totalAmount += recipient.amount
+      totalAmount = fromTokens(toTokens(totalAmount + recipient.amount))
     })
 
     setPaymentTransactionData({

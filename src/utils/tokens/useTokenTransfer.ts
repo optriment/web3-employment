@@ -10,6 +10,7 @@ const { tokenAddress } = publicRuntimeConfig
 
 interface Result {
   isLoading: boolean
+  status: string
   error: string
 }
 
@@ -31,6 +32,7 @@ export const useTokenTransfer = ({
 }: Props): Result => {
   const { connected, signTransaction, address } = useWallet()
 
+  const [status, setStatus] = useState<string>('idle')
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [error, setError] = useState<string>('')
 
@@ -42,6 +44,7 @@ export const useTokenTransfer = ({
 
     const perform = async () => {
       setError('')
+      setStatus('loading')
       setIsLoading(true)
 
       try {
@@ -71,11 +74,15 @@ export const useTokenTransfer = ({
             address
           )
 
+        setStatus('signing')
+
         const signedTransaction = await signTransaction(transaction.transaction)
 
         const transferTx = await tronWeb.trx.sendRawTransaction(
           signedTransaction
         )
+
+        setStatus('polling')
 
         await pollBlockchainResponse({
           tx: transferTx.txid,
@@ -89,6 +96,7 @@ export const useTokenTransfer = ({
         setError(handleError(e))
         onError()
       } finally {
+        setStatus('idle')
         setIsLoading(false)
       }
     }
@@ -105,5 +113,5 @@ export const useTokenTransfer = ({
     signTransaction,
   ])
 
-  return { isLoading: isLoading, error }
+  return { isLoading: isLoading, status, error }
 }

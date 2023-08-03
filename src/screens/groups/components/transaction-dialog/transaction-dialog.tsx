@@ -2,7 +2,12 @@ import { useWallet } from '@tronweb3/tronwallet-adapter-react-hooks'
 import getConfig from 'next/config'
 import React, { useState } from 'react'
 import { Modal, Message, Button } from 'semantic-ui-react'
-import { ErrorMessage, TransactionLoadingMessage } from '@/components'
+import {
+  ErrorMessage,
+  InitializingTransactionMessage,
+  TransactionLoadingMessage,
+  WaitingForSigningTransactionMessage,
+} from '@/components'
 import api, { APIError } from '@/lib/api'
 import { buildTronScanTransactionURL, fromTokens } from '@/lib/blockchain'
 import type { RecipientDTO } from '@/lib/dto/RecipientDTO'
@@ -44,7 +49,7 @@ const Component = ({
   const [enabled, setEnabled] = useState<boolean>(false)
   const [transaction, setTransaction] = useState<string>('')
 
-  const { isLoading, error } = useTokenTransfer({
+  const { isLoading, status, error } = useTokenTransfer({
     enabled: enabled,
     data: {
       recipient: payment.recipient,
@@ -112,7 +117,15 @@ const Component = ({
           />
         )}
 
-        {isLoading && <TransactionLoadingMessage />}
+        {isLoading && (
+          <>
+            {status === 'loading' && <InitializingTransactionMessage />}
+
+            {status === 'signing' && <WaitingForSigningTransactionMessage />}
+
+            {status === 'polling' && <TransactionLoadingMessage />}
+          </>
+        )}
 
         {error && (
           <ErrorMessage header="Unable to process a payment" content={error} />
