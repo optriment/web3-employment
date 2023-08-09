@@ -258,14 +258,6 @@ const Screen = ({ groupId }: Props) => {
             <Grid.Column textAlign="right">
               <Button
                 size={isMobile ? 'medium' : 'large'}
-                icon="upload"
-                content="CSV"
-                primary
-                onClick={() => setImportRecipientsDialogOpen(true)}
-              />
-
-              <Button
-                size={isMobile ? 'medium' : 'large'}
                 icon="plus"
                 content="Recipient"
                 primary
@@ -281,6 +273,21 @@ const Screen = ({ groupId }: Props) => {
                 as="a"
                 href={`/groups/${data.group.id}/batch`}
                 disabled={!!isGroupArchived}
+              />
+
+              <Button
+                size={isMobile ? 'medium' : 'large'}
+                icon="upload"
+                content="Import"
+                onClick={() => setImportRecipientsDialogOpen(true)}
+              />
+
+              <Button
+                size={isMobile ? 'medium' : 'large'}
+                icon="download"
+                content="Export"
+                as="a"
+                href={`/api/groups/${groupId}/export`}
               />
 
               <Button
