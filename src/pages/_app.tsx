@@ -81,7 +81,11 @@ export default function App({
       {linkedInPartner && <LinkedInInsightTag partnerId={linkedInPartner} />}
 
       <SessionProvider session={session}>
-        <WalletProvider onError={onError} adapters={adapters}>
+        <WalletProvider
+          onError={onError}
+          adapters={adapters}
+          autoConnect={false}
+        >
           <WalletModalProvider>
             <IsSsrMobileContext.Provider value={pageProps.isSsrMobile}>
               <Component key={router.asPath} {...pageProps} />

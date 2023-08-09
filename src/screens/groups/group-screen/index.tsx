@@ -10,6 +10,7 @@ import type { GroupWithRecipients } from '@/pages/api/groups/[id]'
 import { useIsMobile } from '@/utils/use-is-mobile'
 import { AddRecipientDialog } from '../components/add-recipient-dialog'
 import { EditRecipientDialog } from '../components/edit-recipient-dialog'
+import { ImportRecipientsDialog } from '../components/import-recipients-dialog'
 import { PreparePaymentDialog } from '../components/prepare-payment-dialog'
 import { RecipientsList } from '../components/recipients-list'
 import { TransactionDialog } from '../components/transaction-dialog'
@@ -31,6 +32,9 @@ const Screen = ({ groupId }: Props) => {
   const [data, setData] = useState<GroupWithRecipients | undefined>(undefined)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [error, setError] = useState<string>('')
+
+  const [importRecipientsDialogOpen, setImportRecipientsDialogOpen] =
+    useState<boolean>(false)
 
   const [newRecipientDialogOpen, setNewRecipientDialogOpen] =
     useState<boolean>(false)
@@ -99,6 +103,10 @@ const Screen = ({ groupId }: Props) => {
     })
     setPreparePaymentDialogOpen(false)
     setTransactionDialogOpen(true)
+  }
+
+  const onRecipientsImported = () => {
+    router.reload()
   }
 
   const handleGroupArchive = async () => {
@@ -243,56 +251,62 @@ const Screen = ({ groupId }: Props) => {
 
         {data && (
           <>
-            <Grid.Row columns={isMobile ? 1 : 2}>
-              <Grid.Column width={8}>
-                <GroupHeader group={data.group} />
-              </Grid.Column>
+            <Grid.Column>
+              <GroupHeader group={data.group} />
+            </Grid.Column>
 
-              <Grid.Column width={8} textAlign={isMobile ? 'center' : 'right'}>
+            <Grid.Column textAlign="right">
+              <Button
+                size={isMobile ? 'medium' : 'large'}
+                icon="upload"
+                content="CSV"
+                primary
+                onClick={() => setImportRecipientsDialogOpen(true)}
+              />
+
+              <Button
+                size={isMobile ? 'medium' : 'large'}
+                icon="plus"
+                content="Recipient"
+                primary
+                onClick={() => setNewRecipientDialogOpen(true)}
+                disabled={!!isGroupArchived}
+              />
+
+              <Button
+                size={isMobile ? 'medium' : 'large'}
+                icon="plus"
+                content="Batch"
+                primary
+                as="a"
+                href={`/groups/${data.group.id}/batch`}
+                disabled={!!isGroupArchived}
+              />
+
+              <Button
+                size={isMobile ? 'medium' : 'large'}
+                icon="money"
+                content="Payments"
+                as="a"
+                href={`/groups/${data.group.id}/payments`}
+              />
+
+              {isGroupArchived ? (
                 <Button
                   size={isMobile ? 'medium' : 'large'}
-                  icon="plus"
-                  content="Recipient"
-                  primary
-                  onClick={() => setNewRecipientDialogOpen(true)}
-                  disabled={!!isGroupArchived}
+                  icon="undo"
+                  onClick={handleGroupUnarchive}
+                  title="Unarchive"
                 />
-
+              ) : (
                 <Button
                   size={isMobile ? 'medium' : 'large'}
-                  icon="plus"
-                  content="Batch"
-                  primary
-                  as="a"
-                  href={`/groups/${data.group.id}/batch`}
-                  disabled={!!isGroupArchived}
+                  icon="archive"
+                  onClick={handleGroupArchive}
+                  title="Archive"
                 />
-
-                <Button
-                  size={isMobile ? 'medium' : 'large'}
-                  icon="money"
-                  content="Payments"
-                  as="a"
-                  href={`/groups/${data.group.id}/payments`}
-                />
-
-                {isGroupArchived ? (
-                  <Button
-                    size={isMobile ? 'medium' : 'large'}
-                    icon="undo"
-                    onClick={handleGroupUnarchive}
-                    title="Unarchive"
-                  />
-                ) : (
-                  <Button
-                    size={isMobile ? 'medium' : 'large'}
-                    icon="archive"
-                    onClick={handleGroupArchive}
-                    title="Archive"
-                  />
-                )}
-              </Grid.Column>
-            </Grid.Row>
+              )}
+            </Grid.Column>
 
             {!connected && (
               <Grid.Column>
@@ -331,6 +345,13 @@ const Screen = ({ groupId }: Props) => {
           </>
         )}
       </Grid>
+
+      <ImportRecipientsDialog
+        open={importRecipientsDialogOpen}
+        setOpen={setImportRecipientsDialogOpen}
+        groupId={groupId}
+        onRecipientsImported={onRecipientsImported}
+      />
 
       {data && (
         <>
