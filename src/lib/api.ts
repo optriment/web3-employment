@@ -195,14 +195,14 @@ const api = {
 
   importRecipients: async (
     groupId: string,
-    body: File
+    file: File
   ): Promise<ImportRecipientsApiResponse> => {
+    const formData = new FormData()
+    formData.append('csv', file)
+
     const payload = {
       method: 'POST',
-      headers: {
-        'Content-Type': 'text/csv',
-      },
-      body,
+      body: formData,
     }
 
     const response = await fetch(

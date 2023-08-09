@@ -1,6 +1,6 @@
 import { useWallet } from '@tronweb3/tronwallet-adapter-react-hooks'
 import { useRouter } from 'next/router'
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Button, Message, Grid } from 'semantic-ui-react'
 import { ErrorMessage, LoadingMessage } from '@/components'
 import api, { APIError } from '@/lib/api'
@@ -10,7 +10,7 @@ import type { GroupWithRecipients } from '@/pages/api/groups/[id]'
 import { useIsMobile } from '@/utils/use-is-mobile'
 import { AddRecipientDialog } from '../components/add-recipient-dialog'
 import { EditRecipientDialog } from '../components/edit-recipient-dialog'
-import { ImportRecipientsSuccessDialog } from '../components/import-recipients-success-dialog'
+import { ImportRecipientsDialog } from '../components/import-recipients-dialog'
 import { PreparePaymentDialog } from '../components/prepare-payment-dialog'
 import { RecipientsList } from '../components/recipients-list'
 import { TransactionDialog } from '../components/transaction-dialog'
@@ -32,6 +32,9 @@ const Screen = ({ groupId }: Props) => {
   const [data, setData] = useState<GroupWithRecipients | undefined>(undefined)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [error, setError] = useState<string>('')
+
+  const [importRecipientsDialogOpen, setImportRecipientsDialogOpen] =
+    useState<boolean>(false)
 
   const [newRecipientDialogOpen, setNewRecipientDialogOpen] =
     useState<boolean>(false)
@@ -65,16 +68,6 @@ const Screen = ({ groupId }: Props) => {
     useState<string>('')
 
   const [transaction, setTransaction] = useState<string>('')
-
-  const [isImportingRecipients, setIsImportingRecipients] =
-    useState<boolean>(false)
-
-  const [
-    importRecipientsSuccessDialogOpen,
-    setImportRecipientsSuccessDialogOpen,
-  ] = useState(false)
-
-  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const onRecipientCreated = () => {
     router.reload()
@@ -110,6 +103,10 @@ const Screen = ({ groupId }: Props) => {
     })
     setPreparePaymentDialogOpen(false)
     setTransactionDialogOpen(true)
+  }
+
+  const onRecipientsImported = () => {
+    router.reload()
   }
 
   const handleGroupArchive = async () => {
@@ -176,28 +173,6 @@ const Screen = ({ groupId }: Props) => {
     }
   }
 
-  const handleImport = async () => {
-    if (!fileInputRef.current?.files?.length) return
-
-    setIsImportingRecipients(true)
-
-    try {
-      const file = fileInputRef.current.files[0]
-
-      await api.importRecipients(groupId, file)
-
-      setImportRecipientsSuccessDialogOpen(true)
-    } catch (e) {
-      if (e instanceof APIError) {
-        setError(e.message)
-      } else {
-        setError(`${e}`)
-      }
-    } finally {
-      setIsImportingRecipients(false)
-    }
-  }
-
   useEffect(() => {
     if (!groupId) return
 
@@ -230,23 +205,6 @@ const Screen = ({ groupId }: Props) => {
           <Grid.Column>
             <LoadingMessage content="Loading group with recipients..." />
           </Grid.Column>
-        )}
-
-        {isImportingRecipients && (
-          <Grid.Column>
-            <LoadingMessage content="Importing recipients..." />
-          </Grid.Column>
-        )}
-
-        {importRecipientsSuccessDialogOpen && (
-          <ImportRecipientsSuccessDialog
-            open={importRecipientsSuccessDialogOpen}
-            setOpen={setImportRecipientsSuccessDialogOpen}
-            onClose={() => {
-              setImportRecipientsSuccessDialogOpen(false)
-              router.reload()
-            }}
-          />
         )}
 
         {error && (
@@ -293,73 +251,62 @@ const Screen = ({ groupId }: Props) => {
 
         {data && (
           <>
-            <Grid.Row columns={isMobile ? 1 : 2}>
-              <Grid.Column width={7}>
-                <GroupHeader group={data.group} />
-              </Grid.Column>
+            <Grid.Column>
+              <GroupHeader group={data.group} />
+            </Grid.Column>
 
-              <Grid.Column width={9} textAlign={isMobile ? 'center' : 'right'}>
+            <Grid.Column textAlign="right">
+              <Button
+                size={isMobile ? 'medium' : 'large'}
+                icon="upload"
+                content="CSV"
+                primary
+                onClick={() => setImportRecipientsDialogOpen(true)}
+              />
+
+              <Button
+                size={isMobile ? 'medium' : 'large'}
+                icon="plus"
+                content="Recipient"
+                primary
+                onClick={() => setNewRecipientDialogOpen(true)}
+                disabled={!!isGroupArchived}
+              />
+
+              <Button
+                size={isMobile ? 'medium' : 'large'}
+                icon="plus"
+                content="Batch"
+                primary
+                as="a"
+                href={`/groups/${data.group.id}/batch`}
+                disabled={!!isGroupArchived}
+              />
+
+              <Button
+                size={isMobile ? 'medium' : 'large'}
+                icon="money"
+                content="Payments"
+                as="a"
+                href={`/groups/${data.group.id}/payments`}
+              />
+
+              {isGroupArchived ? (
                 <Button
                   size={isMobile ? 'medium' : 'large'}
-                  icon="file"
-                  content="Import"
-                  primary
-                  onClick={() =>
-                    fileInputRef.current ? fileInputRef.current.click() : null
-                  }
+                  icon="undo"
+                  onClick={handleGroupUnarchive}
+                  title="Unarchive"
                 />
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept=".csv"
-                  hidden
-                  onChange={handleImport}
-                />
-
+              ) : (
                 <Button
                   size={isMobile ? 'medium' : 'large'}
-                  icon="plus"
-                  content="Recipient"
-                  primary
-                  onClick={() => setNewRecipientDialogOpen(true)}
-                  disabled={!!isGroupArchived}
+                  icon="archive"
+                  onClick={handleGroupArchive}
+                  title="Archive"
                 />
-
-                <Button
-                  size={isMobile ? 'medium' : 'large'}
-                  icon="plus"
-                  content="Batch"
-                  primary
-                  as="a"
-                  href={`/groups/${data.group.id}/batch`}
-                  disabled={!!isGroupArchived}
-                />
-
-                <Button
-                  size={isMobile ? 'medium' : 'large'}
-                  icon="money"
-                  content="Payments"
-                  as="a"
-                  href={`/groups/${data.group.id}/payments`}
-                />
-
-                {isGroupArchived ? (
-                  <Button
-                    size={isMobile ? 'medium' : 'large'}
-                    icon="undo"
-                    onClick={handleGroupUnarchive}
-                    title="Unarchive"
-                  />
-                ) : (
-                  <Button
-                    size={isMobile ? 'medium' : 'large'}
-                    icon="archive"
-                    onClick={handleGroupArchive}
-                    title="Archive"
-                  />
-                )}
-              </Grid.Column>
-            </Grid.Row>
+              )}
+            </Grid.Column>
 
             {!connected && (
               <Grid.Column>
@@ -398,6 +345,13 @@ const Screen = ({ groupId }: Props) => {
           </>
         )}
       </Grid>
+
+      <ImportRecipientsDialog
+        open={importRecipientsDialogOpen}
+        setOpen={setImportRecipientsDialogOpen}
+        groupId={groupId}
+        onRecipientsImported={onRecipientsImported}
+      />
 
       {data && (
         <>
